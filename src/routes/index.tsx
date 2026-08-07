@@ -64,10 +64,16 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              to="/licao"
+              to="/onboarding"
               className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1"
             >
               Começar trilha grátis →
+            </Link>
+            <Link
+              to="/trilha"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-foreground/10 bg-card px-7 py-4 text-base font-extrabold text-foreground shadow-soft transition-transform hover:-translate-y-1"
+            >
+              Ver o mapa da trilha
             </Link>
             <a
               href="#mundos"
