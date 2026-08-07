@@ -185,7 +185,7 @@ function IslandBlock({
         {locked && <span className="ml-auto text-2xl" aria-hidden>🔒</span>}
       </div>
 
-      <ol className="relative space-y-6">
+      <ol className="relative space-y-8">
         {island.nodes.map((n, i) => {
           const offset = ["ml-0", "ml-16", "ml-28", "ml-16"][i % 4];
           return (
@@ -241,7 +241,7 @@ function TrailButton({ node, onSelect }: { node: TrailNode; onSelect: (n: TrailN
   }
   return (
     <div className="relative">
-      <span className="absolute -top-9 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-3 py-1 font-display text-xs font-extrabold text-primary-foreground shadow-chunky animate-bounce-soft">
+      <span className="absolute -top-8 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-full bg-primary px-3 py-1 font-display text-xs font-extrabold text-primary-foreground shadow-chunky animate-bounce-soft">
         COMEÇAR
       </span>
       <button
