@@ -9,9 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrilhaRouteImport } from './routes/trilha'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LicaoRouteImport } from './routes/licao'
 import { Route as IndexRouteImport } from './routes/index'
 
+const TrilhaRoute = TrilhaRouteImport.update({
+  id: '/trilha',
+  path: '/trilha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LicaoRoute = LicaoRouteImport.update({
   id: '/licao',
   path: '/licao',
@@ -26,31 +38,53 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
+  '/onboarding': typeof OnboardingRoute
+  '/trilha': typeof TrilhaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
+  '/onboarding': typeof OnboardingRoute
+  '/trilha': typeof TrilhaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
+  '/onboarding': typeof OnboardingRoute
+  '/trilha': typeof TrilhaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/licao'
+  fullPaths: '/' | '/licao' | '/onboarding' | '/trilha'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/licao'
-  id: '__root__' | '/' | '/licao'
+  to: '/' | '/licao' | '/onboarding' | '/trilha'
+  id: '__root__' | '/' | '/licao' | '/onboarding' | '/trilha'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LicaoRoute: typeof LicaoRoute
+  OnboardingRoute: typeof OnboardingRoute
+  TrilhaRoute: typeof TrilhaRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/trilha': {
+      id: '/trilha'
+      path: '/trilha'
+      fullPath: '/trilha'
+      preLoaderRoute: typeof TrilhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/licao': {
       id: '/licao'
       path: '/licao'
@@ -71,17 +105,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LicaoRoute: LicaoRoute,
+  OnboardingRoute: OnboardingRoute,
+  TrilhaRoute: TrilhaRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

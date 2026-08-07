@@ -31,15 +31,15 @@ function Header() {
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-bold text-muted-foreground md:flex">
           <a href="#mundos" className="hover:text-foreground">Mundos</a>
-          <a href="#trilha" className="hover:text-foreground">Trilha</a>
+          <Link to="/trilha" className="hover:text-foreground">Trilha</Link>
           <a href="#jogos" className="hover:text-foreground">Atividades</a>
           <a href="#escolas" className="hover:text-foreground">Para escolas</a>
         </nav>
         <Link
-          to="/licao"
+          to="/onboarding"
           className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-0.5"
         >
-          Testar lição
+          Começar agora
         </Link>
       </div>
     </header>
@@ -64,10 +64,16 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              to="/licao"
+              to="/onboarding"
               className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1"
             >
               Começar trilha grátis →
+            </Link>
+            <Link
+              to="/trilha"
+              className="inline-flex items-center gap-2 rounded-full border-2 border-foreground/10 bg-card px-7 py-4 text-base font-extrabold text-foreground shadow-soft transition-transform hover:-translate-y-1"
+            >
+              Ver o mapa da trilha
             </Link>
             <a
               href="#mundos"
