@@ -230,9 +230,9 @@ function GamificationSection() {
     { icon: "❤️", title: "5 corações", desc: "recarregam em 4 horinhas, e sem nenhuma punição pesada.", tone: "bg-coral/15" },
     { icon: "🔥", title: "Ofensivas", desc: "Bônus para manter seu progresso no fim de semana.", tone: "bg-sunshine/25" },
     { icon: "🌟", title: "Estrelinhas & 💎 Cristais", desc: "Compre skins do Luvi (EF1) ou do avatar Nova (EF2).", tone: "bg-mint/25" },
-    { icon: "🏆", title: "Ligas semanais", desc: "Personalize seu Luv com estrelinhas e cristais.", tone: "bg-sky/25" },
-    { icon: "🎯", title: "Missões diárias", desc: "3 missões divertidas + desafio semanal em equipe.", tone: "bg-grape/25" },
-    { icon: "📊", title: "Painel do professor", desc: "Mapa de dificuldades + relatórios de apredizagem.", tone: "bg-accent/40" },
+    { icon: "🏆", title: "Ligas semanais", desc: "Bronze → Diamante. Turmas competem por XP juntas.", tone: "bg-sky/25" },
+    { icon: "🎯", title: "Missões diárias", desc: "3 missões visuais + desafio semanal colaborativo.", tone: "bg-grape/25" },
+    { icon: "📊", title: "Painel do professor", desc: "Heatmap de dificuldade, relatórios BNCC e Classroom.", tone: "bg-accent/40" },
   ];
   return (
     <section className="mx-auto max-w-6xl px-6 py-24">
@@ -294,7 +294,7 @@ function LessonCTA() {
         <div className="grid items-center gap-10 md:grid-cols-[1.4fr_1fr]">
           <div>
             <h2 className="font-display text-4xl font-extrabold leading-tight text-white md:text-5xl">
-              Experimente uma micro-lição em 3 minutos.
+              Desafio de 3 minutos com o Luvi.
             </h2>
             <p className="mt-4 max-w-lg text-lg text-white/90">
               Cores em LIBRAS, com o Luvi. 5 telas rápidas, uma delas com o Desafio do Espelho ativado.
