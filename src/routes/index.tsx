@@ -227,18 +227,18 @@ function TrailSection() {
 
 function GamificationSection() {
   const items = [
-    { icon: "❤️", title: "5 corações", desc: "Recarregam em 4h ou revisando. Zero punição pesada.", tone: "bg-coral/15" },
-    { icon: "🔥", title: "Ofensivas", desc: "Streaks com escudo automático nos fins de semana.", tone: "bg-sunshine/25" },
-    { icon: "🌟", title: "Estrelinhas & 💎 Cristais", desc: "Compre skins do Luvi (EF1) ou do avatar Nova (EF2).", tone: "bg-mint/25" },
-    { icon: "🏆", title: "Ligas semanais", desc: "Bronze → Diamante. Turmas competem por XP juntas.", tone: "bg-sky/25" },
-    { icon: "🎯", title: "Missões diárias", desc: "3 missões visuais + desafio semanal colaborativo.", tone: "bg-grape/25" },
-    { icon: "📊", title: "Painel do professor", desc: "Heatmap de dificuldade, relatórios BNCC e Classroom.", tone: "bg-accent/40" },
+    { icon: "❤️", title: "5 corações", desc: "recarregam em 4 horinhas, e sem nenhuma punição pesada.", tone: "bg-coral/15" },
+    { icon: "🔥", title: "Ofensivas", desc: "Bônus para manter seu progesso no fim de semana.", tone: "bg-sunshine/25" },
+    { icon: "🌟", title: "Estrelinhas & 💎 Cristais", desc: "Personalize seu Luv com estrelinhas e cristais adquiridos (EF2).", tone: "bg-mint/25" },
+    { icon: "🏆", title: "Ligas semanais", desc: "Suba o nível da sua liga juntos com amigos.", tone: "bg-sky/25" },
+    { icon: "🎯", title: "Missões diárias", desc: "3 missões divertidas + desafio semanal em equipe!.", tone: "bg-grape/25" },
+    { icon: "📊", title: "Painel do professor", desc: "Mapa de dificuldades + relatórios de aprendizagem e Classroom.", tone: "bg-accent/40" },
   ];
   return (
     <section className="mx-auto max-w-6xl px-6 py-24">
       <div className="mx-auto max-w-2xl text-center">
         <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Gamificação</span>
-        <h2 className="mt-3 font-display text-4xl font-extrabold md:text-5xl">Mecânicas feitas para prender, não viciar.</h2>
+        <h2 className="mt-3 font-display text-4xl font-extrabold md:text-5xl">Mecânicas feitas para aprender,  e não para viciar.</h2>
         <p className="mt-4 text-muted-foreground">Reforço positivo, feedback fofo e progresso visível — sempre respeitando o ritmo da criança.</p>
       </div>
       <div className="mt-12 grid gap-5 md:grid-cols-3">
