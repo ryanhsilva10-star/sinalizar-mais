@@ -148,7 +148,7 @@ function WorldsSection() {
           <p className="mt-2 max-w-sm text-sm text-foreground/70">Cartoon 3D, mascote fofo, cores saturadas e micro-vitórias a cada toque.</p>
           <img src={luviMascot} alt="Luvi" width={1024} height={1024} loading="lazy" className="mx-auto -mb-6 mt-6 w-56 transition-transform group-hover:scale-105" />
           <div className="flex flex-wrap gap-2">
-            {["Saudações","Alfabeto","Cores","Bichos","Família","Escola"].map(t=>(
+            {["Saudações", "Alfabeto", "Cores", "Bichos", "Família", "Escola"].map(t => (
               <span key={t} className="rounded-full bg-card/80 px-3 py-1 text-xs font-bold">{t}</span>
             ))}
           </div>
@@ -164,7 +164,7 @@ function WorldsSection() {
           <p className="mt-2 max-w-sm text-sm text-white/80">Estética teen, cultura surda, gírias e gramática espacial em contexto real.</p>
           <img src={novaAvatar} alt="Nova" width={1024} height={1024} loading="lazy" className="mx-auto -mb-6 mt-6 w-56 transition-transform group-hover:scale-105 drop-shadow-2xl" />
           <div className="flex flex-wrap gap-2">
-            {["Sentimentos","Rotina","Gírias","Redes","Profissões","Gramática"].map(t=>(
+            {["Sentimentos", "Rotina", "Gírias", "Redes", "Profissões", "Gramática"].map(t => (
               <span key={t} className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold backdrop-blur">{t}</span>
             ))}
           </div>
@@ -179,19 +179,19 @@ function TrailSection() {
     { n: 1, t: "Oi, tudo bem?", d: "Saudações", c: "bg-coral", done: true },
     { n: 2, t: "A a Z", d: "Datilológico", c: "bg-sunshine", done: true },
     { n: 3, t: "1, 2, 3…", d: "Números", c: "bg-mint", done: true, current: false },
-    { n: 4, t: "Arco-íris", d: "Cores", c: "bg-sky", current: true },
-    { n: 5, t: "Zoo", d: "Bichos", c: "bg-grape text-white" },
+    { n: 4, t: "Azul,branco,verde...", d: "Cores", c: "bg-sky", current: true },
+    { n: 5, t: "Zoo", d: "Animais", c: "bg-grape text-white" },
     { n: 6, t: "Família", d: "Parentes", c: "bg-coral" },
-    { n: 7, t: "Escola", d: "Objetos", c: "bg-mint" },
-    { n: 8, t: "Boss 🎉", d: "Aniversário", c: "bg-gradient-rainbow text-white" },
+    { n: 7, t: "Escola", d: "Objetos", c: "bg-sunshine" },
+    { n: 8, t: "Parabéns 🎉", d: "Aniversário", c: "bg-gradient-rainbow text-white" },
   ];
   return (
     <section id="trilha" className="border-y border-border bg-muted/40 py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Trilha estilo Duolingo</span>
-            <h2 className="mt-3 max-w-xl font-display text-4xl font-extrabold md:text-5xl">Uma ilha por vez. Zero pressão, muita conquista.</h2>
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Trilha de estudos</span>
+            <h2 className="mt-3 max-w-xl font-display text-4xl font-extrabold md:text-3xl">Uma ilha por vez. Zero pressão, muita conquista.</h2>
           </div>
           <div className="flex items-center gap-3 rounded-full bg-card px-5 py-3 shadow-soft">
             <span className="text-2xl">🔥</span>
