@@ -183,7 +183,7 @@ function TrailSection() {
     { n: 5, t: "Zoo", d: "Animais", c: "bg-grape text-white" },
     { n: 6, t: "Família", d: "Parentes", c: "bg-coral" },
     { n: 7, t: "Escola", d: "Objetos", c: "bg-mint" },
-    { n: 8, t: "Boss 🎉", d: "Aniversário", c: "bg-gradient-rainbow text-white" },
+    { n: 8, t: "Parabéns 🎉", d: "Aniversário", c: "bg-gradient-rainbow text-white" },
   ];
   return (
     <section id="trilha" className="border-y border-border bg-muted/40 py-24">
