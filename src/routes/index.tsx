@@ -229,10 +229,10 @@ function GamificationSection() {
   const items = [
     { icon: "❤️", title: "5 corações", desc: "recarregam em 4 horinhas, e sem nenhuma punição pesada.", tone: "bg-coral/15" },
     { icon: "🔥", title: "Ofensivas", desc: "Bônus para manter seu progresso no fim de semana.", tone: "bg-sunshine/25" },
-    { icon: "🌟", title: "Estrelinhas & 💎 Cristais", desc: "Compre skins do Luvi (EF1) ou do avatar Nova (EF2).", tone: "bg-mint/25" },
-    { icon: "🏆", title: "Ligas semanais", desc: "Bronze → Diamante. Turmas competem por XP juntas.", tone: "bg-sky/25" },
-    { icon: "🎯", title: "Missões diárias", desc: "3 missões visuais + desafio semanal colaborativo.", tone: "bg-grape/25" },
-    { icon: "📊", title: "Painel do professor", desc: "Heatmap de dificuldade, relatórios BNCC e Classroom.", tone: "bg-accent/40" },
+    { icon: "🌟", title: "Estrelinhas & 💎 Cristais", desc: "Personalize seu Luv com estrelinhas e cristais adquiridos (EF2).", tone: "bg-mint/25" },
+    { icon: "🏆", title: "Ligas semanais", desc: "Suba o nível da sua liga junto com o amigos.", tone: "bg-sky/25" },
+    { icon: "🎯", title: "Missões diárias", desc: "3 missões divertidas + desafio semanal em equipe!.", tone: "bg-grape/25" },
+    { icon: "📊", title: "Painel do professor", desc: "Mapa de dificuldades + relatórios de apredizagem e Classroom.", tone: "bg-accent/40" },
   ];
   return (
     <section className="mx-auto max-w-6xl px-6 py-24">
