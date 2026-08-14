@@ -182,7 +182,7 @@ function TrailSection() {
     { n: 4, t: "Azul,branco,verde...", d: "Cores", c: "bg-sky", current: true },
     { n: 5, t: "Zoo", d: "Animais", c: "bg-grape text-white" },
     { n: 6, t: "Família", d: "Parentes", c: "bg-coral" },
-    { n: 7, t: "Escola", d: "Objetos", c: "bg-mint" },
+    { n: 7, t: "Escola", d: "Objetos", c: "bg-sunshine" },
     { n: 8, t: "Parabéns 🎉", d: "Aniversário", c: "bg-gradient-rainbow text-white" },
   ];
   return (
