@@ -230,7 +230,7 @@ function GamificationSection() {
     { icon: "❤️", title: "5 corações", desc: "Recarregam em 4h ou revisando. Zero punição pesada.", tone: "bg-coral/15" },
     { icon: "🔥", title: "Ofensivas", desc: "Streaks com escudo automático nos fins de semana.", tone: "bg-sunshine/25" },
     { icon: "🌟", title: "Estrelinhas & 💎 Cristais", desc: "Compre skins do Luvi (EF1) ou do avatar Nova (EF2).", tone: "bg-mint/25" },
-    { icon: "🏆", title: "Ligas semanais", desc: "Bronze → Diamante. Turmas competem por XP juntas.", tone: "bg-sky/25" },
+    { icon: "🏆",  title: "Ligas semanais", desc: "Bronze → Diamante. Turmas competem por XP juntas.", tone: "bg-sky/25" },
     { icon: "🎯", title: "Missões diárias", desc: "3 missões visuais + desafio semanal colaborativo.", tone: "bg-grape/25" },
     { icon: "📊", title: "Painel do professor", desc: "Heatmap de dificuldade, relatórios BNCC e Classroom.", tone: "bg-accent/40" },
   ];
