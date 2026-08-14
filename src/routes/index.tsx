@@ -148,7 +148,7 @@ function WorldsSection() {
           <p className="mt-2 max-w-sm text-sm text-foreground/70">Cartoon 3D, mascote fofo, cores saturadas e micro-vitórias a cada toque.</p>
           <img src={luviMascot} alt="Luvi" width={1024} height={1024} loading="lazy" className="mx-auto -mb-6 mt-6 w-56 transition-transform group-hover:scale-105" />
           <div className="flex flex-wrap gap-2">
-            {["Saudações","Alfabeto","Cores","Bichos","Família","Escola"].map(t=>(
+            {["Saudações", "Alfabeto", "Cores", "Bichos", "Família", "Escola"].map(t => (
               <span key={t} className="rounded-full bg-card/80 px-3 py-1 text-xs font-bold">{t}</span>
             ))}
           </div>
@@ -164,7 +164,7 @@ function WorldsSection() {
           <p className="mt-2 max-w-sm text-sm text-white/80">Estética teen, cultura surda, gírias e gramática espacial em contexto real.</p>
           <img src={novaAvatar} alt="Nova" width={1024} height={1024} loading="lazy" className="mx-auto -mb-6 mt-6 w-56 transition-transform group-hover:scale-105 drop-shadow-2xl" />
           <div className="flex flex-wrap gap-2">
-            {["Sentimentos","Rotina","Gírias","Redes","Profissões","Gramática"].map(t=>(
+            {["Sentimentos", "Rotina", "Gírias", "Redes", "Profissões", "Gramática"].map(t => (
               <span key={t} className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold backdrop-blur">{t}</span>
             ))}
           </div>
@@ -190,7 +190,7 @@ function TrailSection() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Trilha estilo Duolingo</span>
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Trilha de estudos</span>
             <h2 className="mt-3 max-w-xl font-display text-4xl font-extrabold md:text-5xl">Uma ilha por vez. Zero pressão, muita conquista.</h2>
           </div>
           <div className="flex items-center gap-3 rounded-full bg-card px-5 py-3 shadow-soft">
