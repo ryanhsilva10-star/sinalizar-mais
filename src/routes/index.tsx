@@ -294,7 +294,7 @@ function LessonCTA() {
         <div className="grid items-center gap-10 md:grid-cols-[1.4fr_1fr]">
           <div>
             <h2 className="font-display text-4xl font-extrabold leading-tight text-white md:text-5xl">
-              Desafio de 3 minutos com o Luvi.
+              Desafio de 3  minutos com o Luvi.
             </h2>
             <p className="mt-4 max-w-lg text-lg text-white/90">
               Cores em LIBRAS, 5 telas rápidas para jogar e aprender.
