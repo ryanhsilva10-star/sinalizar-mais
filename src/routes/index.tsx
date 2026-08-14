@@ -294,23 +294,23 @@ function LessonCTA() {
         <div className="grid items-center gap-10 md:grid-cols-[1.4fr_1fr]">
           <div>
             <h2 className="font-display text-4xl font-extrabold leading-tight text-white md:text-5xl">
-              Experimente uma micro-lição em 3 minutos.
+              Desafio de 3 minutos com o Luvi.
             </h2>
             <p className="mt-4 max-w-lg text-lg text-white/90">
-              Cores em LIBRAS, com o Luvi. 5 telas rápidas, uma delas com o Desafio do Espelho ativado.
+              Cores em LIBRAS, 5 telas rápidas para jogar e aprender.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 to="/licao"
                 className="inline-flex items-center gap-2 rounded-full bg-foreground px-7 py-4 text-base font-extrabold text-background shadow-chunky transition-transform hover:-translate-y-1"
               >
-                Começar lição demo →
+                Começar lição →
               </Link>
               <a
                 href="#"
                 className="inline-flex items-center gap-2 rounded-full border-2 border-white/40 bg-white/10 px-7 py-4 text-base font-extrabold text-white backdrop-blur transition-transform hover:-translate-y-1"
               >
-                Quero para minha escola
+                Jogar o desafio com a minha sala →
               </a>
             </div>
           </div>
