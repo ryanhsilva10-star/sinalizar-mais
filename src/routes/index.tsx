@@ -191,7 +191,7 @@ function TrailSection() {
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
             <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Trilha de estudos</span>
-            <h2 className="mt-3 max-w-xl font-display text-4xl font-extrabold md:text-5xl">Uma ilha por vez. Zero pressão, muita conquista.</h2>
+            <h2 className="mt-3 max-w-xl font-display text-4xl font-extrabold md:text-3xl">Uma ilha por vez. Zero pressão, muita conquista.</h2>
           </div>
           <div className="flex items-center gap-3 rounded-full bg-card px-5 py-3 shadow-soft">
             <span className="text-2xl">🔥</span>
