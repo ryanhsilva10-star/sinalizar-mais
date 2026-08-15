@@ -68,6 +68,11 @@
   0% { transform: scale(0.6); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
 
 :root {
   --radius: 1.25rem;
