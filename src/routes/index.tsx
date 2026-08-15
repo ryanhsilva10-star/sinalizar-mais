@@ -257,11 +257,11 @@ function GamificationSection() {
 
 function ActivitiesSection() {
   const acts = [
-    { emoji: "❓", title: "Qual é o sinal?", desc: "4 GIFs de avatares. Aluno toca no correto — feedback destaca o parâmetro errado (mão, movimento, locação)." },
-    { emoji: "🫧", title: "Estoure a Bolha", desc: "Bolhas com sinais flutuam. Criança estoura a que corresponde à palavra. Ritmo suave, sem game over." },
-    { emoji: "🧩", title: "Tradutor de Frases", desc: "Arraste blocos de sinais respeitando a sintaxe LIBRAS (Tópico-Comentário)." },
-    { emoji: "🪞", title: "Desafio do Espelho", desc: "Webcam + IA validam configuração, ponto de articulação e movimento. Cartão de precisão com estrelas." },
-    { emoji: "✋", title: "Soletre com o Dedo", desc: "Datilologia guiada — reproduza pela câmera ou monte arrastando cartões." },
+    { emoji: "🤟", title: "Qual é o sinal?", desc: "4 sinais. Selecione o correto — feedback destaca o parâmetro errado (mão, movimento, locação)." },
+    { emoji: "🔮", title: "Estoure a Bolha", desc: "Bolhas com sinais flutuam. Estore a bolha que corresponde à palavra. Ritmo suave, sem game over." },
+    { emoji: "🧩", title: "Tradutor de Frases", desc: "Arraste blocos de sinais na ordem correta em LIBRAS (Tópico-Comentário)." },
+    { emoji: "🎭", title: "Desafio do Espelho", desc: "Webcam + IA validam configuração, ponto de articulação e movimento. Cartão de precisão com estrelas." },
+    { emoji: "🧏‍♂️", title: "Soletre em libras", desc: "Datilologia guiada — reproduza pela câmera ou monte arrastando cartões." },
     { emoji: "🎬", title: "Leitura de Cena", desc: "Micro-histórias com sinalizantes surdos reais. Treina fluência receptiva de verdade." },
   ];
   return (
@@ -269,8 +269,10 @@ function ActivitiesSection() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-neon">7 formatos interativos</span>
-          <h2 className="mt-3 font-teen text-4xl font-bold md:text-5xl">Todo exercício vira jogo.</h2>
-          <p className="mt-4 text-white/70">Avatares 3D com controle de velocidade (0.5x / 1x) e ângulo (frontal/lateral) — essencial para configurar a mão.</p>
+          <h2 className="mt-3 font-teen text-4xl font-bold md:text-5xl">Aprenda jogando.</h2>
+          <p className="mt-4 text-white/70">Avatares 3D com controle de velocidade (0.5x / 1x) e ângulo (frontal/lateral) </p>
+          <p className="mt-4 text-white/70"> Essencial para aprender a sinalização. </p>
+          
         </div>
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {acts.map((a) => (
