@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import luviMascot from "@/assets/luvi-mascot.png";
 import novaAvatar from "@/assets/nova-avatar.png";
+import Footer from "@/components/Footer";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -323,16 +324,4 @@ function LessonCTA() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="border-t border-border bg-card/60 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
-        <div className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-rainbow font-black text-white">S</span>
-          <span className="font-display text-lg font-extrabold">SinaLINK</span>
-        </div>
-        <p className="text-sm text-muted-foreground">Sinais gravados com modelos surdos reais · Feito com carinho para escolas do Brasil.</p>
-      </div>
-    </footer>
-  );
-}
+
