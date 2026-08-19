@@ -265,7 +265,7 @@ function ActivitiesSection() {
     { emoji: "🎬", title: "Leitura de Cena", desc: "Micro-histórias com sinalizantes surdos reais. Treina fluência receptiva de verdade." },
   ];
   return (
-    <section id="jogos" className="border-y border-border bg-teen-bg py-24 text-teen-fg">
+    <section id="jogos" className="border-y border-border bg-teen-bg py-20 text-teen-fg">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-neon">7 formatos interativos</span>
@@ -277,7 +277,7 @@ function ActivitiesSection() {
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {acts.map((a) => (
             <div key={a.title} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur transition-all hover:-translate-y-1 hover:bg-white/10">
-              <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-rainbow text-3xl shadow-glow-teen">{a.emoji}</div>
+              <div className="mx-auto mb-4 h-14 w-14 items-center justify-center rounded-2xl bg-gradient-rainbow text-3xl shadow-glow-teen px-2 py-2">{a.emoji}</div>
               <h3 className="font-teen text-xl font-bold">{a.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-white/70">{a.desc}</p>
             </div>
