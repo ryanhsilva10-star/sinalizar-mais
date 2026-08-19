@@ -144,7 +144,7 @@
   --card-foreground: oklch(0.98 0.01 285);
   --primary: oklch(0.7 0.2 30);
   --primary-foreground: oklch(0.99 0 0);
-  --border: oklch(1 0 0 / 12%);
+  --border: oklch(12.856% 0.00001 271.152);
 }
 
 @layer base {
