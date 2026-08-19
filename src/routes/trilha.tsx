@@ -56,21 +56,21 @@ const ISLANDS: Island[] = [
     id: 1,
     name: "Ilha do Oi",
     subtitle: "Saudações e apresentação",
-    tone: "bg-sunshine",
+    tone: "bg-sky",
     nodes: TRAIL_NODES.filter((n) => n.islandId === 1),
   },
   {
     id: 2,
     name: "Ilha das Cores",
     subtitle: "Vermelho, azul, amarelo e mais",
-    tone: "bg-coral",
+    tone: "bg-grape",
     nodes: TRAIL_NODES.filter((n) => n.islandId === 2),
   },
   {
     id: 3,
-    name: "Ilha dos Bichos",
+    name: "Ilha dos Animais",
     subtitle: "Animais da fazenda e da floresta",
-    tone: "bg-mint",
+    tone: "bg-neon",
     nodes: TRAIL_NODES.filter((n) => n.islandId === 3),
   },
 ];
@@ -225,7 +225,7 @@ function TrailPage() {
                         ? "border-primary bg-card shadow-chunky"
                         : doneCount === island.nodes.length
                         ? "border-emerald-300 bg-emerald-50/40"
-                        : "border-border bg-card/60 opacity-80"
+                        : "border-emerald-200 bg-card/60 opacity-80"
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -263,10 +263,10 @@ function TrailPage() {
         {/* Locked Next World Banner */}
         <div className="mt-12 rounded-4xl border-4 border-dashed border-border p-8 text-center bg-card/40 backdrop-blur-sm">
           <div className="text-4xl animate-bounce-soft">🏰🔒</div>
-          <h2 className="mt-2 font-display text-xl font-extrabold">
+          <h2 className="mt-8 font-display text-xl font-extrabold">
             Mundo 2: O Castelo da Família e Expressões
           </h2>
-          <p className="mt-1 text-sm text-muted-foreground max-w-md mx-auto">
+          <p className="mt-4 text-sm text-muted-foreground max-w-md mx-auto">
             Termine a jornada na Ilha dos Bichos para cruzar o portão do castelo e desbloquear novas aventuras!
           </p>
         </div>

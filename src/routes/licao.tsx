@@ -30,7 +30,7 @@ function LessonPage() {
   return (
     <div className="min-h-screen bg-gradient-hero">
       <TopBar step={step} total={total} onExit={restart} />
-      <div className="mx-auto max-w-3xl px-6 py-10">
+      <div className="mx-auto max-w-3xl px-7 py-12">
         {step === 0 && <ScreenIntro onNext={next} />}
         {step === 1 && <ScreenTeach onNext={next} />}
         {step === 2 && <ScreenQuiz onNext={next} target={COLORS[1]} />}
@@ -172,7 +172,7 @@ function ScreenQuiz({ target, onNext }: { target: Color; onNext: () => void }) {
           )}
         </div>
         {choice && (
-          <button onClick={onNext} className="rounded-full bg-primary px-10 py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky">
+          <button onClick={onNext} className="rounded-full bg-primary px-12 py-5 font-display text-lg font-extrabold text-primary-foreground shadow-chunky">
             Continuar →
           </button>
         )}
@@ -216,7 +216,7 @@ function ScreenBubble({ target, onNext }: { target: Color; onNext: () => void })
           {popped && popped !== target.pt && <div className="animate-pop text-lg font-bold text-destructive">Ops, era o {target.pt}!</div>}
         </div>
         {popped && (
-          <button onClick={onNext} className="rounded-full bg-primary px-10 py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky">
+          <button onClick={onNext} className="rounded-full bg-primary px-12 py-5 font-display text-lg font-extrabold text-primary-foreground shadow-chunky">
             Próximo desafio →
           </button>
         )}
@@ -287,12 +287,12 @@ function ScreenMirror({ target, onNext }: { target: Color; onNext: () => void })
 
         <div className="mt-8">
           {state === "idle" && (
-            <button onClick={start} className="rounded-full bg-primary px-10 py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky">
+            <button onClick={start} className="rounded-full bg-primary px-12 py-5 font-display text-lg font-extrabold text-primary-foreground shadow-chunky">
               🎬 Começar 3-2-1
             </button>
           )}
           {state === "result" && (
-            <button onClick={onNext} className="rounded-full bg-foreground px-10 py-4 font-display text-lg font-extrabold text-background shadow-chunky">
+            <button onClick={onNext} className="rounded-full bg-foreground px-12 py-5 font-display text-lg font-extrabold text-background shadow-chunky">
               Finalizar lição →
             </button>
           )}
@@ -319,19 +319,19 @@ function ScreenReward({ onRestart }: { onRestart: () => void }) {
           <RewardCard icon="🔥" label="Streak 12" tone="bg-coral text-white" />
         </div>
 
-        <div className="mt-8 rounded-2xl bg-muted p-4">
-          <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">Progresso da trilha "Cores"</div>
-          <div className="h-3 overflow-hidden rounded-full bg-background">
+        <div className="mt-9 rounded-2xl bg-muted p-4">
+          <div className="mb-3 text-xs font-bold uppercase text-muted-foreground">Progresso da trilha "Cores"</div>
+          <div className="h-4 overflow-hidden rounded-full bg-background">
             <div className="h-full w-1/4 rounded-full bg-gradient-rainbow" />
           </div>
-          <div className="mt-2 text-sm font-bold">25% concluído · Próxima: Verde & Rosa</div>
+          <div className="mt-4 text-sm font-bold">25% concluído · Próxima: Verde & Rosa</div>
         </div>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <button onClick={onRestart} className="rounded-full border-2 border-foreground/20 bg-card px-6 py-3 font-display font-extrabold shadow-soft">
+          <button onClick={onRestart} className="rounded-full border-4 border-foreground/20 bg-card px-7 py-4 font-display font-extrabold shadow-soft">
             Repetir lição
           </button>
-          <Link to="/" className="rounded-full bg-primary px-6 py-3 font-display font-extrabold text-primary-foreground shadow-chunky">
+          <Link to="/" className="rounded-full bg-primary px-7 py-4 font-display font-extrabold text-primary-foreground shadow-chunky">
             Voltar ao início
           </Link>
         </div>
