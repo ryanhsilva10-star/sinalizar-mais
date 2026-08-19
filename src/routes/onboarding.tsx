@@ -28,7 +28,7 @@ type Question = { id: string; title: string; hint: string; options: Answer[] };
 const QUESTIONS: Question[] = [
   {
     id: "ano",
-    title: "Em que ano você está?",
+    title: "Quantos anos você tem?",
     hint: "Isso define o ritmo e a linguagem visual da sua trilha.",
     options: [
       { label: "1º ao 3º ano", emoji: "🧒", world: "ef1" },
