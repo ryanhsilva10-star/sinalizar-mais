@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import luviMascot from "@/assets/luvi-mascot.png";
 import novaAvatar from "@/assets/nova-avatar.png";
+import Footer from "@/components/Footer";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -148,7 +149,7 @@ function WorldsSection() {
           <p className="mt-2 max-w-sm text-sm text-foreground/70">Cartoon 3D, mascote fofo, cores saturadas e micro-vitórias a cada toque.</p>
           <img src={luviMascot} alt="Luvi" width={1024} height={1024} loading="lazy" className="mx-auto -mb-6 mt-6 w-56 transition-transform group-hover:scale-105" />
           <div className="flex flex-wrap gap-2">
-            {["Saudações", "Alfabeto", "Cores", "Bichos", "Família", "Escola"].map(t => (
+            {["Saudações","Alfabeto","Cores","Bichos","Família","Escola"].map(t=>(
               <span key={t} className="rounded-full bg-card/80 px-3 py-1 text-xs font-bold">{t}</span>
             ))}
           </div>
@@ -164,7 +165,7 @@ function WorldsSection() {
           <p className="mt-2 max-w-sm text-sm text-white/80">Estética teen, cultura surda, gírias e gramática espacial em contexto real.</p>
           <img src={novaAvatar} alt="Nova" width={1024} height={1024} loading="lazy" className="mx-auto -mb-6 mt-6 w-56 transition-transform group-hover:scale-105 drop-shadow-2xl" />
           <div className="flex flex-wrap gap-2">
-            {["Sentimentos", "Rotina", "Gírias", "Redes", "Profissões", "Gramática"].map(t => (
+            {["Sentimentos","Rotina","Gírias","Redes","Profissões","Gramática"].map(t=>(
               <span key={t} className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold backdrop-blur">{t}</span>
             ))}
           </div>
@@ -179,19 +180,19 @@ function TrailSection() {
     { n: 1, t: "Oi, tudo bem?", d: "Saudações", c: "bg-coral", done: true },
     { n: 2, t: "A a Z", d: "Datilológico", c: "bg-sunshine", done: true },
     { n: 3, t: "1, 2, 3…", d: "Números", c: "bg-mint", done: true, current: false },
-    { n: 4, t: "Azul,branco,verde...", d: "Cores", c: "bg-sky", current: true },
-    { n: 5, t: "Zoo", d: "Animais", c: "bg-grape text-white" },
+    { n: 4, t: "Arco-íris", d: "Cores", c: "bg-sky", current: true },
+    { n: 5, t: "Zoo", d: "Bichos", c: "bg-grape text-white" },
     { n: 6, t: "Família", d: "Parentes", c: "bg-coral" },
-    { n: 7, t: "Escola", d: "Objetos", c: "bg-sunshine" },
-    { n: 8, t: "Parabéns 🎉", d: "Aniversário", c: "bg-gradient-rainbow text-white" },
+    { n: 7, t: "Escola", d: "Objetos", c: "bg-mint" },
+    { n: 8, t: "Boss 🎉", d: "Aniversário", c: "bg-gradient-rainbow text-white" },
   ];
   return (
     <section id="trilha" className="border-y border-border bg-muted/40 py-24">
       <div className="mx-auto max-w-6xl px-6">
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div>
-            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Trilha de estudos</span>
-            <h2 className="mt-3 max-w-xl font-display text-4xl font-extrabold md:text-3xl">Uma ilha por vez. Zero pressão, muita conquista.</h2>
+            <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Trilha estilo Duolingo</span>
+            <h2 className="mt-3 max-w-xl font-display text-4xl font-extrabold md:text-5xl">Uma ilha por vez. Zero pressão, muita conquista.</h2>
           </div>
           <div className="flex items-center gap-3 rounded-full bg-card px-5 py-3 shadow-soft">
             <span className="text-2xl">🔥</span>
@@ -227,18 +228,18 @@ function TrailSection() {
 
 function GamificationSection() {
   const items = [
-    { icon: "❤️", title: "5 corações", desc: "Recarregam em 4h ou revisando. Zero punição pesada.", tone: "bg-coral/15" },
-    { icon: "🔥", title: "Ofensivas", desc: "Streaks com escudo automático nos fins de semana.", tone: "bg-sunshine/25" },
-    { icon: "🌟", title: "Estrelinhas & 💎 Cristais", desc: "Compre skins do Luvi (EF1) ou do avatar Nova (EF2).", tone: "bg-mint/25" },
-    { icon: "🏆", title: "Ligas semanais", desc: "Bronze → Diamante. Turmas competem por XP juntas.", tone: "bg-sky/25" },
-    { icon: "🎯", title: "Missões diárias", desc: "3 missões visuais + desafio semanal colaborativo.", tone: "bg-grape/25" },
-    { icon: "📊", title: "Painel do professor", desc: "Heatmap de dificuldade, relatórios BNCC e Classroom.", tone: "bg-accent/40" },
+    { icon: "❤️", title: "5 corações", desc: "recarregam em 4 horinhas, e sem nenhuma punição pesada.", tone: "bg-coral/15" },
+    { icon: "🔥", title: "Ofensivas", desc: "Bônus para manter seu progresso no fim de semana.", tone: "bg-sunshine/25" },
+    { icon: "🌟", title: "Estrelinhas & 💎 Cristais", desc: "Personalize seu Luv com estrelinhas e cristais adquiridos (EF2).", tone: "bg-mint/25" },
+    { icon: "🏆", title: "Ligas semanais", desc: "Suba o nível da sua liga junto com o amigos.", tone: "bg-sky/25" },
+    { icon: "🎯", title: "Missões diárias", desc: "3 missões divertidas + desafio semanal em equipe!.", tone: "bg-grape/25" },
+    { icon: "📊", title: "Painel do professor", desc: "Mapa de dificuldades + relatórios de apredizagem e Classroom.", tone: "bg-accent/40" },
   ];
   return (
     <section className="mx-auto max-w-6xl px-6 py-24">
       <div className="mx-auto max-w-2xl text-center">
         <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Gamificação</span>
-        <h2 className="mt-3 font-display text-4xl font-extrabold md:text-5xl">Mecânicas feitas para prender, não viciar.</h2>
+        <h2 className="mt-3 font-display text-4xl font-extrabold md:text-5xl">Mecânicas feitas para aprender, e não para viciar.</h2>
         <p className="mt-4 text-muted-foreground">Reforço positivo, feedback fofo e progresso visível — sempre respeitando o ritmo da criança.</p>
       </div>
       <div className="mt-12 grid gap-5 md:grid-cols-3">
@@ -256,11 +257,11 @@ function GamificationSection() {
 
 function ActivitiesSection() {
   const acts = [
-    { emoji: "❓", title: "Qual é o sinal?", desc: "4 GIFs de avatares. Aluno toca no correto — feedback destaca o parâmetro errado (mão, movimento, locação)." },
-    { emoji: "🫧", title: "Estoure a Bolha", desc: "Bolhas com sinais flutuam. Criança estoura a que corresponde à palavra. Ritmo suave, sem game over." },
-    { emoji: "🧩", title: "Tradutor de Frases", desc: "Arraste blocos de sinais respeitando a sintaxe LIBRAS (Tópico-Comentário)." },
-    { emoji: "🪞", title: "Desafio do Espelho", desc: "Webcam + IA validam configuração, ponto de articulação e movimento. Cartão de precisão com estrelas." },
-    { emoji: "✋", title: "Soletre com o Dedo", desc: "Datilologia guiada — reproduza pela câmera ou monte arrastando cartões." },
+    { emoji: "🤟", title: "Qual é o sinal?", desc: "4 sinais. Selecione o correto — feedback destaca o parâmetro errado (mão, movimento, locação)." },
+    { emoji: "🔮", title: "Estoure a Bolha", desc: "Bolhas com sinais flutuam. Estore a bolha que corresponde à palavra. Ritmo suave, sem game over." },
+    { emoji: "🧩", title: "Tradutor de Frases", desc: "Arraste blocos de sinais na ordem correta em LIBRAS (Tópico-Comentário)." },
+    { emoji: "🎭", title: "Desafio do Espelho", desc: "Webcam + IA validam configuração, ponto de articulação e movimento. Cartão de precisão com estrelas." },
+    { emoji: "🧏‍♂️", title: "Soletre em libras", desc: "Datilologia guiada — reproduza pela câmera ou monte arrastando cartões." },
     { emoji: "🎬", title: "Leitura de Cena", desc: "Micro-histórias com sinalizantes surdos reais. Treina fluência receptiva de verdade." },
   ];
   return (
@@ -268,8 +269,10 @@ function ActivitiesSection() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-neon">7 formatos interativos</span>
-          <h2 className="mt-3 font-teen text-4xl font-bold md:text-5xl">Todo exercício vira jogo.</h2>
-          <p className="mt-4 text-white/70">Avatares 3D com controle de velocidade (0.5x / 1x) e ângulo (frontal/lateral) — essencial para configurar a mão.</p>
+          <h2 className="mt-3 font-teen text-4xl font-bold md:text-5xl">Aprenda jogando.</h2>
+          <p className="mt-4 text-white/70">Avatares 3D com controle de velocidade (0.5x / 1x) e ângulo (frontal/lateral) </p>
+          <p className="mt-4 text-white/70"> Essencial para aprender a sinalização. </p>
+          
         </div>
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {acts.map((a) => (
@@ -294,23 +297,23 @@ function LessonCTA() {
         <div className="grid items-center gap-10 md:grid-cols-[1.4fr_1fr]">
           <div>
             <h2 className="font-display text-4xl font-extrabold leading-tight text-white md:text-5xl">
-              Experimente uma micro-lição em 3 minutos.
+              Desafio de 3 minutos com o Luvi.
             </h2>
             <p className="mt-4 max-w-lg text-lg text-white/90">
-              Cores em LIBRAS, com o Luvi. 5 telas rápidas, uma delas com o Desafio do Espelho ativado.
+              Cores em LIBRAS, 5 telas rápidas para aprender.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 to="/licao"
                 className="inline-flex items-center gap-2 rounded-full bg-foreground px-7 py-4 text-base font-extrabold text-background shadow-chunky transition-transform hover:-translate-y-1"
               >
-                Começar lição demo →
+                Começar lição →
               </Link>
               <a
                 href="#"
                 className="inline-flex items-center gap-2 rounded-full border-2 border-white/40 bg-white/10 px-7 py-4 text-base font-extrabold text-white backdrop-blur transition-transform hover:-translate-y-1"
               >
-                Quero para minha escola
+                Jogar com a sala →
               </a>
             </div>
           </div>
@@ -323,16 +326,4 @@ function LessonCTA() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="border-t border-border bg-card/60 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
-        <div className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-rainbow font-black text-white">S</span>
-          <span className="font-display text-lg font-extrabold">SinaLINK</span>
-        </div>
-        <p className="text-sm text-muted-foreground">Sinais gravados com modelos surdos reais · Feito com carinho para escolas do Brasil.</p>
-      </div>
-    </footer>
-  );
-}
+
