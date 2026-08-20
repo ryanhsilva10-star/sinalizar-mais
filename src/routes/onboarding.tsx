@@ -42,7 +42,7 @@ const QUESTIONS: Question[] = [
     title: "Você já sabe alguma coisa de LIBRAS?",
     hint: "Sem pressão — a gente ajusta o começo pra você.",
     options: [
-      { label: "Nunca vi de perto", emoji: "🌱", world: "both" },
+      { label: "Nunca pratiquei", emoji: "🌱", world: "both" },
       { label: "Sei o alfabeto", emoji: "🔤", world: "both" },
       { label: "Converso um pouco", emoji: "💬", world: "both" },
       { label: "Uso no dia a dia", emoji: "🤟", world: "both" },
@@ -50,11 +50,11 @@ const QUESTIONS: Question[] = [
   },
   {
     id: "motivo",
-    title: "Por que você quer aprender?",
+    title: "Qual é a sua finalidade?",
     hint: "Usamos isso para escolher os temas das primeiras lições.",
     options: [
-      { label: "Falar com um amigo surdo", emoji: "🫂", world: "both" },
-      { label: "É da minha família", emoji: "🏠", world: "both" },
+      { label: "Falar com um amigo", emoji: "🫂", world: "both" },
+      { label: "dia a dia em casa", emoji: "🏠", world: "both" },
       { label: "Pedido da escola", emoji: "🏫", world: "both" },
       { label: "Curiosidade mesmo", emoji: "✨", world: "both" },
     ],
@@ -167,7 +167,7 @@ function QuestionCard({
   onPick: (q: Question, a: Answer) => void;
 }) {
   return (
-    <section className="animate-pop rounded-4xl bg-card p-8 shadow-chunky md:p-12">
+    <section className="animate-pop rounded-4xl bg-card p-8 shadow-lg md:p-12">
       <h1 className="font-display text-3xl font-extrabold md:text-4xl">{q.title}</h1>
       <p className="mt-2 text-sm text-muted-foreground">{q.hint}</p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
@@ -180,7 +180,7 @@ function QuestionCard({
               className={`flex items-center gap-4 rounded-3xl border-4 bg-muted p-5 text-left transition-all ${
                 isSel
                   ? "border-mint bg-mint/20 animate-pop"
-                  : "border-transparent hover:-translate-y-1 hover:border-primary"
+                  : "border-transparent hover:-translate-y-1 hover:border-blue-20"
               }`}
             >
               <span className="grid h-14 w-14 shrink-0 place-items-center rounded-2xl bg-card text-2xl shadow-soft">
