@@ -79,13 +79,13 @@
 
   /* Brand base — friendly & warm */
   --background: oklch(0.99 0.01 90);
-  --foreground: oklch(0.22 0.05 265);
+  --foreground: oklch(30.707% 0.06442 265.849);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.22 0.05 265);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.22 0.05 265);
 
-  --primary: oklch(0.68 0.19 35);        /* Coral orange — mascote/CTA */
+  --primary: oklch(70.729% 0.16448 35.171);        /* Coral orange — mascote/CTA */
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.72 0.16 200);     /* Sky blue */
   --secondary-foreground: oklch(0.22 0.05 265);
