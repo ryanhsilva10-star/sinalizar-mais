@@ -30,7 +30,7 @@ function Header() {
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">S</span>
           <span className="font-display text-2xl font-extrabold">SinaLINK</span>
         </Link>
-        <nav className="hidden items-center gap-8 text-sm font-bold text-muted-foreground md:flex">
+        <nav className="hidden items-center gap-8 text-sm font-bold text-muted-foreground md:flex text-secondary-foreground">
           <a href="#mundos" className="hover:text-foreground">Mundos</a>
           <Link to="/trilha" className="hover:text-foreground">Trilha</Link>
           <a href="#jogos" className="hover:text-foreground">Atividades</a>
@@ -38,7 +38,8 @@ function Header() {
         </nav>
         <Link
           to="/onboarding"
-          className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-0.5"
+          className="inline-flex items-center rounded-full bg-foreground px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky
+         transition-transform hover:-translate-y-0.5"
         >
           Começar agora
         </Link>
@@ -66,7 +67,8 @@ function Hero() {
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
               to="/onboarding"
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-extrabold text-primary-foreground shadow-chunky 
+              transition-transform hover:-translate-y-1"
             >
               Começar trilha grátis →
             </Link>
