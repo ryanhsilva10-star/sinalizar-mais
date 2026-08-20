@@ -28,7 +28,7 @@ function LessonPage() {
   const restart = () => setStep(0);
 
   return (
-    <div className="min-h-screen bg-gradient-hero">
+    <div className="min-h-screen bg-gradient-hero shadow">
       <TopBar step={step} total={total} onExit={restart} />
       <div className="mx-auto max-w-3xl px-7 py-12">
         {step === 0 && <ScreenIntro onNext={next} />}
@@ -73,15 +73,15 @@ function ScreenIntro({ onNext }: { onNext: () => void }) {
       <div className="text-center">
         <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">EF1 · Nível 4 · Lição 1</span>
         <h1 className="mt-3 font-display text-4xl font-extrabold md:text-5xl">Vamos aprender as cores em LIBRAS!</h1>
-        <img src={luviMascot} alt="Luvi acenando com balões coloridos" width={1024} height={1024} className="mx-auto my-6 w-64 animate-bounce-soft" />
-        <div className="mx-auto mb-6 flex max-w-xs justify-center gap-3">
+        <img src={luviMascot} alt="Luvi acenando com balões coloridos" width={1024} height={1024} className="mx-auto my-6 w-64 animate-bounce-soft drop-shadow-xl/25" />
+        <div className="mx-auto mb-6 flex max-w-xs justify-center gap-3 drop-shadow-xl/25">
           {COLORS.map((c) => (
             <span key={c.pt} className={`grid h-14 w-14 place-items-center rounded-2xl ${c.tone} text-2xl shadow-chunky animate-float`} style={{ animationDelay: `${COLORS.indexOf(c) * 0.4}s` }}>
               {c.emoji}
             </span>
           ))}
         </div>
-        <button onClick={onNext} className="rounded-full bg-primary px-10 py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1">
+        <button onClick={onNext} className="rounded-full bg-primary px-10 py-4 font-display text-lg font-extrabold text-primary-foreground drop-shadow-xl/25 transition-transform hover:-translate-y-1">
           ▶ Começar
         </button>
       </div>
@@ -112,12 +112,12 @@ function ScreenTeach({ onNext }: { onNext: () => void }) {
             <button className="rounded-full bg-card px-3 py-1.5 text-xs font-bold shadow-soft">🔄 lado</button>
           </div>
         </div>
-        <div className={`mx-auto mt-6 inline-flex items-center gap-3 rounded-2xl ${c.tone} px-6 py-3 shadow-chunky`}>
+        <div className={`mx-auto mt-6 inline-flex items-center gap-3 rounded-2xl ${c.tone} px-6 py-3 drop-shadow-xl/25`}>
           <span className="text-3xl">{c.emoji}</span>
           <span className="font-display text-3xl font-extrabold">{c.pt}</span>
         </div>
         <div className="mt-8">
-          <button onClick={advance} className="rounded-full bg-foreground px-10 py-4 font-display text-lg font-extrabold text-background transition-transform hover:-translate-y-1">
+          <button onClick={advance} className="rounded-full bg-foreground px-10 py-4 font-display text-lg font-extrabold text-background transition-transform hover:-translate-y-1 drop-shadow-xl/25">
             Entendi ✓
           </button>
         </div>
@@ -191,7 +191,7 @@ function ScreenBubble({ target, onNext }: { target: Color; onNext: () => void })
           Estoure o sinal de <span className="rounded-xl bg-accent px-3 py-1">{target.pt}</span>
         </h2>
         <div className="relative mt-8 grid h-72 place-items-center overflow-hidden rounded-3xl bg-gradient-to-b from-sky/30 to-mint/20">
-          <div className="flex items-end justify-around gap-6">
+          <div className="flex items-end justify-around gap-6 drop-shadow-xl/25">
             {COLORS.map((c, i) => {
               const isPopped = popped === c.pt;
               const isRight = isPopped && c.pt === target.pt;
@@ -216,7 +216,7 @@ function ScreenBubble({ target, onNext }: { target: Color; onNext: () => void })
           {popped && popped !== target.pt && <div className="animate-pop text-lg font-bold text-destructive">Ops, era o {target.pt}!</div>}
         </div>
         {popped && (
-          <button onClick={onNext} className="rounded-full bg-primary px-12 py-5 font-display text-lg font-extrabold text-primary-foreground shadow-chunky">
+          <button onClick={onNext} className="rounded-full bg-primary px-12 py-5 font-display text-lg font-extrabold text-primary-foreground drop-shadow-xl/25">
             Próximo desafio →
           </button>
         )}
@@ -287,7 +287,7 @@ function ScreenMirror({ target, onNext }: { target: Color; onNext: () => void })
 
         <div className="mt-8">
           {state === "idle" && (
-            <button onClick={start} className="rounded-full bg-primary px-12 py-5 font-display text-lg font-extrabold text-primary-foreground shadow-chunky">
+            <button onClick={start} className="rounded-full bg-primary px-12 py-5 font-display text-lg font-extrabold text-primary-foreground drop-shadow-xl/25">
               🎬 Começar 3-2-1
             </button>
           )}
@@ -308,7 +308,7 @@ function ScreenReward({ onRestart }: { onRestart: () => void }) {
       <div className="text-center">
         <div className="relative">
           <img src={luviMascot} alt="Luvi celebrando" width={1024} height={1024} className="mx-auto w-56 animate-bounce-soft" />
-          <div className="absolute inset-0 -z-10 bg-gradient-rainbow opacity-30 blur-3xl" />
+          <div className="absolute inset-0 -z-10 bg-gradient-rainbow opacity-30 blur-3xl drop-shadow-xl/25" />
         </div>
         <h1 className="font-display text-4xl font-extrabold md:text-5xl">Lição completa! 🎉</h1>
         <p className="mt-3 text-muted-foreground">Você acabou de aprender 3 cores em LIBRAS.</p>
@@ -331,7 +331,7 @@ function ScreenReward({ onRestart }: { onRestart: () => void }) {
           <button onClick={onRestart} className="rounded-full border-4 border-foreground/20 bg-card px-7 py-4 font-display font-extrabold shadow-soft">
             Repetir lição
           </button>
-          <Link to="/" className="rounded-full bg-primary px-7 py-4 font-display font-extrabold text-primary-foreground shadow-chunky">
+          <Link to="/" className="rounded-full bg-primary px-7 py-4 font-display font-extrabold text-primary-foreground drop-shadow-xl/25">
             Voltar ao início
           </Link>
         </div>
@@ -342,7 +342,7 @@ function ScreenReward({ onRestart }: { onRestart: () => void }) {
 
 function RewardCard({ icon, label, tone }: { icon: string; label: string; tone: string }) {
   return (
-    <div className={`animate-pop rounded-2xl ${tone} p-4 shadow-chunky`}>
+    <div className={`animate-pop rounded-2xl ${tone} p-4 drop-shadow-xl/25`}>
       <div className="text-3xl">{icon}</div>
       <div className="mt-1 font-display text-sm font-extrabold">{label}</div>
     </div>
