@@ -58,6 +58,7 @@ const ISLANDS: Island[] = [
     subtitle: "Saudações e apresentação",
     tone: "bg-sky",
     nodes: TRAIL_NODES.filter((n) => n.islandId === 1),
+
   },
   {
     id: 2,
@@ -222,10 +223,10 @@ function TrailPage() {
                     key={island.id}
                     className={`rounded-3xl border-2 p-4 transition-all ${
                       isCurrent
-                        ? "border-primary bg-card shadow-chunky"
+                        ? "border-emerald-300 bg-card/60 shadow-soft"
                         : doneCount === island.nodes.length
-                        ? "border-emerald-300 bg-emerald-50/40"
-                        : "border-emerald-200 bg-card/60 opacity-80"
+                        ? "border-emerald-400  bg-card/60 shadow-soft"
+                        : "border-emerald-200 bg-card/60 shadow-soft"
                     }`}
                   >
                     <div className="flex items-center gap-3">
@@ -261,7 +262,7 @@ function TrailPage() {
         )}
 
         {/* Locked Next World Banner */}
-        <div className="mt-12 rounded-4xl border-4 border-dashed border-border p-8 text-center bg-card/40 backdrop-blur-sm">
+        <div className="mt-12 rounded-4xl border-4 border-dashed border-border p-8 text-center bg-card/40 backdrop-blur-sm shadow-lg">
           <div className="text-4xl animate-bounce-soft">🏰🔒</div>
           <h2 className="mt-8 font-display text-xl font-extrabold">
             Mundo 2: O Castelo da Família e Expressões
