@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LicaoRouteImport } from './routes/licao'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as TrilhaRouteImport } from './routes/trilha'
 
 const IndexRoute = IndexRouteImport.update({
@@ -24,11 +23,6 @@ const LicaoRoute = LicaoRouteImport.update({
   path: '/licao',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const TrilhaRoute = TrilhaRouteImport.update({
   id: '/trilha',
   path: '/trilha',
@@ -38,34 +32,30 @@ const TrilhaRoute = TrilhaRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
-  '/onboarding': typeof OnboardingRoute
   '/trilha': typeof TrilhaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
-  '/onboarding': typeof OnboardingRoute
   '/trilha': typeof TrilhaRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
-  '/onboarding': typeof OnboardingRoute
   '/trilha': typeof TrilhaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/licao' | '/onboarding' | '/trilha'
+  fullPaths: '/' | '/licao' | '/trilha'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/licao' | '/onboarding' | '/trilha'
-  id: '__root__' | '/' | '/licao' | '/onboarding' | '/trilha'
+  to: '/' | '/licao' | '/trilha'
+  id: '__root__' | '/' | '/licao' | '/trilha'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LicaoRoute: typeof LicaoRoute
-  OnboardingRoute: typeof OnboardingRoute
   TrilhaRoute: typeof TrilhaRoute
 }
 
@@ -85,13 +75,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LicaoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/trilha': {
       id: '/trilha'
       path: '/trilha'
@@ -105,7 +88,6 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LicaoRoute: LicaoRoute,
-  OnboardingRoute: OnboardingRoute,
   TrilhaRoute: TrilhaRoute,
 }
 export const routeTree = rootRouteImport
