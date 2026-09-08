@@ -22,7 +22,23 @@ function LandingPage() {
   );
 }
 
+import { getActiveUser, logoutUser } from "@/lib/user-store";
+import { toast } from "sonner";
+import { useEffect, useState } from "react";
+
 function Header() {
+  const [currentUser, setCurrentUser] = useState(() => getActiveUser());
+
+  useEffect(() => {
+    setCurrentUser(getActiveUser());
+  }, []);
+
+  const handleLogout = () => {
+    logoutUser();
+    setCurrentUser(null);
+    toast.info("Sessão encerrada.");
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
@@ -36,13 +52,40 @@ function Header() {
           <a href="#jogos" className="hover:text-foreground">Atividades</a>
           <a href="#escolas" className="hover:text-foreground">Para escolas</a>
         </nav>
-        <Link
-          to="/onboarding"
-          className="inline-flex items-center rounded-full bg-foreground px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky
-         transition-transform hover:-translate-y-0.5"
-        >
-          Começar agora
-        </Link>
+
+        {currentUser ? (
+          <div className="flex items-center gap-3">
+            <Link
+              to={currentUser.role === "professor" ? "/onboarding" : "/student/profile"}
+              className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-extrabold hover:bg-muted"
+            >
+              <span>{currentUser.avatar}</span>
+              <span>{currentUser.name}</span>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="rounded-full border border-red-500/30 bg-red-500/10 px-3.5 py-2 text-xs font-extrabold text-red-600 hover:bg-red-500/20 dark:text-red-400"
+            >
+              🚪 Sair
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <Link
+              to="/login"
+              className="text-sm font-extrabold text-muted-foreground hover:text-foreground px-3 py-2"
+            >
+              Entrar
+            </Link>
+            <Link
+              to="/login"
+              className="inline-flex items-center rounded-full bg-foreground px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky
+             transition-transform hover:-translate-y-0.5"
+            >
+              Começar agora
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );

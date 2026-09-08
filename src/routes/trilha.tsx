@@ -349,9 +349,55 @@ function TrailHeader({
           <Stat icon="🔥" value="12" label="ofensiva" />
           <Stat icon="⭐" value="340" label="XP" />
           <Stat icon="❤️" value="5" label="vidas" />
+
+          <TrailUserAuthControls />
         </div>
       </div>
     </header>
+  );
+}
+
+import { getActiveUser, logoutUser } from "@/lib/user-store";
+import { toast } from "sonner";
+
+function TrailUserAuthControls() {
+  const [currentUser, setCurrentUser] = useState(() => getActiveUser());
+
+  const handleLogout = () => {
+    logoutUser();
+    setCurrentUser(null);
+    toast.info("Sessão encerrada.");
+  };
+
+  if (!currentUser) {
+    return (
+      <Link
+        to="/login"
+        className="rounded-full bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground shadow-soft"
+      >
+        🔑 Entrar
+      </Link>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <Link
+        to={currentUser.role === "professor" ? "/onboarding" : "/student/profile"}
+        className="flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-extrabold hover:bg-muted"
+        title="Meu Perfil / Painel"
+      >
+        <span>{currentUser.avatar}</span>
+        <span className="hidden md:inline">{currentUser.name.split(" ")[0]}</span>
+      </Link>
+      <button
+        onClick={handleLogout}
+        className="rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-extrabold text-red-600 hover:bg-red-500/20 dark:text-red-400"
+        title="Sair / Log-off"
+      >
+        🚪 Sair
+      </button>
+    </div>
   );
 }
 
