@@ -1,8 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import luviMascot from "@/assets/luvi-mascot.png";
 import { ParallaxTrailMap, type TrailNode } from "@/components/ParallaxTrailMap";
 import { soundFx } from "@/lib/sound-effects";
+import { getActiveUser, logoutUser, User } from "@/lib/user-store";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/trilha")({
   head: () => ({
@@ -31,50 +33,58 @@ type Island = {
   nodes: TrailNode[];
 };
 
-const TRAIL_NODES: TrailNode[] = [
-  // Ilha do Oi (Ponte dos Primeiros Sinais)
-  { id: 1, islandId: 1, islandName: "Ilha do Oi", title: "Oi & Tchau", icon: "👋", kind: "licao", state: "done", stars: 3, x: 10, y: 88 },
-  { id: 2, islandId: 1, islandName: "Ilha do Oi", title: "Meu nome é…", icon: "🪪", kind: "licao", state: "done", stars: 3, x: 22, y: 76 },
-  { id: 3, islandId: 1, islandName: "Ilha do Oi", title: "Revisão relâmpago", icon: "⚡", kind: "revisao", state: "done", stars: 2, x: 34, y: 64 },
-  { id: 4, islandId: 1, islandName: "Ilha do Oi", title: "Chefe: Cumprimentos", icon: "🏆", kind: "chefe", state: "done", stars: 3, x: 40, y: 54 },
-
-  // Ilha das Cores (Ao Longo do Rio)
-  { id: 5, islandId: 2, islandName: "Ilha das Cores", title: "Cores quentes", icon: "🍎", kind: "licao", state: "done", stars: 3, x: 48, y: 48 },
-  { id: 6, islandId: 2, islandName: "Ilha das Cores", title: "Cores frias", icon: "💙", kind: "licao", state: "current", stars: 0, x: 57, y: 52 },
-  { id: 7, islandId: 2, islandName: "Ilha das Cores", title: "Desafio do espelho", icon: "🪞", kind: "espelho", state: "locked", stars: 0, x: 67, y: 54 },
-  { id: 8, islandId: 2, islandName: "Ilha das Cores", title: "Chefe: Arco-íris", icon: "🌈", kind: "chefe", state: "locked", stars: 0, x: 76, y: 45 },
-
-  // Ilha dos Bichos (Subindo até o Castelo)
-  { id: 9, islandId: 3, islandName: "Ilha dos Bichos", title: "Bichos de casa", icon: "🐶", kind: "licao", state: "locked", stars: 0, x: 70, y: 35 },
-  { id: 10, islandId: 3, islandName: "Ilha dos Bichos", title: "Bichos da fazenda", icon: "🐄", kind: "licao", state: "locked", stars: 0, x: 62, y: 25 },
-  { id: 11, islandId: 3, islandName: "Ilha dos Bichos", title: "Revisão relâmpago", icon: "⚡", kind: "revisao", state: "locked", stars: 0, x: 68, y: 18 },
-  { id: 12, islandId: 3, islandName: "Ilha dos Bichos", title: "Chefe: Castelo do Saber", icon: "🏰", kind: "chefe", state: "locked", stars: 0, x: 80, y: 13 },
+// Dados base dos nós — estado e estrelas são sempre calculados dinamicamente
+const TRAIL_NODES_BASE: Omit<TrailNode, "state" | "stars">[] = [
+  // Ilha do Oi
+  { id: 1, islandId: 1, islandName: "Ilha do Oi", title: "Oi & Tchau", icon: "👋", kind: "licao", x: 10, y: 88 },
+  { id: 2, islandId: 1, islandName: "Ilha do Oi", title: "Meu nome é…", icon: "🪪", kind: "licao", x: 22, y: 76 },
+  { id: 3, islandId: 1, islandName: "Ilha do Oi", title: "Revisão relâmpago", icon: "⚡", kind: "revisao", x: 34, y: 64 },
+  { id: 4, islandId: 1, islandName: "Ilha do Oi", title: "Chefe: Cumprimentos", icon: "🏆", kind: "chefe", x: 40, y: 54 },
+  // Ilha das Cores
+  { id: 5, islandId: 2, islandName: "Ilha das Cores", title: "Cores quentes", icon: "🍎", kind: "licao", x: 48, y: 48 },
+  { id: 6, islandId: 2, islandName: "Ilha das Cores", title: "Cores frias", icon: "💙", kind: "licao", x: 57, y: 52 },
+  { id: 7, islandId: 2, islandName: "Ilha das Cores", title: "Desafio do espelho", icon: "🪞", kind: "espelho", x: 67, y: 54 },
+  { id: 8, islandId: 2, islandName: "Ilha das Cores", title: "Chefe: Arco-íris", icon: "🌈", kind: "chefe", x: 76, y: 45 },
+  // Ilha dos Bichos
+  { id: 9, islandId: 3, islandName: "Ilha dos Bichos", title: "Bichos de casa", icon: "🐶", kind: "licao", x: 70, y: 35 },
+  { id: 10, islandId: 3, islandName: "Ilha dos Bichos", title: "Bichos da fazenda", icon: "🐄", kind: "licao", x: 62, y: 25 },
+  { id: 11, islandId: 3, islandName: "Ilha dos Bichos", title: "Revisão relâmpago", icon: "⚡", kind: "revisao", x: 68, y: 18 },
+  { id: 12, islandId: 3, islandName: "Ilha dos Bichos", title: "Chefe: Castelo do Saber", icon: "🏰", kind: "chefe", x: 80, y: 13 },
 ];
+
+/** Calcula o estado dinâmico dos nós com base nas lições concluídas do usuário. */
+function computeNodes(completedLessons: import("@/lib/user-store").CompletedLesson[]): TrailNode[] {
+  const completedIds = new Set(completedLessons.map((l) => l.id));
+  let foundCurrent = false;
+  return TRAIL_NODES_BASE.map((base) => {
+    const lessonId = `trail_node_${base.id}`;
+    if (completedIds.has(lessonId)) {
+      // Já concluído — calcula estrelas pelo score salvo
+      const lesson = completedLessons.find((l) => l.id === lessonId);
+      const stars = lesson ? (lesson.score >= 90 ? 3 : lesson.score >= 60 ? 2 : 1) : 1;
+      return { ...base, state: "done" as const, stars };
+    }
+    if (!foundCurrent) {
+      // Primeiro nó não concluído = "atual"
+      foundCurrent = true;
+      return { ...base, state: "current" as const, stars: 0 };
+    }
+    return { ...base, state: "locked" as const, stars: 0 };
+  });
+}
 
 const ISLANDS: Island[] = [
-  {
-    id: 1,
-    name: "Ilha do Oi",
-    subtitle: "Saudações e apresentação",
-    tone: "bg-sky",
-    nodes: TRAIL_NODES.filter((n) => n.islandId === 1),
-
-  },
-  {
-    id: 2,
-    name: "Ilha das Cores",
-    subtitle: "Vermelho, azul, amarelo e mais",
-    tone: "bg-grape",
-    nodes: TRAIL_NODES.filter((n) => n.islandId === 2),
-  },
-  {
-    id: 3,
-    name: "Ilha dos Animais",
-    subtitle: "Animais da fazenda e da floresta",
-    tone: "bg-neon",
-    nodes: TRAIL_NODES.filter((n) => n.islandId === 3),
-  },
+  { id: 1, name: "Ilha do Oi", subtitle: "Saudações e apresentação", tone: "bg-sky", nodes: [] },
+  { id: 2, name: "Ilha das Cores", subtitle: "Vermelho, azul, amarelo e mais", tone: "bg-grape", nodes: [] },
+  { id: 3, name: "Ilha dos Animais", subtitle: "Animais da fazenda e da floresta", tone: "bg-neon", nodes: [] },
 ];
+
+function buildIslands(nodes: TrailNode[]): Island[] {
+  return ISLANDS.map((island) => ({
+    ...island,
+    nodes: nodes.filter((n) => n.islandId === island.id),
+  }));
+}
 
 const KIND_LABEL: Record<TrailNode["kind"], string> = {
   licao: "Micro-lição · 3 min",
@@ -84,10 +94,45 @@ const KIND_LABEL: Record<TrailNode["kind"], string> = {
 };
 
 function TrailPage() {
+  const navigate = useNavigate();
+  const [isValidating, setIsValidating] = useState(true);
+  const [authorizedUser, setAuthorizedUser] = useState<User | null>(null);
+
+  // Nós e ilhas calculados dinamicamente pelo progresso do usuário
+  const [trailNodes, setTrailNodes] = useState<TrailNode[]>([]);
+  const [islands, setIslands] = useState<Island[]>(ISLANDS);
+
   const [selected, setSelected] = useState<TrailNode | null>(null);
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
   const [timeOfDay, setTimeOfDay] = useState<"day" | "sunset" | "night">("day");
   const [isMuted, setIsMuted] = useState(soundFx.getMuted());
+
+  // Guarda de Rota: Apenas Alunos Autenticados têm acesso à Trilha
+  useEffect(() => {
+    const user = getActiveUser();
+
+    // 1. Não autenticado -> Redireciona para /login
+    if (!user) {
+      toast.error("🔒 Faça login como Aluno para acessar as trilhas de LIBRAS.");
+      navigate({ to: "/login", replace: true });
+      return;
+    }
+
+    // 2. Professor -> Redireciona para /onboarding (Painel do Professor)
+    if (user.role === "professor") {
+      toast.info("🔒 Professores não possuem acesso direto à trilha de lições. Redirecionando para o Painel.");
+      navigate({ to: "/onboarding", replace: true });
+      return;
+    }
+
+    // 3. Aluno Autenticado -> Calcula progresso e concede acesso
+    const lessons = user.completedLessons ?? [];
+    const computed = computeNodes(lessons);
+    setTrailNodes(computed);
+    setIslands(buildIslands(computed));
+    setAuthorizedUser(user);
+    setIsValidating(false);
+  }, [navigate]);
 
   const handleToggleMute = () => {
     const nextMuted = soundFx.toggleMute();
@@ -98,6 +143,20 @@ function TrailPage() {
   const handleSelectNode = (node: TrailNode) => {
     setSelected(node);
   };
+
+  // Enquanto valida ou se não autorizado, não exibe nenhum elemento da trilha
+  if (isValidating || !authorizedUser) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <div className="text-center">
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="mt-4 font-display text-sm font-extrabold text-muted-foreground">
+            Verificando permissões de acesso à trilha...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-hero pb-24 text-foreground selection:bg-primary/20">
@@ -127,21 +186,25 @@ function TrailPage() {
                 Mundo Cores &amp; Bichos
               </h1>
               <span className="rounded-full bg-amber-100 px-3 py-0.5 font-display text-xs font-black text-amber-800">
-                Fase 2 de 3
+                Fase {islands.findIndex((isl) => isl.nodes.some((n) => n.state === "current")) + 1} de {islands.length}
               </span>
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              Você está a <b>1 lição</b> do Chefe da Ilha das Cores. Rumo ao Castelo do Saber! 🏰
+              {trailNodes.filter((n) => n.state === "done").length === 0
+                ? "Bem-vindo(a)! Comece sua jornada pelo primeiro sinal! 🌟"
+                : `Você completou ${trailNodes.filter((n) => n.state === "done").length} de ${trailNodes.length} lições. Continue avançando! 🏰`}
             </p>
             <div className="mt-3 flex items-center gap-3">
               <div className="h-3.5 flex-1 overflow-hidden rounded-full bg-muted shadow-inner">
                 <div
                   className="h-full rounded-full bg-gradient-rainbow transition-all duration-700"
-                  style={{ width: "42%" }}
+                  style={{
+                    width: `${Math.round((trailNodes.filter((n) => n.state === "done").length / trailNodes.length) * 100)}%`,
+                  }}
                 />
               </div>
               <span className="font-display text-xs font-black text-muted-foreground">
-                42% concluído
+                {Math.round((trailNodes.filter((n) => n.state === "done").length / trailNodes.length) * 100)}% concluído
               </span>
             </div>
           </div>
@@ -207,7 +270,7 @@ function TrailPage() {
 
             {/* Interactive Dynamic Parallax Canvas */}
             <ParallaxTrailMap
-              nodes={TRAIL_NODES}
+              nodes={trailNodes}
               selectedNode={selected}
               onSelectNode={handleSelectNode}
               timeOfDay={timeOfDay}
@@ -250,7 +313,7 @@ function TrailPage() {
         ) : (
           /* Classic Island List Mode */
           <div className="space-y-14">
-            {ISLANDS.map((island, ii) => (
+            {islands.map((island, ii) => (
               <IslandBlock
                 key={island.name}
                 island={island}
@@ -357,8 +420,7 @@ function TrailHeader({
   );
 }
 
-import { getActiveUser, logoutUser } from "@/lib/user-store";
-import { toast } from "sonner";
+
 
 function TrailUserAuthControls() {
   const [currentUser, setCurrentUser] = useState(() => getActiveUser());

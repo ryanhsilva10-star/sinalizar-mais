@@ -1,8 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import luviMascot from "@/assets/luvi-mascot.png";
 import { LibrasLessonMirror, type LessonMirrorScore } from "@/components/LibrasLessonMirror";
 import { soundFx } from "@/lib/sound-effects";
+import { getActiveUser, saveUser, User } from "@/lib/user-store";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/licao")({
   head: () => ({
@@ -60,19 +62,84 @@ const COLORS: Color[] = [
 ];
 
 function LessonPage() {
+  const navigate = useNavigate();
+  const [isValidating, setIsValidating] = useState(true);
+  const [authorizedUser, setAuthorizedUser] = useState<User | null>(null);
+
   const [step, setStep] = useState(0);
   const [mirrorScore, setMirrorScore] = useState<LessonMirrorScore | null>(null);
   const total = 5;
 
+  useEffect(() => {
+    const user = getActiveUser();
+
+    if (!user) {
+      toast.error("🔒 Faça login como Aluno para acessar as lições de LIBRAS.");
+      navigate({ to: "/login", replace: true });
+      return;
+    }
+
+    if (user.role === "professor") {
+      toast.info("🔒 Professores não realizam lições diretas de alunos. Redirecionando para o Painel.");
+      navigate({ to: "/onboarding", replace: true });
+      return;
+    }
+
+    setAuthorizedUser(user);
+    setIsValidating(false);
+  }, [navigate]);
+
   const next = () => {
     soundFx.playPop();
-    setStep((s) => Math.min(s + 1, total));
+    const nextStep = Math.min(step + 1, total);
+    setStep(nextStep);
+
+    // Ao atingir o passo final (Recompensa), salva a lição concluída
+    if (nextStep === total && authorizedUser) {
+      const scoreVal = mirrorScore
+        ? Math.round(((mirrorScore.accuracy + mirrorScore.orientationScore + mirrorScore.stabilityScore) / 9) * 100)
+        : 80;
+
+      const existingLessons = authorizedUser.completedLessons ?? [];
+      const alreadyDone = existingLessons.some((l) => l.id === "trail_node_6");
+      if (!alreadyDone) {
+        const updated = saveUser({
+          ...authorizedUser,
+          completedLessons: [
+            ...existingLessons,
+            {
+              id: "trail_node_6",
+              title: "Cores frias em LIBRAS",
+              score: scoreVal,
+              completedAt: new Date().toISOString().split("T")[0],
+            },
+          ],
+          xp: (authorizedUser.xp ?? 0) + 25,
+          streak: (authorizedUser.streak ?? 0) + 1,
+        });
+        // Atualiza usuário local para refletir progresso
+        setAuthorizedUser(updated);
+      }
+    }
   };
 
   const restart = () => {
     setMirrorScore(null);
     setStep(0);
   };
+
+  if (isValidating || !authorizedUser) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background p-4">
+        <div className="text-center">
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          <p className="mt-4 font-display text-sm font-extrabold text-muted-foreground">
+            Verificando permissões da lição...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-hero shadow">

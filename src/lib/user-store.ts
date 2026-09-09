@@ -22,6 +22,7 @@ export interface User {
   document?: string;
   address?: string;
   completedLessons?: CompletedLesson[];
+  hasLoggedIn?: boolean; // true após o primeiro login bem-sucedido
   createdAt: string;
 }
 
@@ -95,6 +96,43 @@ const DEFAULT_USERS: User[] = [
   },
 ];
 
+/**
+ * Garante que os usuários padrão (mock) sempre existam no localStorage.
+ * Usuários reais cadastrados são preservados. Executado uma vez na inicialização.
+ */
+export function seedDefaultUsers(): void {
+  if (typeof window === "undefined") return;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      // Primeiro acesso: salva os dados mocados completos
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_USERS));
+      return;
+    }
+    const existing: User[] = JSON.parse(raw);
+    let changed = false;
+    for (const defaultUser of DEFAULT_USERS) {
+      const idx = existing.findIndex((u) => u.id === defaultUser.id);
+      if (idx === -1) {
+        // Usuário padrão não existe ainda → adiciona
+        existing.push(defaultUser);
+        changed = true;
+      } else {
+        // Garante que o campo password esteja preenchido no usuário padrão
+        if (!existing[idx].password && defaultUser.password) {
+          existing[idx].password = defaultUser.password;
+          changed = true;
+        }
+      }
+    }
+    if (changed) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(existing));
+    }
+  } catch (err) {
+    console.error("Erro ao fazer seed dos usuários:", err);
+  }
+}
+
 export function getUsers(): User[] {
   if (typeof window === "undefined") return DEFAULT_USERS;
   try {
@@ -108,6 +146,16 @@ export function getUsers(): User[] {
     console.error("Erro ao carregar usuários:", err);
     return DEFAULT_USERS;
   }
+}
+
+/**
+ * Reseta o localStorage para os dados mocados originais.
+ * Útil para testes e desenvolvimento.
+ */
+export function resetToDefaults(): void {
+  if (typeof window === "undefined") return;
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(DEFAULT_USERS));
+  localStorage.removeItem(ACTIVE_USER_KEY);
 }
 
 export function saveUser(userData: Partial<User> & { name: string; email: string }): User {
@@ -196,12 +244,27 @@ export function logoutUser(): void {
 
 export function loginUser(email: string, password?: string): User | null {
   const users = getUsers();
-  const found = users.find(
+  const idx = users.findIndex(
     (u) => u.email.toLowerCase() === email.trim().toLowerCase() && (!password || u.password === password)
   );
 
-  if (!found) return null;
+  if (idx === -1) return null;
 
-  setActiveUserId(found.id);
-  return found;
+  let user = users[idx];
+
+  // Na primeira vez que o usuário faz login, zera as lições concluídas
+  if (!user.hasLoggedIn) {
+    user = {
+      ...user,
+      completedLessons: [],
+      hasLoggedIn: true,
+    };
+    users[idx] = user;
+    if (typeof window !== "undefined") {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+    }
+  }
+
+  setActiveUserId(user.id);
+  return user;
 }

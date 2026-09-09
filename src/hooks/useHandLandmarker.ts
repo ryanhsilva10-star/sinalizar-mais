@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import type { HandLandmarker } from "@mediapipe/tasks-vision";
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type HandLandmarker = any;
 import type { Landmark } from "../utils/librasClassifier";
 
 export type LandmarkerState = {
@@ -84,7 +85,10 @@ export function useHandLandmarker(options?: UseHandLandmarkerOptions) {
       }));
 
       try {
-        const { HandLandmarker, FilesetResolver } = await import("@mediapipe/tasks-vision");
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const { HandLandmarker, FilesetResolver }: any = await import(
+          /* @vite-ignore */ "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm"
+        );
 
         if (!isMounted) return;
 

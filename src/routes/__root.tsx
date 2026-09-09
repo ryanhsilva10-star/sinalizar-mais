@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { seedDefaultUsers } from "../lib/user-store";
 
 function NotFoundComponent() {
   return (
@@ -104,6 +105,12 @@ import { Toaster } from "sonner";
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+
+  useEffect(() => {
+    // Garante que os usuários mocados estejam sempre salvos no localStorage
+    seedDefaultUsers();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <Outlet />
