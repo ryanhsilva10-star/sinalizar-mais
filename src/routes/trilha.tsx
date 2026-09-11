@@ -607,8 +607,9 @@ function NodeSheet({ node, onClose }: { node: TrailNode; onClose: () => void }) 
           <div className="mt-8 flex flex-col gap-3">
             <Link
               to="/licao"
+              search={{ nodeId: node.id }}
               onClick={() => soundFx.playChime()}
-              className="rounded-full bg-primary px-8 py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:scale-105 active:scale-95"
+              className="rounded-full bg-primary px-8 py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:scale-105 active:scale-95 text-center"
             >
               {node.state === "done" ? "Refazer lição" : "Começar lição"}
             </Link>
