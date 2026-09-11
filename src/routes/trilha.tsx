@@ -3,10 +3,21 @@ import { useState, useEffect } from "react";
 import luviMascot from "@/assets/luvi-mascot.png";
 import { ParallaxTrailMap, type TrailNode } from "@/components/ParallaxTrailMap";
 import { soundFx } from "@/lib/sound-effects";
-import { getActiveUser, logoutUser, User } from "@/lib/user-store";
+import { getActiveUser, loginUser, logoutUser, User } from "@/lib/user-store";
 import { toast } from "sonner";
 
+type TrilhaSearch = {
+  world?: number;
+};
+
 export const Route = createFileRoute("/trilha")({
+  validateSearch: (search: Record<string, unknown>): TrilhaSearch => {
+    const raw = search?.world;
+    const parsed = typeof raw === "number" ? raw : parseInt(String(raw || ""), 10);
+    return {
+      world: parsed === 1 || parsed === 2 ? parsed : 1,
+    };
+  },
   head: () => ({
     meta: [
       { title: "Minha Trilha de LIBRAS com Mapa 3D · SinaLINK" },
@@ -137,6 +148,7 @@ const KIND_LABEL: Record<TrailNode["kind"], string> = {
 
 function TrailPage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const [isValidating, setIsValidating] = useState(true);
   const [authorizedUser, setAuthorizedUser] = useState<User | null>(null);
 
@@ -156,13 +168,18 @@ function TrailPage() {
 
   // Guarda de Rota: Apenas Alunos Autenticados têm acesso à Trilha
   useEffect(() => {
-    const user = getActiveUser();
+    let user = getActiveUser();
 
-    // 1. Não autenticado -> Redireciona para /login
+    // 1. Não autenticado -> Concede acesso direto com Aluno de demonstração para acesso sem fricção
     if (!user) {
-      toast.error("🔒 Faça login como Aluno para acessar as trilhas de LIBRAS.");
-      navigate({ to: "/login", replace: true });
-      return;
+      user = loginUser("luizinho@sinalink.com", "123");
+      if (user) {
+        toast.info("👋 Bem-vindo(a) à sua primeira trilha de LIBRAS!");
+      } else {
+        toast.error("🔒 Faça login como Aluno para acessar as trilhas de LIBRAS.");
+        navigate({ to: "/login", replace: true });
+        return;
+      }
     }
 
     // 2. Professor -> Redireciona para /onboarding (Painel do Professor)
@@ -178,16 +195,16 @@ function TrailPage() {
     const unlocked2 = completedSet.has("trail_node_12") || completedSet.has("les_12");
     setIsWorld2Unlocked(unlocked2);
 
-    // Se o usuário já concluiu o Mundo 1, pode começar com o Mundo 2 ativado se preferir
-    const initialWorld: 1 | 2 = unlocked2 ? 2 : 1;
-    setActiveWorld(initialWorld);
+    // Se o usuário especificou mundo na busca ou já concluiu o Mundo 1
+    const targetWorld: 1 | 2 = (search.world as 1 | 2) || (unlocked2 ? 2 : 1);
+    setActiveWorld(targetWorld);
 
-    const computed = computeNodes(lessons, initialWorld);
+    const computed = computeNodes(lessons, targetWorld);
     setTrailNodes(computed);
-    setIslands(buildIslands(computed, initialWorld));
+    setIslands(buildIslands(computed, targetWorld));
     setAuthorizedUser(user);
     setIsValidating(false);
-  }, [navigate]);
+  }, [navigate, search.world]);
 
   // Recalcula nós e ilhas ao alternar de mundo
   const handleSelectWorld = (worldNum: 1 | 2) => {

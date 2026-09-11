@@ -109,7 +109,8 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              to="/login"
+              to="/trilha"
+              search={{ world: 1 }}
               className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-extrabold text-primary-foreground shadow-chunky 
               transition-transform hover:-translate-y-1"
             >
@@ -244,19 +245,22 @@ function TrailSection() {
 
         <ol className="mt-12 grid grid-cols-2 gap-4 md:grid-cols-4">
           {levels.map((l) => (
-            <li
-              key={l.n}
-              className={`relative flex flex-col items-start justify-between rounded-3xl p-5 shadow-chunky ${l.c} ${l.current ? "ring-4 ring-foreground/80 animate-pop" : ""} ${!l.done && !l.current ? "opacity-90" : ""}`}
-            >
-              <div className="flex w-full items-center justify-between">
-                <span className="grid h-9 w-9 place-items-center rounded-full bg-background/40 font-display text-lg font-extrabold">{l.n}</span>
-                {l.done && <span className="text-2xl">⭐</span>}
-                {l.current && <span className="rounded-full bg-foreground px-2 py-0.5 text-[10px] font-extrabold uppercase text-background">Aqui</span>}
-              </div>
-              <div className="mt-8">
-                <div className="font-display text-xl font-extrabold">{l.t}</div>
-                <div className="text-xs font-bold opacity-80">{l.d}</div>
-              </div>
+            <li key={l.n}>
+              <Link
+                to="/trilha"
+                search={{ world: 1 }}
+                className={`relative flex flex-col items-start justify-between rounded-3xl p-5 shadow-chunky transition-transform hover:-translate-y-1 block h-full ${l.c} ${l.current ? "ring-4 ring-foreground/80 animate-pop" : ""} ${!l.done && !l.current ? "opacity-90" : ""}`}
+              >
+                <div className="flex w-full items-center justify-between">
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-background/40 font-display text-lg font-extrabold">{l.n}</span>
+                  {l.done && <span className="text-2xl">⭐</span>}
+                  {l.current && <span className="rounded-full bg-foreground px-2 py-0.5 text-[10px] font-extrabold uppercase text-background">Aqui</span>}
+                </div>
+                <div className="mt-8">
+                  <div className="font-display text-xl font-extrabold">{l.t}</div>
+                  <div className="text-xs font-bold opacity-80">{l.d}</div>
+                </div>
+              </Link>
             </li>
           ))}
         </ol>
@@ -296,7 +300,12 @@ function GamificationSection() {
 
 function ActivitiesSection() {
   const acts = [
-    { emoji: "🤟", title: "Qual é o sinal?", desc: "4 sinais. Selecione o correto — feedback destaca o parâmetro errado (mão, movimento, locação)." },
+    {
+      emoji: "🤟",
+      title: "Qual é o sinal?",
+      desc: "4 sinais. Selecione o correto — feedback destaca o parâmetro errado (mão, movimento, locação).",
+      highlight: true,
+    },
     { emoji: "🔮", title: "Estoure a Bolha", desc: "Bolhas com sinais flutuam. Estore a bolha que corresponde à palavra. Ritmo suave, sem game over." },
     { emoji: "🧩", title: "Tradutor de Frases", desc: "Arraste blocos de sinais na ordem correta em LIBRAS (Tópico-Comentário)." },
     { emoji: "🎭", title: "Desafio do Espelho", desc: "Webcam + IA validam configuração, ponto de articulação e movimento. Cartão de precisão com estrelas." },
@@ -308,19 +317,64 @@ function ActivitiesSection() {
       <div className="mx-auto max-w-6xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-neon">7 formatos interativos</span>
-          <h2 className="mt-3 font-teen text-4xl font-bold md:text-5xl">Aprenda jogando.</h2>
+          <h2 className="mt-3 font-teen text-4xl font-bold md:text-5xl">Aprenda sozinho.</h2>
           <p className="mt-4 text-white/70">Avatares 3D com controle de velocidade (0.5x / 1x) e ângulo (frontal/lateral) </p>
-          <p className="mt-4 text-white/70"> Essencial para aprender a sinalização. </p>
-          
+          <p className="mt-4 text-white/70"> Essencial para aprender a sinalização no seu próprio ritmo. </p>
+          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+            <Link
+              to="/trilha"
+              search={{ world: 1 }}
+              className="inline-flex items-center gap-2 rounded-full bg-gradient-rainbow px-7 py-3.5 text-sm font-extrabold text-white shadow-glow-teen transition-transform hover:-translate-y-1 active:scale-95"
+            >
+              <span>🗺️</span>
+              <span>Minha Primeira Trilha →</span>
+            </Link>
+          </div>
         </div>
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {acts.map((a) => (
-            <div key={a.title} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur transition-all hover:-translate-y-1 hover:bg-white/10">
-              <div className="mx-auto mb-4 h-14 w-14 items-center justify-center rounded-2xl bg-gradient-rainbow text-3xl shadow-glow-teen px-2 py-2">{a.emoji}</div>
-              <h3 className="font-teen text-xl font-bold">{a.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/70">{a.desc}</p>
-            </div>
-          ))}
+          {acts.map((a) => {
+            const isQualSinal = a.title === "Qual é o sinal?";
+            return (
+              <Link
+                key={a.title}
+                to="/trilha"
+                search={{ world: 1 }}
+                className="group block focus:outline-none focus:ring-2 focus:ring-neon rounded-3xl"
+              >
+                <div
+                  className={`relative flex h-full flex-col justify-between overflow-hidden rounded-3xl border p-6 backdrop-blur transition-all ${
+                    isQualSinal
+                      ? "border-neon/80 bg-white/10 shadow-glow-teen hover:-translate-y-1.5 hover:border-neon ring-2 ring-neon/40"
+                      : "border-white/10 bg-white/5 hover:-translate-y-1 hover:bg-white/10"
+                  }`}
+                >
+                  {isQualSinal && (
+                    <span className="absolute right-4 top-4 rounded-full bg-neon/20 px-3 py-1 text-[10px] font-extrabold uppercase tracking-wider text-neon border border-neon/40 shadow-sm animate-pulse">
+                      ⭐ Minha Primeira Trilha
+                    </span>
+                  )}
+                  <div>
+                    <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-rainbow text-3xl shadow-glow-teen px-2 py-2">
+                      {a.emoji}
+                    </div>
+                    <h3 className="font-teen text-xl font-bold text-center">{a.title}</h3>
+                    <p className="mt-2 text-sm leading-relaxed text-white/70 text-center">{a.desc}</p>
+                  </div>
+                  <div className="mt-6 flex items-center justify-center">
+                    {isQualSinal ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-full bg-neon px-5 py-2.5 text-xs font-black text-slate-900 shadow-chunky transition-transform group-hover:scale-105">
+                        Abrir minha primeira trilha →
+                      </span>
+                    ) : (
+                      <span className="text-xs font-bold text-white/50 group-hover:text-neon transition-colors">
+                        Praticar na Trilha →
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -343,10 +397,11 @@ function LessonCTA() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
-                to="/licao"
+                to="/trilha"
+                search={{ world: 1 }}
                 className="inline-flex items-center gap-2 rounded-full bg-foreground px-7 py-4 text-base font-extrabold text-background shadow-chunky transition-transform hover:-translate-y-1"
               >
-                Começar lição →
+                Aprenda sozinho →
               </Link>
               <a
                 href="#"
