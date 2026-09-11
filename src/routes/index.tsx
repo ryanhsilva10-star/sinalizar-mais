@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import luviMascot from "@/assets/luvi-mascot.png";
 import novaAvatar from "@/assets/nova-avatar.png";
+import Footer from "@/components/Footer";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
@@ -21,7 +22,23 @@ function LandingPage() {
   );
 }
 
+import { getActiveUser, logoutUser } from "@/lib/user-store";
+import { toast } from "sonner";
+import { useEffect, useState } from "react";
+
 function Header() {
+  const [currentUser, setCurrentUser] = useState(() => getActiveUser());
+
+  useEffect(() => {
+    setCurrentUser(getActiveUser());
+  }, []);
+
+  const handleLogout = () => {
+    logoutUser();
+    setCurrentUser(null);
+    toast.info("Sessão encerrada.");
+  };
+
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
@@ -29,18 +46,46 @@ function Header() {
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">S</span>
           <span className="font-display text-2xl font-extrabold">SinaLINK</span>
         </Link>
-        <nav className="hidden items-center gap-8 text-sm font-bold text-muted-foreground md:flex">
+        <nav className="hidden items-center gap-8 text-sm font-bold text-muted-foreground md:flex text-secondary-foreground">
           <a href="#mundos" className="hover:text-foreground">Mundos</a>
           <Link to="/trilha" className="hover:text-foreground">Trilha</Link>
           <a href="#jogos" className="hover:text-foreground">Atividades</a>
           <a href="#escolas" className="hover:text-foreground">Para escolas</a>
         </nav>
-        <Link
-          to="/onboarding"
-          className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-0.5"
-        >
-          Começar agora
-        </Link>
+
+        {currentUser ? (
+          <div className="flex items-center gap-3">
+            <Link
+              to={currentUser.role === "professor" ? "/onboarding" : "/student/profile"}
+              className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-extrabold hover:bg-muted"
+            >
+              <span>{currentUser.avatar}</span>
+              <span>{currentUser.name}</span>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="rounded-full border border-red-500/30 bg-red-500/10 px-3.5 py-2 text-xs font-extrabold text-red-600 hover:bg-red-500/20 dark:text-red-400"
+            >
+              🚪 Sair
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-3">
+            <Link
+              to="/login"
+              className="text-sm font-extrabold text-muted-foreground hover:text-foreground px-3 py-2"
+            >
+              Entrar
+            </Link>
+            <Link
+              to="/login"
+              className="inline-flex items-center rounded-full bg-foreground px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky
+             transition-transform hover:-translate-y-0.5"
+            >
+              Começar agora
+            </Link>
+          </div>
+        )}
       </div>
     </header>
   );
@@ -64,16 +109,11 @@ function Hero() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link
-              to="/onboarding"
-              className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1"
+              to="/login"
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-extrabold text-primary-foreground shadow-chunky 
+              transition-transform hover:-translate-y-1"
             >
               Começar trilha grátis →
-            </Link>
-            <Link
-              to="/trilha"
-              className="inline-flex items-center gap-2 rounded-full border-2 border-foreground/10 bg-card px-7 py-4 text-base font-extrabold text-foreground shadow-soft transition-transform hover:-translate-y-1"
-            >
-              Ver o mapa da trilha
             </Link>
             <a
               href="#mundos"
@@ -227,18 +267,18 @@ function TrailSection() {
 
 function GamificationSection() {
   const items = [
-    { icon: "❤️", title: "5 corações", desc: "Recarregam em 4h ou revisando. Zero punição pesada.", tone: "bg-coral/15" },
-    { icon: "🔥", title: "Ofensivas", desc: "Streaks com escudo automático nos fins de semana.", tone: "bg-sunshine/25" },
-    { icon: "🌟", title: "Estrelinhas & 💎 Cristais", desc: "Compre skins do Luvi (EF1) ou do avatar Nova (EF2).", tone: "bg-mint/25" },
-    { icon: "🏆", title: "Ligas semanais", desc: "Bronze → Diamante. Turmas competem por XP juntas.", tone: "bg-sky/25" },
-    { icon: "🎯", title: "Missões diárias", desc: "3 missões visuais + desafio semanal colaborativo.", tone: "bg-grape/25" },
-    { icon: "📊", title: "Painel do professor", desc: "Heatmap de dificuldade, relatórios BNCC e Classroom.", tone: "bg-accent/40" },
+    { icon: "❤️", title: "5 corações", desc: "recarregam em 4 horinhas, e sem nenhuma punição pesada.", tone: "bg-coral/15" },
+    { icon: "🔥", title: "Ofensivas", desc: "Bônus para manter seu progresso no fim de semana.", tone: "bg-sunshine/25" },
+    { icon: "🌟", title: "Estrelinhas & 💎 Cristais", desc: "Personalize seu Luv com estrelinhas e cristais adquiridos (EF2).", tone: "bg-mint/25" },
+    { icon: "🏆", title: "Ligas semanais", desc: "Suba o nível da sua liga junto com o amigos.", tone: "bg-sky/25" },
+    { icon: "🎯", title: "Missões diárias", desc: "3 missões divertidas + desafio semanal em equipe!.", tone: "bg-grape/25" },
+    { icon: "📊", title: "Painel do professor", desc: "Mapa de dificuldades + relatórios de apredizagem e Classroom.", tone: "bg-accent/40" },
   ];
   return (
     <section className="mx-auto max-w-6xl px-6 py-24">
       <div className="mx-auto max-w-2xl text-center">
         <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">Gamificação</span>
-        <h2 className="mt-3 font-display text-4xl font-extrabold md:text-5xl">Mecânicas feitas para prender, não viciar.</h2>
+        <h2 className="mt-3 font-display text-4xl font-extrabold md:text-5xl">Mecânicas feitas para aprender, e não para viciar.</h2>
         <p className="mt-4 text-muted-foreground">Reforço positivo, feedback fofo e progresso visível — sempre respeitando o ritmo da criança.</p>
       </div>
       <div className="mt-12 grid gap-5 md:grid-cols-3">
@@ -256,25 +296,27 @@ function GamificationSection() {
 
 function ActivitiesSection() {
   const acts = [
-    { emoji: "❓", title: "Qual é o sinal?", desc: "4 GIFs de avatares. Aluno toca no correto — feedback destaca o parâmetro errado (mão, movimento, locação)." },
-    { emoji: "🫧", title: "Estoure a Bolha", desc: "Bolhas com sinais flutuam. Criança estoura a que corresponde à palavra. Ritmo suave, sem game over." },
-    { emoji: "🧩", title: "Tradutor de Frases", desc: "Arraste blocos de sinais respeitando a sintaxe LIBRAS (Tópico-Comentário)." },
-    { emoji: "🪞", title: "Desafio do Espelho", desc: "Webcam + IA validam configuração, ponto de articulação e movimento. Cartão de precisão com estrelas." },
-    { emoji: "✋", title: "Soletre com o Dedo", desc: "Datilologia guiada — reproduza pela câmera ou monte arrastando cartões." },
+    { emoji: "🤟", title: "Qual é o sinal?", desc: "4 sinais. Selecione o correto — feedback destaca o parâmetro errado (mão, movimento, locação)." },
+    { emoji: "🔮", title: "Estoure a Bolha", desc: "Bolhas com sinais flutuam. Estore a bolha que corresponde à palavra. Ritmo suave, sem game over." },
+    { emoji: "🧩", title: "Tradutor de Frases", desc: "Arraste blocos de sinais na ordem correta em LIBRAS (Tópico-Comentário)." },
+    { emoji: "🎭", title: "Desafio do Espelho", desc: "Webcam + IA validam configuração, ponto de articulação e movimento. Cartão de precisão com estrelas." },
+    { emoji: "🧏‍♂️", title: "Soletre em libras", desc: "Datilologia guiada — reproduza pela câmera ou monte arrastando cartões." },
     { emoji: "🎬", title: "Leitura de Cena", desc: "Micro-histórias com sinalizantes surdos reais. Treina fluência receptiva de verdade." },
   ];
   return (
-    <section id="jogos" className="border-y border-border bg-teen-bg py-24 text-teen-fg">
+    <section id="jogos" className="border-y border-border bg-teen-bg py-20 text-teen-fg">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mx-auto max-w-2xl text-center">
           <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-neon">7 formatos interativos</span>
-          <h2 className="mt-3 font-teen text-4xl font-bold md:text-5xl">Todo exercício vira jogo.</h2>
-          <p className="mt-4 text-white/70">Avatares 3D com controle de velocidade (0.5x / 1x) e ângulo (frontal/lateral) — essencial para configurar a mão.</p>
+          <h2 className="mt-3 font-teen text-4xl font-bold md:text-5xl">Aprenda jogando.</h2>
+          <p className="mt-4 text-white/70">Avatares 3D com controle de velocidade (0.5x / 1x) e ângulo (frontal/lateral) </p>
+          <p className="mt-4 text-white/70"> Essencial para aprender a sinalização. </p>
+          
         </div>
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {acts.map((a) => (
             <div key={a.title} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur transition-all hover:-translate-y-1 hover:bg-white/10">
-              <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-rainbow text-3xl shadow-glow-teen">{a.emoji}</div>
+              <div className="mx-auto mb-4 h-14 w-14 items-center justify-center rounded-2xl bg-gradient-rainbow text-3xl shadow-glow-teen px-2 py-2">{a.emoji}</div>
               <h3 className="font-teen text-xl font-bold">{a.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-white/70">{a.desc}</p>
             </div>
@@ -294,23 +336,23 @@ function LessonCTA() {
         <div className="grid items-center gap-10 md:grid-cols-[1.4fr_1fr]">
           <div>
             <h2 className="font-display text-4xl font-extrabold leading-tight text-white md:text-5xl">
-              Experimente uma micro-lição em 3 minutos.
+              Desafio de 3 minutos com o Luvi.
             </h2>
             <p className="mt-4 max-w-lg text-lg text-white/90">
-              Cores em LIBRAS, com o Luvi. 5 telas rápidas, uma delas com o Desafio do Espelho ativado.
+              Cores em LIBRAS, 5 telas rápidas para aprender.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Link
                 to="/licao"
                 className="inline-flex items-center gap-2 rounded-full bg-foreground px-7 py-4 text-base font-extrabold text-background shadow-chunky transition-transform hover:-translate-y-1"
               >
-                Começar lição demo →
+                Começar lição →
               </Link>
               <a
                 href="#"
                 className="inline-flex items-center gap-2 rounded-full border-2 border-white/40 bg-white/10 px-7 py-4 text-base font-extrabold text-white backdrop-blur transition-transform hover:-translate-y-1"
               >
-                Quero para minha escola
+                Jogar com a sala →
               </a>
             </div>
           </div>
@@ -323,16 +365,4 @@ function LessonCTA() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="border-t border-border bg-card/60 py-10">
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 md:flex-row">
-        <div className="flex items-center gap-2">
-          <span className="grid h-8 w-8 place-items-center rounded-lg bg-gradient-rainbow font-black text-white">S</span>
-          <span className="font-display text-lg font-extrabold">SinaLINK</span>
-        </div>
-        <p className="text-sm text-muted-foreground">Sinais gravados com modelos surdos reais · Feito com carinho para escolas do Brasil.</p>
-      </div>
-    </footer>
-  );
-}
+

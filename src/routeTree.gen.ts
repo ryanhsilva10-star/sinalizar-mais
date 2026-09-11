@@ -11,8 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as LicaoRouteImport } from './routes/licao'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as TrilhaRouteImport } from './routes/trilha'
+import { Route as StudentProfileRouteImport } from './routes/student/profile'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -22,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
 const LicaoRoute = LicaoRouteImport.update({
   id: '/licao',
   path: '/licao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -34,39 +41,60 @@ const TrilhaRoute = TrilhaRouteImport.update({
   path: '/trilha',
   getParentRoute: () => rootRouteImport,
 } as any)
+const StudentProfileRoute = StudentProfileRouteImport.update({
+  id: '/student/profile',
+  path: '/student/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
+  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/trilha': typeof TrilhaRoute
+  '/student/profile': typeof StudentProfileRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
+  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/trilha': typeof TrilhaRoute
+  '/student/profile': typeof StudentProfileRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
+  '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
   '/trilha': typeof TrilhaRoute
+  '/student/profile': typeof StudentProfileRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/licao' | '/onboarding' | '/trilha'
+  fullPaths:
+    '/' | '/licao' | '/login' | '/onboarding' | '/trilha' | '/student/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/licao' | '/onboarding' | '/trilha'
-  id: '__root__' | '/' | '/licao' | '/onboarding' | '/trilha'
+  to: '/' | '/licao' | '/login' | '/onboarding' | '/trilha' | '/student/profile'
+  id:
+    | '__root__'
+    | '/'
+    | '/licao'
+    | '/login'
+    | '/onboarding'
+    | '/trilha'
+    | '/student/profile'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LicaoRoute: typeof LicaoRoute
+  LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
   TrilhaRoute: typeof TrilhaRoute
+  StudentProfileRoute: typeof StudentProfileRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -85,6 +113,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LicaoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/onboarding': {
       id: '/onboarding'
       path: '/onboarding'
@@ -99,14 +134,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrilhaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/student/profile': {
+      id: '/student/profile'
+      path: '/student/profile'
+      fullPath: '/student/profile'
+      preLoaderRoute: typeof StudentProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LicaoRoute: LicaoRoute,
+  LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
   TrilhaRoute: TrilhaRoute,
+  StudentProfileRoute: StudentProfileRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

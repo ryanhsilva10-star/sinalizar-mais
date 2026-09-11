@@ -68,19 +68,24 @@
   0% { transform: scale(0.6); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
 
 :root {
   --radius: 1.25rem;
 
   /* Brand base — friendly & warm */
   --background: oklch(0.99 0.01 90);
-  --foreground: oklch(0.22 0.05 265);
+  --foreground: oklch(30.707% 0.06442 265.849);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.22 0.05 265);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.22 0.05 265);
 
-  --primary: oklch(0.68 0.19 35);        /* Coral orange — mascote/CTA */
+  --primary: oklch(70.729% 0.16448 35.171);        /* Coral orange — mascote/CTA */
   --primary-foreground: oklch(0.99 0 0);
   --secondary: oklch(0.72 0.16 200);     /* Sky blue */
   --secondary-foreground: oklch(0.22 0.05 265);
@@ -124,7 +129,7 @@
     oklch(0.5 0.24 260) 50%,
     oklch(0.65 0.2 200) 100%);
   --gradient-card-ef1: linear-gradient(160deg, oklch(0.98 0.05 90), oklch(0.94 0.08 30));
-
+  text-green-950color: var(--color-green-950);
   /* Shadows */
   --shadow-chunky: 0 6px 0 0 oklch(0.22 0.05 265 / 0.12), 0 12px 30px -8px oklch(0.7 0.2 30 / 0.35);
   --shadow-soft: 0 10px 40px -12px oklch(0.22 0.05 265 / 0.2);
@@ -139,7 +144,7 @@
   --card-foreground: oklch(0.98 0.01 285);
   --primary: oklch(0.7 0.2 30);
   --primary-foreground: oklch(0.99 0 0);
-  --border: oklch(1 0 0 / 12%);
+  --border: oklch(12.856% 0.00001 271.152);
 }
 
 @layer base {
