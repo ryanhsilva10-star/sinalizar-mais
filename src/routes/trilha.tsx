@@ -33,54 +33,96 @@ type Island = {
   nodes: TrailNode[];
 };
 
-// Dados base dos nós — estado e estrelas são sempre calculados dinamicamente
-const TRAIL_NODES_BASE: Omit<TrailNode, "state" | "stars">[] = [
-  // Ilha do Oi
+// MUNDO 1: CORES & BICHOS (Fases 1 a 12)
+const TRAIL_NODES_BASE_WORLD1: Omit<TrailNode, "state" | "stars">[] = [
+  // Ilha do Oi (1-4)
   { id: 1, islandId: 1, islandName: "Ilha do Oi", title: "Oi & Tchau", icon: "👋", kind: "licao", x: 10, y: 88 },
   { id: 2, islandId: 1, islandName: "Ilha do Oi", title: "Meu nome é…", icon: "🪪", kind: "licao", x: 22, y: 76 },
   { id: 3, islandId: 1, islandName: "Ilha do Oi", title: "Revisão relâmpago", icon: "⚡", kind: "revisao", x: 34, y: 64 },
   { id: 4, islandId: 1, islandName: "Ilha do Oi", title: "Chefe: Cumprimentos", icon: "🏆", kind: "chefe", x: 40, y: 54 },
-  // Ilha das Cores
+  // Ilha das Cores (5-8)
   { id: 5, islandId: 2, islandName: "Ilha das Cores", title: "Cores quentes", icon: "🍎", kind: "licao", x: 48, y: 48 },
   { id: 6, islandId: 2, islandName: "Ilha das Cores", title: "Cores frias", icon: "💙", kind: "licao", x: 57, y: 52 },
   { id: 7, islandId: 2, islandName: "Ilha das Cores", title: "Desafio do espelho", icon: "🪞", kind: "espelho", x: 67, y: 54 },
   { id: 8, islandId: 2, islandName: "Ilha das Cores", title: "Chefe: Arco-íris", icon: "🌈", kind: "chefe", x: 76, y: 45 },
-  // Ilha dos Bichos
+  // Ilha dos Bichos (9-12)
   { id: 9, islandId: 3, islandName: "Ilha dos Bichos", title: "Bichos de casa", icon: "🐶", kind: "licao", x: 70, y: 35 },
   { id: 10, islandId: 3, islandName: "Ilha dos Bichos", title: "Bichos da fazenda", icon: "🐄", kind: "licao", x: 62, y: 25 },
   { id: 11, islandId: 3, islandName: "Ilha dos Bichos", title: "Revisão relâmpago", icon: "⚡", kind: "revisao", x: 68, y: 18 },
   { id: 12, islandId: 3, islandName: "Ilha dos Bichos", title: "Chefe: Castelo do Saber", icon: "🏰", kind: "chefe", x: 80, y: 13 },
 ];
 
-/** Calcula o estado dinâmico dos nós com base nas lições concluídas do usuário. */
-function computeNodes(completedLessons: import("@/lib/user-store").CompletedLesson[]): TrailNode[] {
+// MUNDO 2: O CASTELO DA FAMÍLIA E EXPRESSÕES (Fases 13 a 24)
+const TRAIL_NODES_BASE_WORLD2: Omit<TrailNode, "state" | "stars">[] = [
+  // Ilha da Família (13-16)
+  { id: 13, islandId: 4, islandName: "Ilha da Família", title: "Mãe & Pai", icon: "👩‍👧", kind: "licao", x: 12, y: 84 },
+  { id: 14, islandId: 4, islandName: "Ilha da Família", title: "Irmão & Avós", icon: "🧑‍🤝‍🧑", kind: "licao", x: 25, y: 72 },
+  { id: 15, islandId: 4, islandName: "Ilha da Família", title: "Revisão relâmpago", icon: "⚡", kind: "revisao", x: 38, y: 60 },
+  { id: 16, islandId: 4, islandName: "Ilha da Família", title: "Chefe: Banquete em Família", icon: "🏠", kind: "chefe", x: 44, y: 50 },
+  // Ilha das Expressões & Sentimentos (17-20)
+  { id: 17, islandId: 5, islandName: "Ilha das Expressões", title: "Alegria & Tristeza", icon: "😃", kind: "licao", x: 54, y: 46 },
+  { id: 18, islandId: 5, islandName: "Ilha das Expressões", title: "Amor & Coragem", icon: "❤️", kind: "licao", x: 64, y: 52 },
+  { id: 19, islandId: 5, islandName: "Ilha das Expressões", title: "Desafio do espelho", icon: "🪞", kind: "espelho", x: 74, y: 46 },
+  { id: 20, islandId: 5, islandName: "Ilha das Expressões", title: "Chefe: Festival dos Sentimentos", icon: "🕊️", kind: "chefe", x: 80, y: 36 },
+  // O Portão Real do Castelo (21-24)
+  { id: 21, islandId: 6, islandName: "Portão Real do Castelo", title: "Boas-vindas", icon: "🏰", kind: "licao", x: 70, y: 26 },
+  { id: 22, islandId: 6, islandName: "Portão Real do Castelo", title: "Diálogo no Castelo", icon: "🧠", kind: "licao", x: 60, y: 18 },
+  { id: 23, islandId: 6, islandName: "Portão Real do Castelo", title: "Revisão do Castelo", icon: "⚡", kind: "revisao", x: 68, y: 12 },
+  { id: 24, islandId: 6, islandName: "Portão Real do Castelo", title: "Grande Chefe: O Trono", icon: "👑", kind: "chefe", x: 82, y: 8 },
+];
+
+const ISLANDS_WORLD1: Island[] = [
+  { id: 1, name: "Ilha do Oi", subtitle: "Saudações e apresentação", tone: "bg-sky", nodes: [] },
+  { id: 2, name: "Ilha das Cores", subtitle: "Vermelho, azul, amarelo e mais", tone: "bg-grape", nodes: [] },
+  { id: 3, name: "Ilha dos Bichos", subtitle: "Animais da fazenda e domésticos", tone: "bg-neon", nodes: [] },
+];
+
+const ISLANDS_WORLD2: Island[] = [
+  { id: 4, name: "Ilha da Família", subtitle: "Mães, pais, irmãos e avós em LIBRAS", tone: "bg-coral", nodes: [] },
+  { id: 5, name: "Ilha das Expressões & Sentimentos", subtitle: "Alegria, amor, coragem e IA na câmera", tone: "bg-sunshine", nodes: [] },
+  { id: 6, name: "O Portão Real do Castelo", subtitle: "Boas-vindas, diálogos e o Grande Trono", tone: "bg-sky", nodes: [] },
+];
+
+/** Calcula o estado dinâmico dos nós com base nas lições concluídas do usuário e no mundo ativo. */
+function computeNodes(
+  completedLessons: import("@/lib/user-store").CompletedLesson[],
+  world: 1 | 2
+): TrailNode[] {
   const completedIds = new Set(completedLessons.map((l) => l.id));
+  const baseNodes = world === 1 ? TRAIL_NODES_BASE_WORLD1 : TRAIL_NODES_BASE_WORLD2;
+
+  // No Mundo 2, se o Mundo 1 não foi concluído (Fase 12), todas as fases ficam travadas
+  const isWorld1Completed = completedIds.has("trail_node_12") || completedIds.has("les_12");
+
   let foundCurrent = false;
-  return TRAIL_NODES_BASE.map((base) => {
+
+  return baseNodes.map((base) => {
     const lessonId = `trail_node_${base.id}`;
-    if (completedIds.has(lessonId)) {
-      // Já concluído — calcula estrelas pelo score salvo
-      const lesson = completedLessons.find((l) => l.id === lessonId);
+    const legacyId = `les_${base.id}`;
+    const isDone = completedIds.has(lessonId) || completedIds.has(legacyId);
+
+    if (isDone) {
+      const lesson = completedLessons.find((l) => l.id === lessonId || l.id === legacyId);
       const stars = lesson ? (lesson.score >= 90 ? 3 : lesson.score >= 60 ? 2 : 1) : 1;
       return { ...base, state: "done" as const, stars };
     }
+
+    if (world === 2 && !isWorld1Completed) {
+      return { ...base, state: "locked" as const, stars: 0 };
+    }
+
     if (!foundCurrent) {
-      // Primeiro nó não concluído = "atual"
       foundCurrent = true;
       return { ...base, state: "current" as const, stars: 0 };
     }
+
     return { ...base, state: "locked" as const, stars: 0 };
   });
 }
 
-const ISLANDS: Island[] = [
-  { id: 1, name: "Ilha do Oi", subtitle: "Saudações e apresentação", tone: "bg-sky", nodes: [] },
-  { id: 2, name: "Ilha das Cores", subtitle: "Vermelho, azul, amarelo e mais", tone: "bg-grape", nodes: [] },
-  { id: 3, name: "Ilha dos Animais", subtitle: "Animais da fazenda e da floresta", tone: "bg-neon", nodes: [] },
-];
-
-function buildIslands(nodes: TrailNode[]): Island[] {
-  return ISLANDS.map((island) => ({
+function buildIslands(nodes: TrailNode[], world: 1 | 2): Island[] {
+  const template = world === 1 ? ISLANDS_WORLD1 : ISLANDS_WORLD2;
+  return template.map((island) => ({
     ...island,
     nodes: nodes.filter((n) => n.islandId === island.id),
   }));
@@ -98,9 +140,14 @@ function TrailPage() {
   const [isValidating, setIsValidating] = useState(true);
   const [authorizedUser, setAuthorizedUser] = useState<User | null>(null);
 
+  // Estado do Mundo ativo (1: Cores & Bichos, 2: Castelo da Família & Expressões)
+  const [activeWorld, setActiveWorld] = useState<1 | 2>(1);
+  const [isWorld2Unlocked, setIsWorld2Unlocked] = useState(false);
+  const [showLockModal, setShowLockModal] = useState(false);
+
   // Nós e ilhas calculados dinamicamente pelo progresso do usuário
   const [trailNodes, setTrailNodes] = useState<TrailNode[]>([]);
-  const [islands, setIslands] = useState<Island[]>(ISLANDS);
+  const [islands, setIslands] = useState<Island[]>(ISLANDS_WORLD1);
 
   const [selected, setSelected] = useState<TrailNode | null>(null);
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
@@ -127,12 +174,36 @@ function TrailPage() {
 
     // 3. Aluno Autenticado -> Calcula progresso e concede acesso
     const lessons = user.completedLessons ?? [];
-    const computed = computeNodes(lessons);
+    const completedSet = new Set(lessons.map((l) => l.id));
+    const unlocked2 = completedSet.has("trail_node_12") || completedSet.has("les_12");
+    setIsWorld2Unlocked(unlocked2);
+
+    // Se o usuário já concluiu o Mundo 1, pode começar com o Mundo 2 ativado se preferir
+    const initialWorld: 1 | 2 = unlocked2 ? 2 : 1;
+    setActiveWorld(initialWorld);
+
+    const computed = computeNodes(lessons, initialWorld);
     setTrailNodes(computed);
-    setIslands(buildIslands(computed));
+    setIslands(buildIslands(computed, initialWorld));
     setAuthorizedUser(user);
     setIsValidating(false);
   }, [navigate]);
+
+  // Recalcula nós e ilhas ao alternar de mundo
+  const handleSelectWorld = (worldNum: 1 | 2) => {
+    soundFx.playPop();
+    if (worldNum === 2 && !isWorld2Unlocked) {
+      setShowLockModal(true);
+      return;
+    }
+    setActiveWorld(worldNum);
+    if (authorizedUser) {
+      const lessons = authorizedUser.completedLessons ?? [];
+      const computed = computeNodes(lessons, worldNum);
+      setTrailNodes(computed);
+      setIslands(buildIslands(computed, worldNum));
+    }
+  };
 
   const handleToggleMute = () => {
     const nextMuted = soundFx.toggleMute();
@@ -158,6 +229,9 @@ function TrailPage() {
     );
   }
 
+  const completedCount = trailNodes.filter((n) => n.state === "done").length;
+  const progressPercent = Math.round((completedCount / trailNodes.length) * 100);
+
   return (
     <div className="min-h-screen bg-gradient-hero pb-24 text-foreground selection:bg-primary/20">
       {/* Top Header with Stats and Controls */}
@@ -171,6 +245,37 @@ function TrailPage() {
       />
 
       <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
+        {/* Selector de Mundos (Abas de Navegação) */}
+        <div className="mb-6 flex items-center justify-center gap-3">
+          <button
+            onClick={() => handleSelectWorld(1)}
+            className={`flex items-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${
+              activeWorld === 1
+                ? "bg-primary text-primary-foreground shadow-chunky scale-105"
+                : "bg-card text-muted-foreground hover:bg-muted hover:text-foreground shadow-soft"
+            }`}
+          >
+            <span>🌊</span>
+            <span>Mundo 1: Cores &amp; Bichos</span>
+          </button>
+
+          <button
+            onClick={() => handleSelectWorld(2)}
+            className={`flex items-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${
+              activeWorld === 2
+                ? "bg-gradient-rainbow text-white shadow-chunky scale-105"
+                : isWorld2Unlocked
+                ? "bg-card text-foreground hover:bg-muted shadow-soft"
+                : "bg-muted/80 text-muted-foreground cursor-pointer shadow-soft opacity-80"
+            }`}
+          >
+            <span>🏰</span>
+            <span>Mundo 2: O Castelo da Família</span>
+            {!isWorld2Unlocked && <span className="ml-1 text-xs">🔒</span>}
+            {isWorld2Unlocked && <span className="ml-1 text-xs">✨</span>}
+          </button>
+        </div>
+
         {/* World Banner Progress */}
         <section className="mb-6 flex flex-col items-center gap-4 rounded-4xl bg-card p-6 shadow-soft sm:flex-row sm:gap-6">
           <img
@@ -183,28 +288,32 @@ function TrailPage() {
           <div className="flex-1 text-center sm:text-left">
             <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
               <h1 className="font-display text-2xl font-black text-foreground">
-                Mundo Cores &amp; Bichos
+                {activeWorld === 1
+                  ? "Mundo 1: Cores & Bichos"
+                  : "Mundo 2: O Castelo da Família e Expressões"}
               </h1>
               <span className="rounded-full bg-amber-100 px-3 py-0.5 font-display text-xs font-black text-amber-800">
                 Fase {islands.findIndex((isl) => isl.nodes.some((n) => n.state === "current")) + 1} de {islands.length}
               </span>
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
-              {trailNodes.filter((n) => n.state === "done").length === 0
-                ? "Bem-vindo(a)! Comece sua jornada pelo primeiro sinal! 🌟"
-                : `Você completou ${trailNodes.filter((n) => n.state === "done").length} de ${trailNodes.length} lições. Continue avançando! 🏰`}
+              {activeWorld === 1
+                ? completedCount === 0
+                  ? "Bem-vindo(a)! Comece sua jornada pelo primeiro sinal! 🌟"
+                  : `Você completou ${completedCount} de ${trailNodes.length} lições do Mundo 1. Continue avançando! 🏰`
+                : isWorld2Unlocked
+                ? `Bem-vindo ao Castelo! Você completou ${completedCount} de ${trailNodes.length} lições do Mundo 2! 👑`
+                : "Conclua a Fase 12 na Ilha dos Bichos para abrir os portões do Castelo! 🔒"}
             </p>
             <div className="mt-3 flex items-center gap-3">
               <div className="h-3.5 flex-1 overflow-hidden rounded-full bg-muted shadow-inner">
                 <div
                   className="h-full rounded-full bg-gradient-rainbow transition-all duration-700"
-                  style={{
-                    width: `${Math.round((trailNodes.filter((n) => n.state === "done").length / trailNodes.length) * 100)}%`,
-                  }}
+                  style={{ width: `${progressPercent}%` }}
                 />
               </div>
               <span className="font-display text-xs font-black text-muted-foreground">
-                {Math.round((trailNodes.filter((n) => n.state === "done").length / trailNodes.length) * 100)}% concluído
+                {progressPercent}% concluído
               </span>
             </div>
           </div>
@@ -217,7 +326,9 @@ function TrailPage() {
               <div>
                 <h2 className="font-display text-xl font-black">Mapa de Aventura Interativo</h2>
                 <p className="text-xs text-muted-foreground">
-                  Interaja com os elementos do relevo e clique nos pontos para aprender LIBRAS
+                  {activeWorld === 1
+                    ? "Explore o relevo das ilhas e clique nos nós para aprender LIBRAS"
+                    : "Explore o pátio real e os salões do Castelo da Família & Expressões"}
                 </p>
               </div>
 
@@ -278,7 +389,7 @@ function TrailPage() {
 
             {/* Islands Quick Overview Cards */}
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-              {ISLANDS.map((island) => {
+              {islands.map((island) => {
                 const doneCount = island.nodes.filter((n) => n.state === "done").length;
                 const isCurrent = island.nodes.some((n) => n.state === "current");
                 return (
@@ -324,17 +435,86 @@ function TrailPage() {
           </div>
         )}
 
-        {/* Locked Next World Banner */}
-        <div className="mt-12 rounded-4xl border-4 border-dashed border-border p-8 text-center bg-card/40 backdrop-blur-sm shadow-lg">
-          <div className="text-4xl animate-bounce-soft">🏰🔒</div>
-          <h2 className="mt-8 font-display text-xl font-extrabold">
-            Mundo 2: O Castelo da Família e Expressões
-          </h2>
-          <p className="mt-4 text-sm text-muted-foreground max-w-md mx-auto">
-            Termine a jornada na Ilha dos Bichos para cruzar o portão do castelo e desbloquear novas aventuras!
-          </p>
-        </div>
+        {/* Dynamic Bottom World Transition Banner */}
+        {activeWorld === 1 ? (
+          <div
+            onClick={() => handleSelectWorld(2)}
+            className={`mt-12 cursor-pointer rounded-4xl border-4 p-8 text-center backdrop-blur-sm shadow-lg transition-transform hover:scale-[1.01] ${
+              isWorld2Unlocked
+                ? "border-emerald-400 bg-emerald-500/10 dark:bg-emerald-950/20"
+                : "border-dashed border-border bg-card/40"
+            }`}
+          >
+            <div className="text-4xl animate-bounce-soft">
+              {isWorld2Unlocked ? "🏰✨" : "🏰🔒"}
+            </div>
+            <h2 className="mt-4 font-display text-xl font-extrabold">
+              Mundo 2: O Castelo da Família e Expressões
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
+              {isWorld2Unlocked
+                ? "Parabéns! O Portão do Castelo está aberto! Clique para explorar o Mundo 2!"
+                : "Termine a jornada na Ilha dos Bichos (Fase 12) para cruzar o portão do castelo e desbloquear novas aventuras!"}
+            </p>
+            <button
+              className={`mt-4 rounded-full px-6 py-2.5 font-display text-xs font-black shadow-soft ${
+                isWorld2Unlocked
+                  ? "bg-emerald-500 text-white hover:bg-emerald-600"
+                  : "bg-primary text-primary-foreground hover:opacity-90"
+              }`}
+            >
+              {isWorld2Unlocked ? "Entrar no Castelo 🏰" : "Ver Portão do Castelo 🔒"}
+            </button>
+          </div>
+        ) : (
+          <div
+            onClick={() => handleSelectWorld(1)}
+            className="mt-12 cursor-pointer rounded-4xl border-2 border-sky-300 bg-sky-500/10 p-6 text-center shadow-lg transition-transform hover:scale-[1.01]"
+          >
+            <div className="text-3xl">🌊</div>
+            <h3 className="mt-2 font-display text-lg font-extrabold text-sky-900 dark:text-sky-200">
+              Voltar ao Mundo 1: Cores &amp; Bichos
+            </h3>
+            <p className="mt-1 text-xs text-sky-700 dark:text-sky-300">
+              Revise lições de saudações, cores e animais a qualquer momento!
+            </p>
+          </div>
+        )}
       </main>
+
+      {/* Modal de Alerta de Portão Trancado */}
+      {showLockModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/50 p-4 backdrop-blur-sm">
+          <div className="animate-pop relative w-full max-w-md rounded-4xl bg-card p-8 shadow-chunky text-center">
+            <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-amber-100 text-4xl shadow-chunky">
+              🏰🔒
+            </div>
+            <h2 className="mt-4 font-display text-2xl font-black text-foreground">
+              Portão do Castelo Trancado!
+            </h2>
+            <p className="mt-2 text-sm text-muted-foreground leading-relaxed">
+              Para cruzar o portão do castelo e explorar o <strong>Mundo 2: O Castelo da Família e Expressões</strong>, você precisa vencer o desafio final da Ilha dos Bichos no Mundo 1!
+            </p>
+            <div className="mt-6 flex flex-col gap-3">
+              <button
+                onClick={() => {
+                  setShowLockModal(false);
+                  handleSelectWorld(1);
+                }}
+                className="rounded-full bg-primary px-6 py-3 font-display text-sm font-black text-primary-foreground shadow-chunky transition-transform hover:scale-105"
+              >
+                 Ir para a Fase 12 (Chefe da Ilha dos Bichos)
+              </button>
+              <button
+                onClick={() => setShowLockModal(false)}
+                className="text-xs font-bold text-muted-foreground hover:text-foreground"
+              >
+                Entendi, continuar no Mundo 1
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Node Detail Sheet Modal */}
       {selected && <NodeSheet node={selected} onClose={() => setSelected(null)} />}
@@ -607,8 +787,9 @@ function NodeSheet({ node, onClose }: { node: TrailNode; onClose: () => void }) 
           <div className="mt-8 flex flex-col gap-3">
             <Link
               to="/licao"
+              search={{ nodeId: node.id }}
               onClick={() => soundFx.playChime()}
-              className="rounded-full bg-primary px-8 py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:scale-105 active:scale-95"
+              className="rounded-full bg-primary px-8 py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:scale-105 active:scale-95 text-center"
             >
               {node.state === "done" ? "Refazer lição" : "Começar lição"}
             </Link>
