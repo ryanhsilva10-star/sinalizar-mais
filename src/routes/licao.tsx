@@ -1,10 +1,20 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import luviMascot from "@/assets/luvi-mascot.png";
 import { LibrasLessonMirror, type LessonMirrorScore } from "@/components/LibrasLessonMirror";
 import { soundFx } from "@/lib/sound-effects";
 import { getActiveUser, saveUser, User } from "@/lib/user-store";
 import { toast } from "sonner";
+
+/** Função utilitária para embaralhar alternativas de resposta */
+function shuffleArray<T>(array: T[]): T[] {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
 
 export type LessonItem = {
   pt: string;
@@ -469,6 +479,451 @@ export const LESSONS_DATA: Record<number, LessonNodeData> = {
       },
     ],
   },
+  // MUNDO 2 — O CASTELO DA FAMÍLIA E EXPRESSÕES
+  13: {
+    id: 13,
+    title: "Mãe & Pai em LIBRAS",
+    subtitle: "Início do Castelo da Família",
+    colors: [
+      {
+        pt: "MAE",
+        sign: "Sinal de mulher (passar polegar na bochecha) + beijo na mão",
+        emoji: "👩‍👧",
+        tone: "bg-coral",
+        targetLetter: "M",
+        signTip: "Passe o dorso do polegar na bochecha (mulher) e encoste a mão na boca com carinho (bênção/beijo).",
+        handShapeDesc: "Polegar deslizando na bochecha e toque nos lábios",
+        bodyLocation: "Bochecha e lábios",
+      },
+      {
+        pt: "PAI",
+        sign: "Sinal de homem (passar indicador no queixo) + beijo na mão",
+        emoji: "👨‍👦",
+        tone: "bg-sky",
+        targetLetter: "P",
+        signTip: "Passe a lateral do indicador no queixo simulando a barba (homem) e leve a mão aos lábios.",
+        handShapeDesc: "Indicador no queixo (homem) e toque nos lábios",
+        bodyLocation: "Queixo e lábios",
+      },
+      {
+        pt: "FILHO",
+        sign: "Mão em garra puxando no peito",
+        emoji: "👶",
+        tone: "bg-sunshine",
+        targetLetter: "F",
+        signTip: "Abra a mão no peito e feche levemente em garra como se segurasse um bebê com carinho.",
+        handShapeDesc: "Mão em 'C' fechando no peito",
+        bodyLocation: "Peito",
+      },
+    ],
+  },
+  14: {
+    id: 14,
+    title: "Irmão & Avós em LIBRAS",
+    subtitle: "Parentesco e Laços de Afeto",
+    colors: [
+      {
+        pt: "IRMAO",
+        sign: "Indicadores estendidos encostando lateralmente",
+        emoji: "🧑‍🤝‍🧑",
+        tone: "bg-mint",
+        targetLetter: "I",
+        signTip: "Estenda os dois indicadores para a frente e friccione-os lateralmente duas vezes.",
+        handShapeDesc: "Dois indicadores paralelos",
+        bodyLocation: "Frente do peito",
+      },
+      {
+        pt: "AVO",
+        sign: "Mão curvada perto do queixo imitando velhice",
+        emoji: "👵",
+        tone: "bg-grape",
+        targetLetter: "A",
+        signTip: "Faça a letra 'C' fechada junto ao queixo dando leves toques tremidos com ternura.",
+        handShapeDesc: "Mão em 'C' fechada tremida",
+        bodyLocation: "Queixo",
+      },
+      {
+        pt: "FAMILIA",
+        sign: "Duas mãos em 'F' fazendo um círculo e se unindo",
+        emoji: "👨‍👩‍👧‍👦",
+        tone: "bg-neon",
+        targetLetter: "F",
+        signTip: "Faça a letra 'F' com ambas as mãos, desenhe um círculo no ar e una os mínimos no centro.",
+        handShapeDesc: "Duas mãos em 'F' completando um círculo",
+        bodyLocation: "Frente do peito",
+      },
+    ],
+  },
+  15: {
+    id: 15,
+    title: "Revisão relâmpago: Família",
+    subtitle: "Fixação dos Sinais de Parentesco",
+    colors: [
+      {
+        pt: "MAE",
+        sign: "Mulher + bênção",
+        emoji: "👩‍👧",
+        tone: "bg-coral",
+        targetLetter: "M",
+        signTip: "Polegar na bochecha + toque nos lábios.",
+        handShapeDesc: "Sinal de Mãe",
+        bodyLocation: "Rosto",
+      },
+      {
+        pt: "IRMAO",
+        sign: "Indicadores tocando",
+        emoji: "🧑‍🤝‍🧑",
+        tone: "bg-mint",
+        targetLetter: "I",
+        signTip: "Indicadores paralelos roçando.",
+        handShapeDesc: "Indicadores juntos",
+        bodyLocation: "Peito",
+      },
+      {
+        pt: "FAMILIA",
+        sign: "Círculo com mãos em 'F'",
+        emoji: "👨‍👩‍👧‍👦",
+        tone: "bg-neon",
+        targetLetter: "F",
+        signTip: "Mãos em 'F' unindo-se no final.",
+        handShapeDesc: "Círculo em 'F'",
+        bodyLocation: "Frente do corpo",
+      },
+    ],
+  },
+  16: {
+    id: 16,
+    title: "Desafio do Chefe: Banquete em Família",
+    subtitle: "União e Valores Familiares",
+    colors: [
+      {
+        pt: "CASA",
+        sign: "Pontas dos dedos unidas formando telhado",
+        emoji: "🏠",
+        tone: "bg-sunshine",
+        targetLetter: "C",
+        signTip: "Junte as pontas dos dedos das duas mãos em forma de triângulo sobre o peito.",
+        handShapeDesc: "Mãos formando telhado de casa",
+        bodyLocation: "Frente do peito",
+      },
+      {
+        pt: "UNIAO",
+        sign: "Mãos entrelaçadas pelos indicadores",
+        emoji: "🤝",
+        tone: "bg-sky",
+        targetLetter: "U",
+        signTip: "Enganche os dedos em forma de elo firme demonstrando união inquebrável.",
+        handShapeDesc: "Mãos enganchadas em elo",
+        bodyLocation: "Centro do peito",
+      },
+      {
+        pt: "AMOR",
+        sign: "Mãos cruzadas sobre o peito",
+        emoji: "💖",
+        tone: "bg-coral",
+        targetLetter: "A",
+        signTip: "Cruze os braços sobre o coração e aperte suavemente demonstrando afeto.",
+        handShapeDesc: "Braços cruzados no peito",
+        bodyLocation: "Coração",
+      },
+    ],
+  },
+  17: {
+    id: 17,
+    title: "Expressões: Alegria & Tristeza",
+    subtitle: "Sentimentos e Gramática Facial",
+    colors: [
+      {
+        pt: "FELIZ",
+        sign: "Mãos em 'F' balançando no peito com sorriso radiante",
+        emoji: "😃",
+        tone: "bg-sunshine",
+        targetLetter: "F",
+        signTip: "Faça a letra 'F' com ambas as mãos e balance no peito sorrindo abertamente!",
+        handShapeDesc: "Duas mãos em 'F' vibrando",
+        bodyLocation: "Peito e sorriso no rosto",
+      },
+      {
+        pt: "TRISTE",
+        sign: "Mão em 'Y' descendo no queixo com olhar abatido",
+        emoji: "😢",
+        tone: "bg-sky",
+        targetLetter: "T",
+        signTip: "Desça a mão perto do queixo inclinando a cabeça levemente para baixo com olhar calmo.",
+        handShapeDesc: "Mão em 'Y' descendo",
+        bodyLocation: "Queixo / Rosto abatido",
+      },
+      {
+        pt: "BRAVO",
+        sign: "Mão em garra no rosto com expressão franzida",
+        emoji: "😠",
+        tone: "bg-coral",
+        targetLetter: "B",
+        signTip: "Forme uma garra na frente do rosto e franza as sobrancelhas para demonstrar zanga.",
+        handShapeDesc: "Mão em garra na bochecha",
+        bodyLocation: "Rosto / Sobrancelhas franzidas",
+      },
+    ],
+  },
+  18: {
+    id: 18,
+    title: "Expressões: Amor & Coragem",
+    subtitle: "Sentimentos Profundos no Peito",
+    colors: [
+      {
+        pt: "AMOR",
+        sign: "Mãos cruzadas no peito sorrindo",
+        emoji: "❤️",
+        tone: "bg-coral",
+        targetLetter: "A",
+        signTip: "Cruze as palmas abertas sobre o peito com expressão calorosa.",
+        handShapeDesc: "Mãos espalmadas no tórax",
+        bodyLocation: "Peito",
+      },
+      {
+        pt: "CORAGEM",
+        sign: "Mão fechada bater no peito com olhar firme",
+        emoji: "🦁",
+        tone: "bg-sunshine",
+        targetLetter: "C",
+        signTip: "Feche o punho no peito e erga o queixo com determinação heroica!",
+        handShapeDesc: "Punho fechado firme",
+        bodyLocation: "Peito e cabeça erguida",
+      },
+      {
+        pt: "SAUDADE",
+        sign: "Mão fechada no peito fazendo giros suaves",
+        emoji: "🥺",
+        tone: "bg-grape",
+        targetLetter: "S",
+        signTip: "Gire a mão fechada sobre a região do coração com olhar nostálgico.",
+        handShapeDesc: "Punho girando em círculo",
+        bodyLocation: "Coração",
+      },
+    ],
+  },
+  19: {
+    id: 19,
+    title: "Desafio do Espelho com IA: Expressões",
+    subtitle: "Reconhecimento Facial e Gestual na Câmera",
+    colors: [
+      {
+        pt: "FELIZ",
+        sign: "Sorriso radiante + Mãos em 'F' na câmera",
+        emoji: "🪞",
+        tone: "bg-sunshine",
+        targetLetter: "F",
+        signTip: "Sorria para a câmera enquanto balança a mão em 'F'.",
+        handShapeDesc: "Letra 'F' + Sorriso",
+        bodyLocation: "Frente da câmera",
+      },
+      {
+        pt: "AMOR",
+        sign: "Braços cruzados no peito",
+        emoji: "💖",
+        tone: "bg-coral",
+        targetLetter: "A",
+        signTip: "Mantenha a posição de abraço no peito bem visível.",
+        handShapeDesc: "Mãos no peito",
+        bodyLocation: "Frente da câmera",
+      },
+      {
+        pt: "CORAGEM",
+        sign: "Punho no peito com expressão firme",
+        emoji: "🦁",
+        tone: "bg-mint",
+        targetLetter: "C",
+        signTip: "Postura ereta e punho firme para o sensor validar.",
+        handShapeDesc: "Punho no peito",
+        bodyLocation: "Frente da câmera",
+      },
+    ],
+  },
+  20: {
+    id: 20,
+    title: "Desafio do Chefe: Festival dos Sentimentos",
+    subtitle: "Harmonia e Celebração do Amor",
+    colors: [
+      {
+        pt: "PAZ",
+        sign: "Mãos cruzando e abrindo para os lados em calma",
+        emoji: "🕊️",
+        tone: "bg-sky",
+        targetLetter: "P",
+        signTip: "Cruze as palmas na altura do peito e abra-as suavemente para fora respirando fundo.",
+        handShapeDesc: "Mãos abrindo para as laterais",
+        bodyLocation: "Frente do corpo",
+      },
+      {
+        pt: "AMIZADE",
+        sign: "Mãos dadas simuladas balançando",
+        emoji: "🤝",
+        tone: "bg-mint",
+        targetLetter: "A",
+        signTip: "Segure a própria mão amigavelmente e balance em sinal de companheirismo.",
+        handShapeDesc: "Mãos unidas num aperto",
+        bodyLocation: "Peito",
+      },
+      {
+        pt: "HARMONIA",
+        sign: "Desenhar um círculo no ar com expressão serena",
+        emoji: "✨",
+        tone: "bg-neon",
+        targetLetter: "H",
+        signTip: "Movimente as duas mãos juntas criando ondas harmoniosas no ar.",
+        handShapeDesc: "Mãos fluidas no ar",
+        bodyLocation: "Espaço neutro",
+      },
+    ],
+  },
+  21: {
+    id: 21,
+    title: "Frases de Boas-vindas em LIBRAS",
+    subtitle: "Acolhimento no Portão do Castelo",
+    colors: [
+      {
+        pt: "TUDO BEM",
+        sign: "Sinal de bom + mão em 'B' fechando",
+        emoji: "👍",
+        tone: "bg-sunshine",
+        targetLetter: "B",
+        signTip: "Toque os lábios e estenda o polegar para cima com um olhar simpático.",
+        handShapeDesc: "Boca -> Polegar para cima",
+        bodyLocation: "Lábios e frente do peito",
+      },
+      {
+        pt: "BEM-VINDO",
+        sign: "Mão aberta chamando para junto do peito",
+        emoji: "🏰",
+        tone: "bg-coral",
+        targetLetter: "B",
+        signTip: "Estenda a palma virada para cima e traga-a suavemente em direção ao seu peito.",
+        handShapeDesc: "Palma para cima recolhendo",
+        bodyLocation: "Frente do peito",
+      },
+      {
+        pt: "OBRIGADO",
+        sign: "Mão na testa levada para frente",
+        emoji: "🙏",
+        tone: "bg-mint",
+        targetLetter: "O",
+        signTip: "Toque a testa com a ponta dos dedos e incline levemente a cabeça agradecendo.",
+        handShapeDesc: "Mão na testa acenando",
+        bodyLocation: "Testa e peito",
+      },
+    ],
+  },
+  22: {
+    id: 22,
+    title: "Diálogo no Castelo em LIBRAS",
+    subtitle: "Comunicação Eficiente entre Exploradores",
+    colors: [
+      {
+        pt: "CONHECER",
+        sign: "Mão em '4' tocando levemente a bochecha",
+        emoji: "💡",
+        tone: "bg-sky",
+        targetLetter: "C",
+        signTip: "Bata a ponta dos dedos na bochecha duas vezes para indicar conhecimento.",
+        handShapeDesc: "Dedos tocando a bochecha",
+        bodyLocation: "Bochecha",
+      },
+      {
+        pt: "APRENDER",
+        sign: "Mão fechando na testa como abrindo a mente",
+        emoji: "🧠",
+        tone: "bg-grape",
+        targetLetter: "A",
+        signTip: "Abra a mão na testa e feche-a como se capturasse uma nova ideia brilhante!",
+        handShapeDesc: "Mão aberta fechando em 'S' na testa",
+        bodyLocation: "Testa",
+      },
+      {
+        pt: "JUNTOS",
+        sign: "Duas mãos fechadas unidas balançando",
+        emoji: "🌟",
+        tone: "bg-neon",
+        targetLetter: "J",
+        signTip: "Junte os dois punhos no centro do corpo e mova-os juntos em harmonia.",
+        handShapeDesc: "Punhos unidos",
+        bodyLocation: "Centro do corpo",
+      },
+    ],
+  },
+  23: {
+    id: 23,
+    title: "Revisão Espaçada do Castelo",
+    subtitle: "Consolidação de Família, Sentimentos e Diálogo",
+    colors: [
+      {
+        pt: "FELIZ",
+        sign: "Mãos em 'F' balançando",
+        emoji: "😃",
+        tone: "bg-sunshine",
+        targetLetter: "F",
+        signTip: "Sinal de felicidade com sorriso.",
+        handShapeDesc: "Mãos em 'F'",
+        bodyLocation: "Peito",
+      },
+      {
+        pt: "FAMILIA",
+        sign: "Círculo em 'F'",
+        emoji: "👨‍👩‍👧‍👦",
+        tone: "bg-neon",
+        targetLetter: "F",
+        signTip: "União familiar em 'F'.",
+        handShapeDesc: "Círculo com mãos",
+        bodyLocation: "Frente do corpo",
+      },
+      {
+        pt: "JUNTOS",
+        sign: "Punhos unidos em movimento",
+        emoji: "🌟",
+        tone: "bg-mint",
+        targetLetter: "J",
+        signTip: "Sinal de cooperação.",
+        handShapeDesc: "Punhos unidos",
+        bodyLocation: "Centro",
+      },
+    ],
+  },
+  24: {
+    id: 24,
+    title: "Grande Chefe: O Trono de LIBRAS",
+    subtitle: "Conquista Máxima do Mundo 2!",
+    colors: [
+      {
+        pt: "REI",
+        sign: "Mão em 'R' desenhando a coroa no topo da cabeça",
+        emoji: "👑",
+        tone: "bg-sunshine",
+        targetLetter: "R",
+        signTip: "Cruze o indicador e médio em 'R' e coloque no topo da cabeça como a Coroa Real!",
+        handShapeDesc: "Mão em 'R' no topo da cabeça",
+        bodyLocation: "Topo da cabeça",
+      },
+      {
+        pt: "SINALIZAR",
+        sign: "Mãos abertas alternando círculos no ar com fluidez",
+        emoji: "👐",
+        tone: "bg-sky",
+        targetLetter: "S",
+        signTip: "Gire as duas mãos alternadamente para a frente demonstrando a beleza da LIBRAS!",
+        handShapeDesc: "Mãos girando em círculo alternado",
+        bodyLocation: "Frente do peito",
+      },
+      {
+        pt: "VITORIA",
+        sign: "Sinal de 'V' no ar com explosão de confetes e alegria",
+        emoji: "🏆",
+        tone: "bg-coral",
+        targetLetter: "V",
+        signTip: "Erga os braços em 'V' com a maior alegria do mundo por concluir o Castelo!",
+        handShapeDesc: "Sinal de Vitória heroico",
+        bodyLocation: "No ar em festa",
+      },
+    ],
+  },
 };
 
 type LicaoSearch = {
@@ -480,7 +935,7 @@ export const Route = createFileRoute("/licao")({
     const raw = search?.nodeId;
     const parsed = typeof raw === "number" ? raw : parseInt(String(raw || ""), 10);
     return {
-      nodeId: !isNaN(parsed) && parsed >= 1 && parsed <= 12 ? parsed : 6,
+      nodeId: !isNaN(parsed) && parsed >= 1 && parsed <= 24 ? parsed : 6,
     };
   },
   head: () => ({
@@ -575,7 +1030,7 @@ function LessonPage() {
 
   const handleNextLesson = () => {
     const nextId = nodeId + 1;
-    if (nextId <= 12) {
+    if (nextId <= 24) {
       navigate({ to: "/licao", search: { nodeId: nextId } });
       soundFx.playChime();
     }
@@ -596,7 +1051,7 @@ function LessonPage() {
 
   return (
     <div className="min-h-screen bg-gradient-hero shadow">
-      <TopBar step={step} total={total} title={currentLesson.title} onExit={restart} />
+      <TopBar step={step} total={total} title={currentLesson.title} nodeId={nodeId} onExit={restart} />
       <div className="mx-auto max-w-3xl px-4 py-8 sm:px-7 sm:py-12">
         {step === 0 && <ScreenIntro lesson={currentLesson} onNext={next} />}
         {step === 1 && <ScreenTeach lesson={currentLesson} onNext={next} />}
@@ -629,14 +1084,19 @@ function TopBar({
   step,
   total,
   title,
+  nodeId,
   onExit,
 }: {
   step: number;
   total: number;
   title: string;
+  nodeId: number;
   onExit: () => void;
 }) {
   const pct = (step / total) * 100;
+  const isWorld2 = nodeId >= 13;
+  const worldLabel = isWorld2 ? `Mundo 2 (Atividade ${nodeId})` : `Mundo 1 (Atividade ${nodeId})`;
+
   return (
     <div className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
       <div className="mx-auto flex max-w-3xl items-center gap-4 px-6 py-4">
@@ -649,7 +1109,9 @@ function TopBar({
         </Link>
         <div className="flex-1">
           <div className="flex justify-between text-xs font-extrabold mb-1">
-            <span className="text-primary truncate max-w-[200px] sm:max-w-none">{title}</span>
+            <span className="text-primary truncate max-w-[220px] sm:max-w-none">
+              {worldLabel} · {title}
+            </span>
             <span className="text-muted-foreground">{step}/{total}</span>
           </div>
           <div className="h-3 overflow-hidden rounded-full bg-muted shadow-inner">
@@ -683,11 +1145,17 @@ function ScreenShell({ children }: { children: React.ReactNode }) {
 }
 
 function ScreenIntro({ lesson, onNext }: { lesson: LessonNodeData; onNext: () => void }) {
+  const isWorld2 = lesson.id >= 13;
+  const activityNumInWorld = isWorld2 ? lesson.id - 12 : lesson.id;
+  const worldBadge = isWorld2
+    ? `Mundo 2: O Castelo da Família · Atividade ${lesson.id} de 24 (Fase ${activityNumInWorld} do Castelo)`
+    : `Mundo 1: Cores & Bichos · Atividade ${lesson.id} de 12`;
+
   return (
     <ScreenShell>
       <div className="text-center">
         <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">
-          EF1 · Fase {lesson.id} · Lição Interativa para Iniciantes
+          {worldBadge}
         </span>
         <h1 className="mt-3 font-display text-4xl font-extrabold md:text-5xl">
           {lesson.title}
@@ -699,9 +1167,11 @@ function ScreenIntro({ lesson, onNext }: { lesson: LessonNodeData; onNext: () =>
           <span className="text-3xl shrink-0">💡</span>
           <div>
             <strong className="font-extrabold block text-amber-950 dark:text-amber-100 text-sm">
-              Primeira vez aprendendo LIBRAS?
+              {isWorld2 ? "Atividade do Mundo 2: O Castelo da Família" : "Primeira vez aprendendo LIBRAS?"}
             </strong>
-            A LIBRAS é uma língua visual! Observe o formato dos dedos (Configuração de Mão) e a posição no corpo. Siga os passos no seu próprio ritmo!
+            {isWorld2
+              ? `Você está realizando a Atividade ${lesson.id} do Mundo 2! Pratique as expressões e os sinais de parentesco com foco e atenção.`
+              : "A LIBRAS é uma língua visual! Observe o formato dos dedos (Configuração de Mão) e a posição no corpo. Siga os passos no seu próprio ritmo!"}
           </div>
         </div>
 
@@ -729,7 +1199,7 @@ function ScreenIntro({ lesson, onNext }: { lesson: LessonNodeData; onNext: () =>
           onClick={onNext}
           className="rounded-full bg-primary px-10 py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1 active:scale-95"
         >
-          ▶ Começar Lição Passo a Passo
+          ▶ Começar Atividade Passo a Passo
         </button>
       </div>
     </ScreenShell>
@@ -825,6 +1295,9 @@ function ScreenQuiz({
   const [choice, setChoice] = useState<string | null>(null);
   const correct = choice === target.pt;
 
+  // Embaralha as opções de resposta para mudar a ordem e não manter a mesma do ensinado
+  const shuffledColors = useMemo(() => shuffleArray(colors), [colors]);
+
   return (
     <ScreenShell>
       <div className="text-center">
@@ -838,7 +1311,7 @@ function ScreenQuiz({
         <p className="mt-1 text-xs text-muted-foreground">Dica: {target.signTip}</p>
 
         <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          {colors.map((c) => {
+          {shuffledColors.map((c) => {
             const isSel = choice === c.pt;
             const isRight = isSel && c.pt === target.pt;
             const isWrong = isSel && c.pt !== target.pt;
@@ -913,6 +1386,9 @@ function ScreenBubble({
 }) {
   const [popped, setPopped] = useState<string | null>(null);
 
+  // Embaralha as bolhas de resposta para mudar de posição
+  const shuffledColors = useMemo(() => shuffleArray(colors), [colors]);
+
   return (
     <ScreenShell>
       <div className="text-center">
@@ -925,7 +1401,7 @@ function ScreenBubble({
 
         <div className="relative mt-8 grid h-72 place-items-center overflow-hidden rounded-3xl bg-gradient-to-b from-sky/30 to-mint/20 border border-border">
           <div className="flex items-end justify-around gap-6 drop-shadow-xl/25">
-            {colors.map((c, i) => {
+            {shuffledColors.map((c, i) => {
               const isPopped = popped === c.pt;
               const isRight = isPopped && c.pt === target.pt;
               return (
@@ -1056,8 +1532,10 @@ function ScreenReward({
   onNextLesson: () => void;
 }) {
   const nextNodeId = nodeId + 1;
-  const hasNextLesson = nextNodeId <= 12;
+  const hasNextLesson = nextNodeId <= 24;
   const nextLessonData = LESSONS_DATA[nextNodeId];
+  const isWorld2 = nodeId >= 13;
+  const worldTitle = isWorld2 ? "Mundo 2: O Castelo da Família e Expressões" : "Mundo 1: Cores & Bichos";
 
   return (
     <ScreenShell>
@@ -1072,9 +1550,13 @@ function ScreenReward({
           />
           <div className="absolute inset-0 -z-10 bg-gradient-rainbow opacity-30 blur-3xl drop-shadow-xl/25" />
         </div>
-        <h1 className="font-display text-4xl font-extrabold md:text-5xl">Lição completa! 🎉</h1>
+        <h1 className="font-display text-4xl font-extrabold md:text-5xl">
+          {isWorld2 ? `Atividade ${nodeId} do Mundo 2 Concluída! 🎉` : `Atividade ${nodeId} Concluída! 🎉`}
+        </h1>
         <p className="mt-3 text-muted-foreground">
-          Parabéns! Você aprendeu e validou novos sinais em LIBRAS com auxílio da inteligência artificial!
+          {isWorld2
+            ? `Parabéns por completar esta atividade no ${worldTitle}!`
+            : "Parabéns! Você aprendeu e validou novos sinais em LIBRAS com auxílio da inteligência artificial!"}
         </p>
 
         {/* Breakdown das estrelas */}
@@ -1101,32 +1583,42 @@ function ScreenReward({
 
         <div className="mt-8 rounded-2xl bg-muted p-4 border border-border">
           <div className="mb-2 text-xs font-bold uppercase text-muted-foreground">
-            Progresso na Trilha de LIBRAS
+            Progresso — {worldTitle}
           </div>
           <div className="h-4 overflow-hidden rounded-full bg-background shadow-inner">
             <div
               className="h-full rounded-full bg-gradient-rainbow transition-all duration-500"
-              style={{ width: `${Math.round((nodeId / 12) * 100)}%` }}
+              style={{
+                width: isWorld2
+                  ? `${Math.round(((nodeId - 12) / 12) * 100)}%`
+                  : `${Math.round((nodeId / 12) * 100)}%`,
+              }}
             />
           </div>
           <div className="mt-3 text-sm font-bold">
-            Fase {nodeId} de 12 concluída ({Math.round((nodeId / 12) * 100)}%)
+            {isWorld2
+              ? `Atividade ${nodeId} de 24 (Atividade ${nodeId - 12} de 12 do Mundo 2) — ${Math.round(((nodeId - 12) / 12) * 100)}% concluído`
+              : `Atividade ${nodeId} de 12 do Mundo 1 — ${Math.round((nodeId / 12) * 100)}% concluído`}
           </div>
         </div>
 
-        {/* Botão para Próxima Lição em Destaque */}
+        {/* Botão para Próxima Lição em Destaque com Indicação do Mundo 2 e Número da Atividade */}
         <div className="mt-8 flex flex-col items-center gap-3">
           {hasNextLesson ? (
             <button
               onClick={onNextLesson}
               className="w-full max-w-md rounded-full bg-primary px-8 py-5 font-display text-xl font-extrabold text-primary-foreground shadow-chunky transition-transform hover:scale-105 active:scale-95 flex items-center justify-center gap-2 animate-bounce-soft"
             >
-              <span>▶ Próxima Lição: {nextLessonData?.title || `Fase ${nextNodeId}`}</span>
+              <span>
+                {nextNodeId >= 13
+                  ? `▶ Próxima Atividade: Mundo 2 — Atividade ${nextNodeId}: ${nextLessonData?.title || `Fase ${nextNodeId}`}`
+                  : `▶ Próxima Atividade: Mundo 1 — Atividade ${nextNodeId}: ${nextLessonData?.title || `Fase ${nextNodeId}`}`}
+              </span>
               <span className="text-2xl">→</span>
             </button>
           ) : (
             <div className="w-full max-w-md rounded-2xl bg-mint/30 border border-mint p-4 text-emerald-900 dark:text-emerald-200 font-display font-black text-center shadow-soft">
-              🏆 Parabéns! Você concluiu todas as 12 lições do Mundo 1!
+              🏆 Parabéns! Você concluiu todas as 24 atividades do Mundo 2 e do SinaLINK!
             </div>
           )}
 
