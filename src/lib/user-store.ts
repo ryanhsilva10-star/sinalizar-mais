@@ -22,6 +22,7 @@ export interface User {
   document?: string;
   address?: string;
   completedLessons?: CompletedLesson[];
+  classroomCode?: string; // código da sala do professor
   hasLoggedIn?: boolean; // true após o primeiro login bem-sucedido
   createdAt: string;
 }

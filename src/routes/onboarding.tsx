@@ -308,7 +308,7 @@ function OnboardingPage() {
                   <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Perfil do Usuário:
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => {
@@ -348,7 +348,7 @@ function OnboardingPage() {
                   <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Nível de Ensino / Trilha Principal:
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setWorld("ef1")}

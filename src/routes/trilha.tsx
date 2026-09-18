@@ -263,10 +263,10 @@ function TrailPage() {
 
       <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
         {/* Selector de Mundos (Abas de Navegação) */}
-        <div className="mb-6 flex items-center justify-center gap-3">
+        <div className="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
           <button
             onClick={() => handleSelectWorld(1)}
-            className={`flex items-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${
               activeWorld === 1
                 ? "bg-primary text-primary-foreground shadow-chunky scale-105"
                 : "bg-card text-muted-foreground hover:bg-muted hover:text-foreground shadow-soft"
@@ -278,7 +278,7 @@ function TrailPage() {
 
           <button
             onClick={() => handleSelectWorld(2)}
-            className={`flex items-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${
               activeWorld === 2
                 ? "bg-gradient-rainbow text-white shadow-chunky scale-105"
                 : isWorld2Unlocked
