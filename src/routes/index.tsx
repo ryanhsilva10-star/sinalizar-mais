@@ -188,7 +188,7 @@ function WorldsSection() {
           <p className="mt-2 max-w-sm text-sm text-foreground/70">Cartoon 3D, mascote fofo, cores saturadas e micro-vitórias a cada toque.</p>
           <img src={luviMascot} alt="Luvi" width={1024} height={1024} loading="lazy" className="mx-auto -mb-6 mt-6 w-56 transition-transform group-hover:scale-105" />
           <div className="flex flex-wrap gap-2">
-            {["Saudações","Alfabeto","Cores","Bichos","Família","Escola"].map(t=>(
+            {["Saudações", "Alfabeto", "Cores", "Bichos", "Família", "Escola"].map(t => (
               <span key={t} className="rounded-full bg-card/80 px-3 py-1 text-xs font-bold">{t}</span>
             ))}
           </div>
@@ -204,7 +204,7 @@ function WorldsSection() {
           <p className="mt-2 max-w-sm text-sm text-white/80">Estética teen, cultura surda, gírias e gramática espacial em contexto real.</p>
           <img src={novaAvatar} alt="Nova" width={1024} height={1024} loading="lazy" className="mx-auto -mb-6 mt-6 w-56 transition-transform group-hover:scale-105 drop-shadow-2xl" />
           <div className="flex flex-wrap gap-2">
-            {["Sentimentos","Rotina","Gírias","Redes","Profissões","Gramática"].map(t=>(
+            {["Sentimentos", "Rotina", "Gírias", "Redes", "Profissões", "Gramática"].map(t => (
               <span key={t} className="rounded-full bg-white/15 px-3 py-1 text-xs font-bold backdrop-blur">{t}</span>
             ))}
           </div>
@@ -296,31 +296,121 @@ function GamificationSection() {
 
 function ActivitiesSection() {
   const acts = [
-    { emoji: "🤟", title: "Qual é o sinal?", desc: "4 sinais. Selecione o correto — feedback destaca o parâmetro errado (mão, movimento, locação)." },
-    { emoji: "🔮", title: "Estoure a Bolha", desc: "Bolhas com sinais flutuam. Estore a bolha que corresponde à palavra. Ritmo suave, sem game over." },
-    { emoji: "🧩", title: "Tradutor de Frases", desc: "Arraste blocos de sinais na ordem correta em LIBRAS (Tópico-Comentário)." },
-    { emoji: "🎭", title: "Desafio do Espelho", desc: "Webcam + IA validam configuração, ponto de articulação e movimento. Cartão de precisão com estrelas." },
-    { emoji: "🧏‍♂️", title: "Soletre em libras", desc: "Datilologia guiada — reproduza pela câmera ou monte arrastando cartões." },
-    { emoji: "🎬", title: "Leitura de Cena", desc: "Micro-histórias com sinalizantes surdos reais. Treina fluência receptiva de verdade." },
+    {
+      lesson: 1,
+      emoji: "🤟",
+      title: "Qual é o sinal?",
+      desc: "4 sinais. Selecione o correto — feedback destaca o parâmetro errado (mão, movimento, locação).",
+      label: "Lição 1 · Iniciar",
+      unlocked: true,
+    },
+    {
+      lesson: 2,
+      emoji: "🔮",
+      title: "Estoure a Bolha",
+      desc: "Bolhas com sinais flutuam. Estoure a bolha que corresponde à palavra. Ritmo suave, sem game over.",
+      label: "Lição 2 · Começar",
+      unlocked: true,
+    },
+    {
+      lesson: 3,
+      emoji: "🧩",
+      title: "Tradutor de Frases",
+      desc: "Arraste blocos de sinais na ordem correta em LIBRAS (Tópico-Comentário).",
+      label: "Lição 3 · Avançar",
+      unlocked: true,
+    },
+    {
+      lesson: 4,
+      emoji: "🎭",
+      title: "Desafio do Espelho",
+      desc: "Webcam + IA validam configuração, ponto de articulação e movimento. Cartão de precisão com estrelas.",
+      label: "Lição 4 · Jogar",
+      unlocked: true,
+    },
+    {
+      lesson: 5,
+      emoji: "🧏‍♂️",
+      title: "Soletre em LIBRAS",
+      desc: "Datilologia guiada — reproduza pela câmera ou monte arrastando cartões.",
+      label: "Lição 5 · Praticar",
+      unlocked: true,
+    },
+    {
+      lesson: 6,
+      emoji: "🎬",
+      title: "Leitura de Cena",
+      desc: "Micro-histórias com sinalizantes surdos reais. Treina fluência receptiva de verdade.",
+      label: "Lição 6 · Assistir",
+      unlocked: true,
+    },
   ];
+
   return (
     <section id="jogos" className="border-y border-border bg-teen-bg py-20 text-teen-fg">
       <div className="mx-auto max-w-6xl px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-neon">7 formatos interativos</span>
+          <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-neon">6 formatos interativos</span>
           <h2 className="mt-3 font-teen text-4xl font-bold md:text-5xl">Aprenda jogando.</h2>
-          <p className="mt-4 text-white/70">Avatares 3D com controle de velocidade (0.5x / 1x) e ângulo (frontal/lateral) </p>
-          <p className="mt-4 text-white/70"> Essencial para aprender a sinalização. </p>
-          
+          <p className="mt-4 text-white/70">Avatares 3D com controle de velocidade (0.5x / 1x) e ângulo (frontal/lateral)</p>
+          <p className="mt-2 text-white/70">Essencial para aprender a sinalização.</p>
         </div>
+
         <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {acts.map((a) => (
-            <div key={a.title} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur transition-all hover:-translate-y-1 hover:bg-white/10">
-              <div className="mx-auto mb-4 h-14 w-14 items-center justify-center rounded-2xl bg-gradient-rainbow text-3xl shadow-glow-teen px-2 py-2">{a.emoji}</div>
+          {acts.map((a, idx) => (
+            <Link
+              key={a.title}
+              to="/licao"
+              search={{ lesson: a.lesson }}
+              className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur transition-all hover:-translate-y-2 hover:bg-white/10 hover:border-white/25 hover:shadow-glow-teen focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon"
+              aria-label={`${a.title} — ${a.label}`}
+            >
+              {/* Lesson number badge */}
+              <span className="absolute right-4 top-4 rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider text-white/60">
+                #{a.lesson}
+              </span>
+
+              {/* Emoji icon */}
+              <div className="mb-4 h-14 w-14 flex items-center justify-center rounded-2xl bg-gradient-rainbow text-3xl shadow-glow-teen transition-transform group-hover:scale-110">
+                {a.emoji}
+              </div>
+
               <h3 className="font-teen text-xl font-bold">{a.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-white/70">{a.desc}</p>
-            </div>
+              <p className="mt-2 flex-1 text-sm leading-relaxed text-white/70">{a.desc}</p>
+
+              {/* CTA button row */}
+              <div className="mt-5 flex items-center justify-between">
+                <span className="flex items-center gap-1.5 rounded-full bg-neon/20 px-4 py-1.5 text-xs font-extrabold text-neon ring-1 ring-neon/40 transition-all group-hover:bg-neon group-hover:text-teen-bg group-hover:ring-neon">
+                  {a.label} →
+                </span>
+                {/* Progress dots indicating position in trail */}
+                <div className="flex gap-1">
+                  {acts.map((_, i) => (
+                    <span
+                      key={i}
+                      className={`h-1.5 rounded-full transition-all ${i === idx
+                          ? "w-4 bg-neon"
+                          : i < idx
+                            ? "w-1.5 bg-white/40"
+                            : "w-1.5 bg-white/15"
+                        }`}
+                    />
+                  ))}
+                </div>
+              </div>
+            </Link>
           ))}
+        </div>
+
+        {/* Trail CTA */}
+        <div className="mt-10 text-center">
+          <Link
+            to="/licao"
+            search={{ lesson: 1 }}
+            className="inline-flex items-center gap-2 rounded-full bg-neon px-8 py-4 font-teen text-base font-bold text-teen-bg shadow-glow-teen transition-transform hover:-translate-y-1 active:scale-95"
+          >
+            ▶ Começar pela Lição 1
+          </Link>
         </div>
       </div>
     </section>
