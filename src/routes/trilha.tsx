@@ -5,6 +5,7 @@ import { ParallaxTrailMap, type TrailNode } from "@/components/ParallaxTrailMap"
 import { soundFx } from "@/lib/sound-effects";
 import { getActiveUser, loginUser, logoutUser, User } from "@/lib/user-store";
 import { toast } from "sonner";
+import { JoinClassroomFab } from "@/components/JoinClassroomFab";
 
 type TrilhaSearch = {
   world?: number;
@@ -535,6 +536,9 @@ function TrailPage() {
 
       {/* Node Detail Sheet Modal */}
       {selected && <NodeSheet node={selected} onClose={() => setSelected(null)} />}
+
+      {/* Botão flutuante para entrar em sala de aula */}
+      <JoinClassroomFab />
     </div>
   );
 }
