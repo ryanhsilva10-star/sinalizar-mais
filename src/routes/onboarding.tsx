@@ -280,6 +280,18 @@ function OnboardingPage() {
           </div>
         </div>
 
+        {/* Desafio de 3 minutos com o Luvi - Cores */}
+        <section className="my-12">
+          <h2 className="font-display text-3xl font-bold mb-4">Desafio de 3 minutos com o Luvi</h2>
+          <div className="grid grid-cols-2 gap-4">
+            <Link to="/onboarding/cores/vermelho" className="block p-4 bg-card rounded-lg shadow hover:scale-105 transition-transform">Vermelho</Link>
+            <Link to="/onboarding/cores/azul" className="block p-4 bg-card rounded-lg shadow hover:scale-105 transition-transform">Azul</Link>
+            <Link to="/onboarding/cores/verde" className="block p-4 bg-card rounded-lg shadow hover:scale-105 transition-transform">Verde</Link>
+            <Link to="/onboarding/cores/amarelo" className="block p-4 bg-card rounded-lg shadow hover:scale-105 transition-transform">Amarelo</Link>
+            <Link to="/onboarding/cores/roxo" className="block p-4 bg-card rounded-lg shadow hover:scale-105 transition-transform">Roxo</Link>
+          </div>
+        </section>
+
         {/* MODES CONTENT */}
 
         {/* MODE 1: CREATE / SAVE USER FORM */}
@@ -308,7 +320,7 @@ function OnboardingPage() {
                   <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Perfil do Usuário:
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => {
@@ -348,7 +360,7 @@ function OnboardingPage() {
                   <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Nível de Ensino / Trilha Principal:
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setWorld("ef1")}

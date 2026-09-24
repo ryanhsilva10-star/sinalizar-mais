@@ -5,6 +5,10 @@ import {
   getActiveUser,
   saveUser,
   logoutUser,
+  getClassroomByCode,
+  joinClassroom,
+  leaveClassroom,
+  Classroom,
   User,
 } from "@/lib/user-store";
 import Footer from "@/components/Footer";
@@ -34,6 +38,8 @@ const AVATARS = [
 function StudentProfilePage() {
   const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [roomCodeInput, setRoomCodeInput] = useState("");
+  const [isJoiningRoom, setIsJoiningRoom] = useState(false);
 
   // Form States
   const [name, setName] = useState("");
@@ -82,6 +88,39 @@ function StudentProfilePage() {
     navigate({ to: "/login", replace: true });
   };
 
+  // Entrar em sala via código no perfil
+  const handleJoinClassroom = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser) return;
+    const trimmed = roomCodeInput.trim().toUpperCase();
+    if (!trimmed) {
+      toast.error("Informe o código da sala.");
+      return;
+    }
+    setIsJoiningRoom(true);
+    setTimeout(() => {
+      const res = joinClassroom(currentUser.id, trimmed);
+      setIsJoiningRoom(false);
+      if (res.success) {
+        toast.success(res.message);
+        setRoomCodeInput("");
+        const refreshed = getActiveUser();
+        if (refreshed) setCurrentUser(refreshed);
+      } else {
+        toast.error(res.message);
+      }
+    }, 400);
+  };
+
+  // Sair da sala atual
+  const handleLeaveClassroom = () => {
+    if (!currentUser) return;
+    leaveClassroom(currentUser.id);
+    toast.info("Você saiu da sala de aula.");
+    const refreshed = getActiveUser();
+    if (refreshed) setCurrentUser(refreshed);
+  };
+
   // Salvar edições cadastrais do Aluno
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -116,6 +155,10 @@ function StudentProfilePage() {
   };
 
   if (!currentUser) return null;
+
+  const currentClassroom: Classroom | null = currentUser.classroomCode
+    ? getClassroomByCode(currentUser.classroomCode)
+    : null;
 
   const isTeen = world === "ef2";
 
@@ -345,8 +388,98 @@ function StudentProfilePage() {
             </section>
           </div>
 
-          {/* Histórico de Lições Concluídas (1 Coluna) */}
-          <div>
+          {/* Coluna Lateral: Sala de Aula + Histórico de Lições */}
+          <div className="space-y-6">
+            {/* Card de Sala de Aula */}
+            <section className="rounded-3xl border border-border bg-card p-6 shadow-xl">
+              <div className="flex items-center justify-between gap-2 border-b border-border/60 pb-3 mb-4">
+                <h3 className="font-display text-lg font-extrabold flex items-center gap-2">
+                  <span>🏫</span> Minha Sala de Aula
+                </h3>
+                {currentClassroom && (
+                  <span className="rounded-full bg-emerald-500/20 px-2.5 py-0.5 text-[10px] font-black uppercase text-emerald-600 dark:text-emerald-400">
+                    Conectado
+                  </span>
+                )}
+              </div>
+
+              {currentClassroom ? (
+                <div className="space-y-3">
+                  <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4">
+                    <p className="font-display text-base font-extrabold text-foreground">
+                      {currentClassroom.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      🧑‍🏫 Professor: <strong className="text-foreground">{currentClassroom.teacherName}</strong>
+                    </p>
+                    {currentClassroom.discipline && (
+                      <p className="text-xs text-muted-foreground">
+                        📚 {currentClassroom.discipline}
+                      </p>
+                    )}
+                    <div className="mt-3 flex items-center justify-between rounded-xl bg-background/80 p-2.5 text-xs">
+                      <span className="font-bold text-muted-foreground">Código da Sala:</span>
+                      <span className="font-mono font-black text-primary text-sm tracking-wider">
+                        {currentClassroom.code}
+                      </span>
+                    </div>
+                  </div>
+
+                  <p className="text-[11px] text-muted-foreground">
+                    Seu professor tem livre acesso ao seu progresso e notas nesta sala.
+                  </p>
+
+                  <button
+                    type="button"
+                    onClick={handleLeaveClassroom}
+                    className="w-full rounded-2xl border border-red-500/30 bg-red-500/10 py-2.5 text-xs font-extrabold text-red-600 hover:bg-red-500/20 transition-colors"
+                  >
+                    🚪 Sair desta Sala
+                  </button>
+                </div>
+              ) : currentUser.classroomCode ? (
+                <div className="space-y-3">
+                  <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4 text-xs">
+                    <p className="font-bold">Código vinculado: {currentUser.classroomCode}</p>
+                    <p className="text-muted-foreground mt-1">
+                      Aguardando confirmação do professor ou código atualizado.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleLeaveClassroom}
+                    className="w-full rounded-2xl border border-red-500/30 bg-red-500/10 py-2 text-xs font-bold text-red-600"
+                  >
+                    Desvincular
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    Você ainda não está em nenhuma sala. Digite o código passado pelo seu professor para que ele acompanhe seu aprendizado!
+                  </p>
+                  <form onSubmit={handleJoinClassroom} className="space-y-2.5">
+                    <input
+                      type="text"
+                      value={roomCodeInput}
+                      onChange={(e) => setRoomCodeInput(e.target.value.toUpperCase())}
+                      placeholder="Ex: LIBRAS2026"
+                      maxLength={20}
+                      className="w-full rounded-xl border-2 border-border bg-background px-3 py-2.5 text-center font-display text-sm font-extrabold uppercase tracking-wider outline-none focus:border-primary"
+                    />
+                    <button
+                      type="submit"
+                      disabled={isJoiningRoom || !roomCodeInput.trim()}
+                      className="w-full rounded-full bg-primary py-2.5 text-xs font-extrabold text-primary-foreground shadow-soft transition-transform hover:-translate-y-0.5 active:translate-y-0 disabled:opacity-50"
+                    >
+                      {isJoiningRoom ? "Entrando…" : "🚀 Entrar na Sala"}
+                    </button>
+                  </form>
+                </div>
+              )}
+            </section>
+
+            {/* Histórico de Lições Concluídas */}
             <section className="rounded-3xl border border-border bg-card p-6 shadow-xl">
               <h3 className="font-display text-lg font-extrabold flex items-center gap-2">
                 <span>📜</span> Minhas Lições Concluídas

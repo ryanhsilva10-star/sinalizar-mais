@@ -153,7 +153,7 @@ function LoginPage() {
             <div className="inline-flex rounded-2xl bg-muted/60 p-1 shadow-inner w-full">
               <button
                 onClick={() => setMode("login")}
-                className={`w-1/2 rounded-xl py-2.5 text-sm font-extrabold transition-all ${
+                className={`w-1/2 rounded-xl py-2.5 text-xs sm:text-sm font-extrabold transition-all ${
                   mode === "login"
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:text-foreground"
@@ -163,7 +163,7 @@ function LoginPage() {
               </button>
               <button
                 onClick={() => setMode("register")}
-                className={`w-1/2 rounded-xl py-2.5 text-sm font-extrabold transition-all ${
+                className={`w-1/2 rounded-xl py-2.5 text-xs sm:text-sm font-extrabold transition-all ${
                   mode === "register"
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:text-foreground"
@@ -276,7 +276,7 @@ function LoginPage() {
                   <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Tipo de Perfil:
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <button
                       type="button"
                       onClick={() => setRole("aluno")}
