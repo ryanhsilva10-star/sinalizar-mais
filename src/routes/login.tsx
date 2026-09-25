@@ -103,25 +103,29 @@ function LoginPage() {
       return;
     }
 
-    const saved = saveUser({
-      name,
-      email,
-      password,
-      role,
-      discipline: role === "professor" ? discipline : undefined,
-      world,
-      avatar: selectedAvatar,
-    });
+    try {
+      const saved = saveUser({
+        name,
+        email,
+        password,
+        role,
+        discipline: role === "professor" ? discipline : undefined,
+        world,
+        avatar: selectedAvatar,
+      });
 
-    // efetua o login explícito com o usuário cadastrado
-    loginUser(saved.email, saved.password);
+      // efetua o login explícito com o usuário cadastrado
+      loginUser(saved.email, saved.password);
 
-    toast.success(`Conta criada com sucesso! Bem-vindo(a), ${saved.name}.`);
+      toast.success(`Conta criada com sucesso! Bem-vindo(a), ${saved.name}.`);
 
-    if (saved.role === "professor") {
-      navigate({ to: "/onboarding", replace: true });
-    } else {
-      navigate({ to: "/student/profile", replace: true });
+      if (saved.role === "professor") {
+        navigate({ to: "/onboarding", replace: true });
+      } else {
+        navigate({ to: "/student/profile", replace: true });
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Ocorreu um erro ao criar a conta.");
     }
   };
 
@@ -223,40 +227,8 @@ function LoginPage() {
               </form>
 
               {/* Quick Select Preset Account */}
-              {usersList.length > 0 && (
-                <div className="mt-8 border-t border-border/60 pt-6">
-                  <p className="mb-3 text-center text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Ou selecione um perfil de teste:
-                  </p>
-                  <div className="flex flex-col gap-2">
-                    {usersList.map((usr) => (
-                      <button
-                        key={usr.id}
-                        type="button"
-                        onClick={() => handleQuickLogin(usr)}
-                        className="flex items-center justify-between rounded-2xl border border-border bg-background p-3 text-left transition-all hover:bg-muted/60"
-                      >
-                        <div className="flex items-center gap-3">
-                          <span className="text-2xl">{usr.avatar}</span>
-                          <div>
-                            <p className="font-display font-extrabold text-xs">{usr.name}</p>
-                            <p className="text-[10px] text-muted-foreground">{usr.email}</p>
-                          </div>
-                        </div>
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-[9px] font-black uppercase ${
-                            usr.role === "professor"
-                              ? "bg-blue-500/20 text-blue-600 dark:text-blue-400"
-                              : "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                          }`}
-                        >
-                          {usr.role === "professor" ? "Professor" : "Aluno"}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* REMOVED: Quick select preset accounts to prevent displaying users in general on the web */}
+
             </div>
           ) : (
             <div>

@@ -238,6 +238,17 @@ export function resetToDefaults(): void {
 
 export function saveUser(userData: Partial<User> & { name: string; email: string }): User {
   const users = getUsers();
+
+  // Validação de e-mail duplicado para novos usuários
+  if (!userData.id) {
+    const emailExists = users.some(
+      (u) => u.email.toLowerCase() === userData.email.trim().toLowerCase()
+    );
+    if (emailExists) {
+      throw new Error("Este e-mail já está cadastrado no sistema.");
+    }
+  }
+
   const existingIndex = users.findIndex(
     (u) => (userData.id && u.id === userData.id) || u.email.toLowerCase() === userData.email.toLowerCase()
   );
@@ -395,22 +406,40 @@ export function getClassroomsByTeacher(teacherId: string): Classroom[] {
   return classrooms.filter((c) => c.teacherId === teacherId);
 }
 
+export function generateRandomClassroomCode(): string {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let result = "";
+  for (let i = 0; i < 6; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
 export function saveClassroom(
-  classroomData: Partial<Classroom> & { name: string; code: string; teacherId: string }
+  classroomData: Partial<Classroom> & { name: string; teacherId: string },
 ): Classroom {
   const classrooms = getClassrooms();
-  const normalizedCode = classroomData.code.trim().toUpperCase();
+
+  // Gera código aleatório se não for fornecido
+  const code = classroomData.code
+    ? classroomData.code.trim().toUpperCase()
+    : generateRandomClassroomCode();
 
   // Verifica unicidade de código se for nova sala ou edição de código
   const existingWithCode = classrooms.find(
-    (c) => c.code.toUpperCase() === normalizedCode && c.id !== classroomData.id
+    (c) => c.code.toUpperCase() === code && c.id !== classroomData.id
   );
   if (existingWithCode) {
-    throw new Error(`O código de sala "${normalizedCode}" já está em uso por outra turma.`);
+    // Se for gerado automaticamente e colidir, tenta gerar outro (recursão simples)
+    if (!classroomData.code) {
+      return saveClassroom(classroomData);
+    }
+    throw new Error(`O código de sala "${code}" já está em uso por outra turma.`);
   }
 
   let updatedClassroom: Classroom;
   const existingIdx = classrooms.findIndex((c) => classroomData.id && c.id === classroomData.id);
+
 
   if (existingIdx >= 0) {
     const oldCode = classrooms[existingIdx].code;
