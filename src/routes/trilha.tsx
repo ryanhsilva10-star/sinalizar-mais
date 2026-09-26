@@ -2,10 +2,12 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import luviMascot from "@/assets/luvi-mascot.png";
 import { ParallaxTrailMap, type TrailNode } from "@/components/ParallaxTrailMap";
+import { AlphabetReferenceModal } from "@/components/AlphabetReferenceModal";
 import { soundFx } from "@/lib/sound-effects";
 import { getActiveUser, loginUser, logoutUser, User } from "@/lib/user-store";
 import { toast } from "sonner";
 import { JoinClassroomFab } from "@/components/JoinClassroomFab";
+import { BookOpen } from "lucide-react";
 
 type TrilhaSearch = {
   world?: number;
@@ -45,54 +47,54 @@ type Island = {
   nodes: TrailNode[];
 };
 
-// MUNDO 1: CORES & BICHOS (Fases 1 a 12)
+// MUNDO 1: ALFABETO DOS BICHINHOS (Fases 1 a 12 - Letras A a R)
 const TRAIL_NODES_BASE_WORLD1: Omit<TrailNode, "state" | "stars">[] = [
-  // Ilha do Oi (1-4)
-  { id: 1, islandId: 1, islandName: "Ilha do Oi", title: "Oi & Tchau", icon: "👋", kind: "licao", x: 10, y: 88 },
-  { id: 2, islandId: 1, islandName: "Ilha do Oi", title: "Meu nome é…", icon: "🪪", kind: "licao", x: 22, y: 76 },
-  { id: 3, islandId: 1, islandName: "Ilha do Oi", title: "Revisão relâmpago", icon: "⚡", kind: "revisao", x: 34, y: 64 },
-  { id: 4, islandId: 1, islandName: "Ilha do Oi", title: "Chefe: Cumprimentos", icon: "🏆", kind: "chefe", x: 40, y: 54 },
-  // Ilha das Cores (5-8)
-  { id: 5, islandId: 2, islandName: "Ilha das Cores", title: "Cores quentes", icon: "🍎", kind: "licao", x: 48, y: 48 },
-  { id: 6, islandId: 2, islandName: "Ilha das Cores", title: "Cores frias", icon: "💙", kind: "licao", x: 57, y: 52 },
-  { id: 7, islandId: 2, islandName: "Ilha das Cores", title: "Desafio do espelho", icon: "🪞", kind: "espelho", x: 67, y: 54 },
-  { id: 8, islandId: 2, islandName: "Ilha das Cores", title: "Chefe: Arco-íris", icon: "🌈", kind: "chefe", x: 76, y: 45 },
-  // Ilha dos Bichos (9-12)
-  { id: 9, islandId: 3, islandName: "Ilha dos Bichos", title: "Bichos de casa", icon: "🐶", kind: "licao", x: 70, y: 35 },
-  { id: 10, islandId: 3, islandName: "Ilha dos Bichos", title: "Bichos da fazenda", icon: "🐄", kind: "licao", x: 62, y: 25 },
-  { id: 11, islandId: 3, islandName: "Ilha dos Bichos", title: "Revisão relâmpago", icon: "⚡", kind: "revisao", x: 68, y: 18 },
-  { id: 12, islandId: 3, islandName: "Ilha dos Bichos", title: "Chefe: Castelo do Saber", icon: "🏰", kind: "chefe", x: 80, y: 13 },
+  // Ilha das Primeiras Letras (1-4)
+  { id: 1, islandId: 1, islandName: "Ilha das Primeiras Letras", title: "Letras A, B, C", icon: "🦫", kind: "licao", x: 10, y: 88 },
+  { id: 2, islandId: 1, islandName: "Ilha das Primeiras Letras", title: "Letras D, E, F", icon: "🦖", kind: "licao", x: 22, y: 76 },
+  { id: 3, islandId: 1, islandName: "Ilha das Primeiras Letras", title: "Revisão: A, B, C", icon: "⚡", kind: "revisao", x: 34, y: 64 },
+  { id: 4, islandId: 1, islandName: "Ilha das Primeiras Letras", title: "Chefe: D, E, F", icon: "🏆", kind: "chefe", x: 40, y: 54 },
+  // Ilha dos Bichinhos do Meio (5-8)
+  { id: 5, islandId: 2, islandName: "Ilha dos Bichinhos do Meio", title: "Letras G, H, I", icon: "🦒", kind: "licao", x: 48, y: 48 },
+  { id: 6, islandId: 2, islandName: "Ilha dos Bichinhos do Meio", title: "Letras J, K, L", icon: "🦁", kind: "licao", x: 57, y: 52 },
+  { id: 7, islandId: 2, islandName: "Ilha dos Bichinhos do Meio", title: "Espelho IA: G, H, I", icon: "🪞", kind: "espelho", x: 67, y: 54 },
+  { id: 8, islandId: 2, islandName: "Ilha dos Bichinhos do Meio", title: "Chefe: J, K, L", icon: "👑", kind: "chefe", x: 76, y: 45 },
+  // Ilha das Letras do Castelo (9-12)
+  { id: 9, islandId: 3, islandName: "Ilha das Letras do Castelo", title: "Letras M, N, O", icon: "🐵", kind: "licao", x: 70, y: 35 },
+  { id: 10, islandId: 3, islandName: "Ilha das Letras do Castelo", title: "Letras P, Q, R", icon: "🐼", kind: "licao", x: 62, y: 25 },
+  { id: 11, islandId: 3, islandName: "Ilha das Letras do Castelo", title: "Revisão: M, N, O", icon: "⚡", kind: "revisao", x: 68, y: 18 },
+  { id: 12, islandId: 3, islandName: "Ilha das Letras do Castelo", title: "Chefe Mundo 1: P, Q, R", icon: "🏰", kind: "chefe", x: 80, y: 13 },
 ];
 
-// MUNDO 2: O CASTELO DA FAMÍLIA E EXPRESSÕES (Fases 13 a 24)
+// MUNDO 2: O CASTELO DOS BICHINHOS AVENTUREIROS (Fases 13 a 24 - Letras S a Z e Maestria)
 const TRAIL_NODES_BASE_WORLD2: Omit<TrailNode, "state" | "stars">[] = [
-  // Ilha da Família (13-16)
-  { id: 13, islandId: 4, islandName: "Ilha da Família", title: "Mãe & Pai", icon: "👩‍👧", kind: "licao", x: 12, y: 84 },
-  { id: 14, islandId: 4, islandName: "Ilha da Família", title: "Irmão & Avós", icon: "🧑‍🤝‍🧑", kind: "licao", x: 25, y: 72 },
-  { id: 15, islandId: 4, islandName: "Ilha da Família", title: "Revisão relâmpago", icon: "⚡", kind: "revisao", x: 38, y: 60 },
-  { id: 16, islandId: 4, islandName: "Ilha da Família", title: "Chefe: Banquete em Família", icon: "🏠", kind: "chefe", x: 44, y: 50 },
-  // Ilha das Expressões & Sentimentos (17-20)
-  { id: 17, islandId: 5, islandName: "Ilha das Expressões", title: "Alegria & Tristeza", icon: "😃", kind: "licao", x: 54, y: 46 },
-  { id: 18, islandId: 5, islandName: "Ilha das Expressões", title: "Amor & Coragem", icon: "❤️", kind: "licao", x: 64, y: 52 },
-  { id: 19, islandId: 5, islandName: "Ilha das Expressões", title: "Desafio do espelho", icon: "🪞", kind: "espelho", x: 74, y: 46 },
-  { id: 20, islandId: 5, islandName: "Ilha das Expressões", title: "Chefe: Festival dos Sentimentos", icon: "🕊️", kind: "chefe", x: 80, y: 36 },
-  // O Portão Real do Castelo (21-24)
-  { id: 21, islandId: 6, islandName: "Portão Real do Castelo", title: "Boas-vindas", icon: "🏰", kind: "licao", x: 70, y: 26 },
-  { id: 22, islandId: 6, islandName: "Portão Real do Castelo", title: "Diálogo no Castelo", icon: "🧠", kind: "licao", x: 60, y: 18 },
-  { id: 23, islandId: 6, islandName: "Portão Real do Castelo", title: "Revisão do Castelo", icon: "⚡", kind: "revisao", x: 68, y: 12 },
-  { id: 24, islandId: 6, islandName: "Portão Real do Castelo", title: "Grande Chefe: O Trono", icon: "👑", kind: "chefe", x: 82, y: 8 },
+  // Ilha dos Bichos Aventureiros (13-16)
+  { id: 13, islandId: 4, islandName: "Ilha dos Bichos Aventureiros", title: "Letras S, T, U", icon: "🐸", kind: "licao", x: 12, y: 84 },
+  { id: 14, islandId: 4, islandName: "Ilha dos Bichos Aventureiros", title: "Letras V, W, X", icon: "🐮", kind: "licao", x: 25, y: 72 },
+  { id: 15, islandId: 4, islandName: "Ilha dos Bichos Aventureiros", title: "Revisão: S, T, U", icon: "⚡", kind: "revisao", x: 38, y: 60 },
+  { id: 16, islandId: 4, islandName: "Ilha dos Bichos Aventureiros", title: "Chefe: V, W, X", icon: "🏠", kind: "chefe", x: 44, y: 50 },
+  // Ilha dos Sinais Dinâmicos (17-20)
+  { id: 17, islandId: 5, islandName: "Ilha dos Sinais Dinâmicos", title: "Letras Y, Z, A", icon: "🦬", kind: "licao", x: 54, y: 46 },
+  { id: 18, islandId: 5, islandName: "Ilha dos Sinais Dinâmicos", title: "Dinâmicos: H, J, Z", icon: "🔄", kind: "licao", x: 64, y: 52 },
+  { id: 19, islandId: 5, islandName: "Ilha dos Sinais Dinâmicos", title: "Espelho IA: F, T, S", icon: "🪞", kind: "espelho", x: 74, y: 46 },
+  { id: 20, islandId: 5, islandName: "Ilha dos Sinais Dinâmicos", title: "Chefe: K, P, D", icon: "🕊️", kind: "chefe", x: 80, y: 36 },
+  // O Portão Real do Trono A-Z (21-24)
+  { id: 21, islandId: 6, islandName: "O Portão Real do Trono A-Z", title: "Dedos Unidos: R, U, V", icon: "✌️", kind: "licao", x: 70, y: 26 },
+  { id: 22, islandId: 6, islandName: "O Portão Real do Trono A-Z", title: "Dedos p/ Baixo: M, N, W", icon: "👇", kind: "licao", x: 60, y: 18 },
+  { id: 23, islandId: 6, islandName: "O Portão Real do Trono A-Z", title: "Super Revisão: A, L, Y", icon: "⚡", kind: "revisao", x: 68, y: 12 },
+  { id: 24, islandId: 6, islandName: "O Portão Real do Trono A-Z", title: "Grande Trono: X, Y, Z", icon: "👑", kind: "chefe", x: 82, y: 8 },
 ];
 
 const ISLANDS_WORLD1: Island[] = [
-  { id: 1, name: "Ilha do Oi", subtitle: "Saudações e apresentação", tone: "bg-sky", nodes: [] },
-  { id: 2, name: "Ilha das Cores", subtitle: "Vermelho, azul, amarelo e mais", tone: "bg-grape", nodes: [] },
-  { id: 3, name: "Ilha dos Bichos", subtitle: "Animais da fazenda e domésticos", tone: "bg-neon", nodes: [] },
+  { id: 1, name: "Ilha das Primeiras Letras", subtitle: "Aprenda A, B, C e D, E, F com os mascotes", tone: "bg-sky", nodes: [] },
+  { id: 2, name: "Ilha dos Bichinhos do Meio", subtitle: "Aprenda G, H, I e J, K, L em LIBRAS", tone: "bg-grape", nodes: [] },
+  { id: 3, name: "Ilha das Letras do Castelo", subtitle: "Aprenda M, N, O e P, Q, R com a turma", tone: "bg-neon", nodes: [] },
 ];
 
 const ISLANDS_WORLD2: Island[] = [
-  { id: 4, name: "Ilha da Família", subtitle: "Mães, pais, irmãos e avós em LIBRAS", tone: "bg-coral", nodes: [] },
-  { id: 5, name: "Ilha das Expressões & Sentimentos", subtitle: "Alegria, amor, coragem e IA na câmera", tone: "bg-sunshine", nodes: [] },
-  { id: 6, name: "O Portão Real do Castelo", subtitle: "Boas-vindas, diálogos e o Grande Trono", tone: "bg-sky", nodes: [] },
+  { id: 4, name: "Ilha dos Bichos Aventureiros", subtitle: "Aprenda S, T, U e V, W, X em LIBRAS", tone: "bg-coral", nodes: [] },
+  { id: 5, name: "Ilha dos Sinais Dinâmicos", subtitle: "Letras Y, Z, Movimentos e Desafios de Polegar", tone: "bg-sunshine", nodes: [] },
+  { id: 6, name: "O Portão Real do Trono A-Z", subtitle: "Domínio completo do alfabeto manual em LIBRAS", tone: "bg-sky", nodes: [] },
 ];
 
 /** Calcula o estado dinâmico dos nós com base nas lições concluídas do usuário e no mundo ativo. */
@@ -166,6 +168,7 @@ function TrailPage() {
   const [viewMode, setViewMode] = useState<"map" | "list">("map");
   const [timeOfDay, setTimeOfDay] = useState<"day" | "sunset" | "night">("day");
   const [isMuted, setIsMuted] = useState(soundFx.getMuted());
+  const [isAlphabetModalOpen, setIsAlphabetModalOpen] = useState(false);
 
   // Guarda de Rota: Apenas Alunos Autenticados têm acesso à Trilha
   useEffect(() => {
@@ -260,6 +263,7 @@ function TrailPage() {
         onToggleMute={handleToggleMute}
         viewMode={viewMode}
         onToggleView={setViewMode}
+        onOpenAlphabet={() => setIsAlphabetModalOpen(true)}
       />
 
       <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
@@ -273,8 +277,8 @@ function TrailPage() {
                 : "bg-card text-muted-foreground hover:bg-muted hover:text-foreground shadow-soft"
             }`}
           >
-            <span>🌊</span>
-            <span>Mundo 1: Cores &amp; Bichos</span>
+            <span>🐾</span>
+            <span>Mundo 1: Alfabeto dos Bichinhos (A-R)</span>
           </button>
 
           <button
@@ -287,8 +291,8 @@ function TrailPage() {
                 : "bg-muted/80 text-muted-foreground cursor-pointer shadow-soft opacity-80"
             }`}
           >
-            <span>🏰</span>
-            <span>Mundo 2: O Castelo da Família</span>
+            <span>👑</span>
+            <span>Mundo 2: O Trono do Alfabeto (S-Z)</span>
             {!isWorld2Unlocked && <span className="ml-1 text-xs">🔒</span>}
             {isWorld2Unlocked && <span className="ml-1 text-xs">✨</span>}
           </button>
@@ -307,21 +311,21 @@ function TrailPage() {
             <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start">
               <h1 className="font-display text-2xl font-black text-foreground">
                 {activeWorld === 1
-                  ? "Mundo 1: Cores & Bichos"
-                  : "Mundo 2: O Castelo da Família e Expressões"}
+                  ? "Mundo 1: Alfabeto dos Bichinhos"
+                  : "Mundo 2: O Grande Trono do Alfabeto"}
               </h1>
               <span className="rounded-full bg-amber-100 px-3 py-0.5 font-display text-xs font-black text-amber-800">
-                Fase {islands.findIndex((isl) => isl.nodes.some((n) => n.state === "current")) + 1} de {islands.length}
+                Ilha {islands.findIndex((isl) => isl.nodes.some((n) => n.state === "current")) + 1} de {islands.length}
               </span>
             </div>
             <p className="mt-1 text-sm text-muted-foreground">
               {activeWorld === 1
                 ? completedCount === 0
-                  ? "Bem-vindo(a)! Comece sua jornada pelo primeiro sinal! 🌟"
-                  : `Você completou ${completedCount} de ${trailNodes.length} lições do Mundo 1. Continue avançando! 🏰`
+                  ? "Bem-vindo(a)! Aprenda o alfabeto em LIBRAS, 3 letras por lição com os bichinhos! 🐾"
+                  : `Você completou ${completedCount} de ${trailNodes.length} lições do Mundo 1. Continue avançando! 🌟`
                 : isWorld2Unlocked
-                ? `Bem-vindo ao Castelo! Você completou ${completedCount} de ${trailNodes.length} lições do Mundo 2! 👑`
-                : "Conclua a Fase 12 na Ilha dos Bichos para abrir os portões do Castelo! 🔒"}
+                ? `Bem-vindo ao Trono Real! Você completou ${completedCount} de ${trailNodes.length} lições do Mundo 2! 👑`
+                : "Conclua a Fase 12 na Ilha das Letras do Castelo para abrir os portões do Mundo 2! 🔒"}
             </p>
             <div className="mt-3 flex items-center gap-3">
               <div className="h-3.5 flex-1 overflow-hidden rounded-full bg-muted shadow-inner">
@@ -537,6 +541,12 @@ function TrailPage() {
       {/* Node Detail Sheet Modal */}
       {selected && <NodeSheet node={selected} onClose={() => setSelected(null)} />}
 
+      {/* Modal Interativo do Alfabeto Oficial LIBRAS */}
+      <AlphabetReferenceModal
+        isOpen={isAlphabetModalOpen}
+        onClose={() => setIsAlphabetModalOpen(false)}
+      />
+
       {/* Botão flutuante para entrar em sala de aula */}
       <JoinClassroomFab />
     </div>
@@ -550,6 +560,7 @@ function TrailHeader({
   onToggleMute,
   viewMode,
   onToggleView,
+  onOpenAlphabet,
 }: {
   timeOfDay: "day" | "sunset" | "night";
   setTimeOfDay: (t: "day" | "sunset" | "night") => void;
@@ -557,6 +568,7 @@ function TrailHeader({
   onToggleMute: () => void;
   viewMode: "map" | "list";
   onToggleView: (v: "map" | "list") => void;
+  onOpenAlphabet?: () => void;
 }) {
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
@@ -600,8 +612,19 @@ function TrailHeader({
           </button>
         </div>
 
-        {/* Game Stats & Audio Toggle */}
+        {/* Game Stats, Alphabet Guide & Audio Toggle */}
         <div className="flex items-center gap-2">
+          {onOpenAlphabet && (
+            <button
+              onClick={onOpenAlphabet}
+              className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-extrabold text-primary hover:bg-primary/20 shadow-xs"
+              title="Abrir Guia Oficial de Alfabeto em LIBRAS (A-Z)"
+            >
+              <BookOpen className="h-3.5 w-3.5" />
+              <span className="hidden sm:inline">Guia A-Z</span>
+            </button>
+          )}
+
           <button
             onClick={onToggleMute}
             className="grid h-9 w-9 place-items-center rounded-full bg-card shadow-soft transition-transform hover:scale-105"
