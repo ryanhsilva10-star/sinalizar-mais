@@ -8,8 +8,13 @@ import {
   deleteUser,
   getActiveUser,
   logoutUser,
+  getClassroomsByTeacher,
+  saveClassroom,
+  getStudentsInClassroom,
+  Classroom,
 } from "@/lib/user-store";
 import Footer from "@/components/Footer";
+import { Eye, EyeOff, Plus } from "lucide-react";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -42,8 +47,9 @@ function OnboardingPage() {
   const [usersList, setUsersList] = useState<User[]>([]);
   const [activeUser, setActiveUser] = useState<User | null>(null);
 
-  // Modos de visualização da página: 'manage' (Alunos) | 'create' | 'teachers'
-  const [mode, setMode] = useState<"manage" | "create" | "teachers">("manage");
+  // Modos de visualização da página: 'manage' (Alunos) | 'create' | 'teachers' | 'classrooms'
+  const [mode, setMode] = useState<"manage" | "create" | "teachers" | "classrooms">("manage");
+
 
   // Estado do formulário (Criar / Editar)
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -61,7 +67,13 @@ function OnboardingPage() {
   // Estado para o modal de lições realizadas do aluno
   const [selectedStudentForLessons, setSelectedStudentForLessons] = useState<User | null>(null);
 
+  // Estados para Gerenciamento de Salas
+  const [classroomName, setClassroomName] = useState("");
+  const [classroomDiscipline, setClassroomDiscipline] = useState("");
+  const [visibleCodes, setVisibleCodes] = useState<Record<string, boolean>>({});
+
   // Guarda de Autorização da Rota (Apenas Professores)
+
   const refreshUserData = () => {
     const list = getUsers();
     setUsersList(list);
@@ -164,24 +176,30 @@ function OnboardingPage() {
     }
   };
 
-  // Confirmar Exclusão de Usuário
-  const handleConfirmDelete = () => {
-    if (!userToDelete) return;
+  const handleCreateClassroom = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!classroomName.trim()) {
+      toast.error("Por favor, informe o nome da turma.");
+      return;
+    }
 
     try {
-      const deletedName = userToDelete.name;
-      deleteUser(userToDelete.id);
-      setUserToDelete(null);
-      refreshUserData();
-      toast.success(`Usuário "${deletedName}" deletado com sucesso.`);
-
-      if (editingId === userToDelete.id) {
-        resetForm();
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Erro ao deletar usuário.");
+      saveClassroom({
+        name: classroomName,
+        teacherId: activeUser!.id,
+        teacherName: activeUser!.name,
+        discipline: classroomDiscipline,
+      });
+      setClassroomName("");
+      setClassroomDiscipline("");
+      toast.success("Sala de aula criada com sucesso! 🎉");
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao criar sala.");
     }
+  };
+
+  const toggleCodeVisibility = (id: string) => {
+    setVisibleCodes((prev) => ({ ...prev, [id]: !prev[id] }));
   };
 
   if (!activeUser) return null;
@@ -252,7 +270,16 @@ function OnboardingPage() {
             >
               👥 Gerenciar Alunos ({studentsList.length})
             </button>
-
+            <button
+              onClick={() => setMode("classrooms")}
+              className={`rounded-xl px-4 py-2.5 text-xs md:text-sm font-extrabold transition-all ${
+                mode === "classrooms"
+                  ? "bg-primary text-primary-foreground shadow-md"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              🏫 Minhas Salas
+            </button>
             <button
               onClick={() => setMode("teachers")}
               className={`rounded-xl px-4 py-2.5 text-xs md:text-sm font-extrabold transition-all ${
