@@ -437,9 +437,9 @@ export function saveClassroom(
     throw new Error(`O código de sala "${code}" já está em uso por outra turma.`);
   }
 
+  const normalizedCode = code.toUpperCase();
   let updatedClassroom: Classroom;
   const existingIdx = classrooms.findIndex((c) => classroomData.id && c.id === classroomData.id);
-
 
   if (existingIdx >= 0) {
     const oldCode = classrooms[existingIdx].code;

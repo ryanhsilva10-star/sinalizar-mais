@@ -176,6 +176,14 @@ function OnboardingPage() {
     }
   };
 
+  const handleConfirmDelete = () => {
+    if (!userToDelete) return;
+    deleteUser(userToDelete.id);
+    refreshUserData();
+    toast.success(`Usuário "${userToDelete.name}" excluído com sucesso.`);
+    setUserToDelete(null);
+  };
+
   const handleCreateClassroom = (e: React.FormEvent) => {
     e.preventDefault();
     if (!classroomName.trim()) {

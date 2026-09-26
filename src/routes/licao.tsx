@@ -360,7 +360,7 @@ export const LESSONS_DATA: Record<number, LessonNodeData> = {
         species: "Girafa",
         tone: "bg-sunshine",
         signTip: "Mostre o indicador ereto para a câmera.",
-        handShapeDesc: "Letra G na câmera",
+        handShapeDesc: "na câmera",
         bodyLocation: "Centro do vídeo",
       },
       {
@@ -1693,17 +1693,15 @@ function ScreenTeach({
                     <div className="flex gap-1">
                       <button
                         onClick={() => setActiveAngleView("primary")}
-                        className={`rounded-md px-2 py-0.5 text-[9px] font-extrabold ${
-                          activeAngleView === "primary" ? "bg-primary text-white" : "bg-muted text-muted-foreground"
-                        }`}
+                        className={`rounded-md px-2 py-0.5 text-[9px] font-extrabold ${activeAngleView === "primary" ? "bg-primary text-white" : "bg-muted text-muted-foreground"
+                          }`}
                       >
                         Frente
                       </button>
                       <button
                         onClick={() => setActiveAngleView("secondary")}
-                        className={`rounded-md px-2 py-0.5 text-[9px] font-extrabold ${
-                          activeAngleView === "secondary" ? "bg-primary text-white" : "bg-muted text-muted-foreground"
-                        }`}
+                        className={`rounded-md px-2 py-0.5 text-[9px] font-extrabold ${activeAngleView === "secondary" ? "bg-primary text-white" : "bg-muted text-muted-foreground"
+                          }`}
                       >
                         Lado
                       </button>
@@ -1824,13 +1822,12 @@ function ScreenQuiz({
                     else soundFx.playPop();
                   }
                 }}
-                className={`group relative flex flex-col items-center justify-center p-4 rounded-3xl border-4 ${mascot.tone} transition-all ${
-                  isRight
+                className={`group relative flex flex-col items-center justify-center p-4 rounded-3xl border-4 ${mascot.tone} transition-all ${isRight
                     ? "border-mint bg-mint/30 animate-pop scale-105 shadow-chunky ring-4 ring-mint/40"
                     : isWrong
-                    ? "border-destructive bg-destructive/10 opacity-75"
-                    : "border-transparent hover:border-primary hover:-translate-y-1 shadow-soft"
-                }`}
+                      ? "border-destructive bg-destructive/10 opacity-75"
+                      : "border-transparent hover:border-primary hover:-translate-y-1 shadow-soft"
+                  }`}
               >
                 {/* Visual da mãozinha do mascote (SEM PLACA, SEM EXIBIR A LETRA ANTES DA RESPOSTA) */}
                 <div className="relative h-28 w-28 overflow-hidden rounded-2xl border-2 border-black/20 bg-card/70 shadow-sm flex flex-col items-center justify-center p-1">
@@ -1867,9 +1864,8 @@ function ScreenQuiz({
                   {/* SÓ REVELA A LETRA APÓS O ALUNO TER CLICADO PARA RESPONDER! */}
                   {choice && (
                     <span
-                      className={`absolute top-1 right-1 rounded-md px-1.5 py-0.5 text-xs font-black text-white shadow-sm ${
-                        c.targetLetter === target.targetLetter ? "bg-mint text-slate-950" : "bg-black/80"
-                      }`}
+                      className={`absolute top-1 right-1 rounded-md px-1.5 py-0.5 text-xs font-black text-white shadow-sm ${c.targetLetter === target.targetLetter ? "bg-mint text-slate-950" : "bg-black/80"
+                        }`}
                     >
                       {c.targetLetter}
                     </span>
@@ -1967,13 +1963,12 @@ function ScreenBubble({
                   }}
                   disabled={!!popped}
                   style={{ animationDelay: `${i * 0.4}s` }}
-                  className={`animate-float rounded-3xl ${mascot.tone} p-3 shadow-chunky transition-all ${
-                    isPopped
+                  className={`animate-float rounded-3xl ${mascot.tone} p-3 shadow-chunky transition-all ${isPopped
                       ? isRight
                         ? "scale-125 opacity-30 ring-4 ring-mint"
                         : "scale-75 opacity-40"
                       : "hover:scale-110"
-                  }`}
+                    }`}
                 >
                   <div className="flex flex-col items-center">
                     <div className="relative h-20 w-20 sm:h-22 sm:w-22 overflow-hidden rounded-2xl border border-black/20 bg-card/70 p-1 flex flex-col items-center justify-center">
@@ -2086,11 +2081,10 @@ function ScreenMirror({
                   setSelectedColor(c);
                   soundFx.playPop();
                 }}
-                className={`flex items-center gap-1.5 rounded-2xl px-4 py-2 text-xs font-extrabold transition-all ${
-                  selectedColor.targetLetter === c.targetLetter
+                className={`flex items-center gap-1.5 rounded-2xl px-4 py-2 text-xs font-extrabold transition-all ${selectedColor.targetLetter === c.targetLetter
                     ? "bg-primary text-primary-foreground shadow-sm scale-105"
                     : "bg-muted text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 <span>{m.emoji}</span>
                 <span>{m.animalName} (Letra {c.targetLetter})</span>
