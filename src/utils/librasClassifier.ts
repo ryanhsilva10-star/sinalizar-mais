@@ -1,3 +1,9 @@
+import {
+  ALPHABET_OFFICIAL_REFERENCES,
+  getAlphabetReference,
+  type AlphabetLetterReference,
+} from "./alphabetReference";
+
 export type Landmark = {
   x: number;
   y: number;
@@ -11,6 +17,23 @@ export type HandDetectionResult = {
   isFramed: boolean;
   landmarksCount: number;
   orientation: "UP" | "DOWN" | "SIDEWAYS";
+  hasMotion?: boolean;
+  motionScore?: number;
+  correctionFeedback?: string;
+};
+
+export type SignEvaluationResult = {
+  isTargetMatch: boolean;
+  targetLetter: string;
+  detectedLetter: string;
+  overallScore: number; // 0 to 100
+  accuracyStars: number; // 1, 2, or 3
+  orientationScore: number; // 1, 2, or 3
+  stabilityScore: number; // 1, 2, or 3
+  motionScore: number; // 1, 2, or 3
+  feedback: string;
+  correctionCues: string[];
+  reference: AlphabetLetterReference;
 };
 
 export type TwoHandSignResult = {
@@ -21,168 +44,22 @@ export type TwoHandSignResult = {
   handsCount: number;
 };
 
-// Informações pedagógicas para cada letra do alfabeto manual em LIBRAS
+// Mantém compatibilidade com ALPHABET_GUIDE
 export const ALPHABET_GUIDE: Record<
   string,
   { name: string; tip: string; orientation: string; emoji: string }
-> = {
-  A: {
-    name: "Letra A",
-    tip: "Feche os 4 dedos na palma e deixe o polegar ereto encostado ao lado do indicador.",
-    orientation: "Para cima",
-    emoji: "🅰️",
+> = Object.entries(ALPHABET_OFFICIAL_REFERENCES).reduce(
+  (acc, [key, ref]) => {
+    acc[key] = {
+      name: ref.name,
+      tip: ref.pedagogicalTip,
+      orientation: ref.orientationDescription,
+      emoji: ref.emoji,
+    };
+    return acc;
   },
-  B: {
-    name: "Letra B",
-    tip: "Mantenha os 4 dedos estendidos e unidos para cima, com o polegar dobrado sobre a palma.",
-    orientation: "Para cima",
-    emoji: "🅱️",
-  },
-  C: {
-    name: "Letra C",
-    tip: "Curve os 4 dedos e o polegar formando um arco semicircular em formato de 'C'.",
-    orientation: "De frente/lateral",
-    emoji: "🌙",
-  },
-  D: {
-    name: "Letra D",
-    tip: "Apenas o indicador apontado para cima. As pontas dos outros dedos tocam o polegar formando um círculo.",
-    orientation: "Para cima",
-    emoji: "☝️",
-  },
-  E: {
-    name: "Letra E",
-    tip: "Dobre todos os dedos pelas falanges para baixo, com o polegar recolhido na palma.",
-    orientation: "Para cima",
-    emoji: "✊",
-  },
-  F: {
-    name: "Letra F",
-    tip: "Mantenha médio, anelar e mínimo para cima. O indicador dobra e o polegar fica por fora encostado nele.",
-    orientation: "Para cima",
-    emoji: "👌",
-  },
-  G: {
-    name: "Letra G",
-    tip: "Mão virada de lado, com indicador estendido na horizontal e polegar paralelo.",
-    orientation: "De lado",
-    emoji: "👉",
-  },
-  H: {
-    name: "Letra H",
-    tip: "Indicador e médio estendidos para o lado, com o polegar entre eles e movimento sutil.",
-    orientation: "De lado",
-    emoji: "✌️",
-  },
-  I: {
-    name: "Letra I",
-    tip: "Apenas o dedo mindinho (mínimo) estendido para cima. Polegar sobre os outros dedos.",
-    orientation: "Para cima",
-    emoji: "🤙",
-  },
-  J: {
-    name: "Letra J",
-    tip: "Com a mão em 'I' (mindinho para cima), desenhe a curva de um 'J' no ar.",
-    orientation: "Para baixo em curva",
-    emoji: "🪄",
-  },
-  K: {
-    name: "Letra K",
-    tip: "Indicador para cima e médio levemente inclinado com o polegar no meio, movendo para cima.",
-    orientation: "De lado/cima",
-    emoji: "✌️",
-  },
-  L: {
-    name: "Letra L",
-    tip: "Indicador para cima e polegar aberto formando um 'L' perfeito de 90°.",
-    orientation: "Para cima",
-    emoji: "👆",
-  },
-  M: {
-    name: "Letra M",
-    tip: "Três dedos (indicador, médio e anelar) estendidos e apontados para baixo.",
-    orientation: "Para baixo",
-    emoji: "👇",
-  },
-  N: {
-    name: "Letra N",
-    tip: "Dois dedos (indicador e médio) estendidos apontando para baixo.",
-    orientation: "Para baixo",
-    emoji: "👇",
-  },
-  O: {
-    name: "Letra O",
-    tip: "Pontas de todos os dedos encostadas no polegar formando um círculo aberto.",
-    orientation: "De frente",
-    emoji: "⭕",
-  },
-  P: {
-    name: "Letra P",
-    tip: "Mão na horizontal com indicador estendido e médio apontando para baixo.",
-    orientation: "Para frente/baixo",
-    emoji: "👇",
-  },
-  Q: {
-    name: "Letra Q",
-    tip: "Indicador e polegar estendidos e apontados para baixo em pinça aberta.",
-    orientation: "Para baixo",
-    emoji: "👇",
-  },
-  R: {
-    name: "Letra R",
-    tip: "Indicador e médio estendidos para cima e cruzados (um sobre o outro).",
-    orientation: "Para cima",
-    emoji: "🤞",
-  },
-  S: {
-    name: "Letra S",
-    tip: "Punho totalmente fechado com o polegar cruzado passando por cima dos dedos.",
-    orientation: "Para cima",
-    emoji: "✊",
-  },
-  T: {
-    name: "Letra T",
-    tip: "Sinal de figas: polegar encaixado entre o indicador e o médio.",
-    orientation: "Para cima",
-    emoji: "🤞",
-  },
-  U: {
-    name: "Letra U",
-    tip: "Indicador e médio estendidos para cima bem colados e paralelos.",
-    orientation: "Para cima",
-    emoji: "✌️",
-  },
-  V: {
-    name: "Letra V",
-    tip: "Indicador e médio estendidos para cima bem afastados em forma de 'V'.",
-    orientation: "Para cima",
-    emoji: "✌️",
-  },
-  W: {
-    name: "Letra W",
-    tip: "Três dedos (indicador, médio e anelar) estendidos para cima e separados.",
-    orientation: "Para cima",
-    emoji: "🖐️",
-  },
-  X: {
-    name: "Letra X",
-    tip: "Indicador dobrado em formato de gancho puxando para trás.",
-    orientation: "Para cima/gancho",
-    emoji: "☝️",
-  },
-  Y: {
-    name: "Letra Y",
-    tip: "Sinal de 'Hang Loose': apenas o polegar e o dedo mínimo estendidos para os lados.",
-    orientation: "Para os lados",
-    emoji: "🤙",
-  },
-  Z: {
-    name: "Letra Z",
-    tip: "Indicador estendido desenhando a letra 'Z' no ar.",
-    orientation: "Movimento no ar",
-    emoji: "⚡",
-  },
-};
+  {} as Record<string, { name: string; tip: string; orientation: string; emoji: string }>
+);
 
 // Calcula a distância euclidiana 3D entre dois pontos
 export function distance(p1: Landmark, p2: Landmark): number {
@@ -311,7 +188,7 @@ export function classifyLibrasSign(landmarks: Landmark[]): HandDetectionResult {
     };
   }
 
-  // --- LANDMARKS DA MÃO ---
+  // --- LANDMARKS DA MÃO (21 pontos MediaPipe) ---
   const wrist = landmarks[0];
   const thumbTip = landmarks[4];
   const thumbIp = landmarks[3];
@@ -379,7 +256,7 @@ export function classifyLibrasSign(landmarks: Landmark[]): HandDetectionResult {
     distance(wrist, pinkyTip) > distance(wrist, pinkyPip) * 1.12 ||
     distance(pinkyMcp, pinkyTip) > distance(pinkyMcp, pinkyPip) * 1.3;
 
-  // Estados individuais de extensão dos outros 3 dedos
+  // Estados individuais de extensão dos outros dedos
   const isIndexExt =
     distance(wrist, indexTip) > distance(wrist, indexPip) * 1.15 ||
     isIndexPointingHorizontalSideways;
@@ -442,7 +319,7 @@ export function classifyLibrasSign(landmarks: Landmark[]): HandDetectionResult {
   let description = "Gesto em análise";
 
   // =========================================================================
-  // REGRAS ESPECÍFICAS INDIVIDUAIS PARA CADA LETRA DO ALFABETO MANUAL LIBRAS
+  // REGRAS ESPECÍFICAS BASEADAS NOS MODELOS OFICIAIS (ALFABETO MANUAL LIBRAS)
   // =========================================================================
 
   // 1. LETRA B: Todos os 4 dedos estendidos para CIMA e polegar recolhido sobre a palma
@@ -569,7 +446,7 @@ export function classifyLibrasSign(landmarks: Landmark[]): HandDetectionResult {
     ) {
       letter = "K";
       confidence = 0.98;
-      description = "Letra K: Mão de lado com indicador e médio AFASTADOS";
+      description = "Letra K: Mão de lado com indicador e médio AFASTADOS e polegar no meio";
     } else {
       letter = "H";
       confidence = 0.98;
@@ -618,7 +495,7 @@ export function classifyLibrasSign(landmarks: Landmark[]): HandDetectionResult {
   ) {
     letter = "P";
     confidence = 0.98;
-    description = "Letra P: Indicador acima do pulso e médio abaixo do pulso";
+    description = "Letra P: Indicador horizontal e médio inclinado para BAIXO";
   }
 
   // 11. LETRA W: 3 dedos para cima
@@ -660,14 +537,14 @@ export function classifyLibrasSign(landmarks: Landmark[]): HandDetectionResult {
   ) {
     letter = "J";
     confidence = 0.98;
-    description = "Letra J: Dedo mínimo estendido com movimento descendente";
+    description = "Letra J: Dedo mínimo estendido com movimento descendente curvo";
   }
 
   // 14. LETRA F: 3 dedos para cima, polegar e indicador em pinça externa
   else if (isMiddleExt && isRingExt && isPinkyExt && thumbIndexDist < 0.35) {
     letter = "F";
     confidence = 0.96;
-    description = "Letra F: Médio, anelar e mínimo para CIMA com indicador e polegar em pinça";
+    description = "Letra F: Médio, anelar e mínimo para CIMA com indicador e polegar por FORA";
   }
 
   // 15. LETRA Q: Indicador e polegar para baixo
@@ -711,7 +588,7 @@ export function classifyLibrasSign(landmarks: Landmark[]): HandDetectionResult {
     if (isThumbTipBetweenJoints6and10) {
       letter = "T";
       confidence = 0.98;
-      description = "Letra T: Figas com polegar entre o indicador e médio";
+      description = "Letra T: Figas com polegar encaixado POR DENTRO entre indicador e médio";
     } else if (!isThumbInPalmArea && isThumbExtendedUp && !isThumbCrossingOverToRingFinger) {
       letter = "A";
       confidence = 0.98;
@@ -796,6 +673,109 @@ export function classifyLibrasSign(landmarks: Landmark[]): HandDetectionResult {
     isFramed: true,
     landmarksCount: landmarks.length,
     orientation,
+  };
+}
+
+/**
+ * Avalia em tempo real a mão do usuário em comparação direta com o modelo oficial da letra alvo.
+ * Fornece dicas de correção imediatas e pontuação por aspecto (configuração de mão, orientação e estabilidade/movimento).
+ */
+export function evaluateSignAgainstTarget(
+  landmarks: Landmark[] | null | undefined,
+  targetLetter: string,
+  motionBuffer?: Landmark[][]
+): SignEvaluationResult {
+  const targetUpper = targetLetter.toUpperCase();
+  const reference = getAlphabetReference(targetUpper);
+
+  if (!landmarks || landmarks.length < 21) {
+    return {
+      isTargetMatch: false,
+      targetLetter: targetUpper,
+      detectedLetter: "-",
+      overallScore: 0,
+      accuracyStars: 1,
+      orientationScore: 1,
+      stabilityScore: 1,
+      motionScore: 1,
+      feedback: "Mostre sua mão no campo de visão da câmera para iniciar a avaliação.",
+      correctionCues: [
+        "Centralize a mão na câmera",
+        reference.handShapeDescription,
+      ],
+      reference,
+    };
+  }
+
+  const detection = classifyLibrasSign(landmarks);
+  const detectedUpper = detection.letter.toUpperCase();
+  const isMatch = detectedUpper === targetUpper;
+
+  // Analisa movimento caso a letra alvo exija movimento dinâmico (H, J, K, X, Z)
+  let motionScore = 3;
+  let hasValidMotion = true;
+  if (reference.hasMovement && motionBuffer && motionBuffer.length >= 5) {
+    const startPos = motionBuffer[0][8]; // ponta do indicador
+    const currentPos = landmarks[8];
+    const deltaMotion = distance(startPos, currentPos);
+
+    if (reference.movementType === "upward_bounce") {
+      // K: subida rápida
+      hasValidMotion = currentPos.y < startPos.y - 0.02 || deltaMotion > 0.03;
+    } else if (reference.movementType === "curve") {
+      // J: descida e curva com mindinho
+      const pinkyStart = motionBuffer[0][20];
+      const pinkyCurrent = landmarks[20];
+      hasValidMotion = pinkyCurrent.y > pinkyStart.y - 0.02 || deltaMotion > 0.03;
+    } else if (reference.movementType === "pull") {
+      // X: puxar para trás
+      hasValidMotion = currentPos.z < startPos.z - 0.01 || deltaMotion > 0.025;
+    } else if (reference.movementType === "zigzag") {
+      // Z: traçado no ar
+      hasValidMotion = deltaMotion > 0.04;
+    } else if (reference.movementType === "rotation") {
+      // H: rotação
+      hasValidMotion = deltaMotion > 0.025;
+    }
+
+    motionScore = hasValidMotion ? 3 : 2;
+  }
+
+  // Gera diagnósticos e correções específicas
+  let feedback = "";
+  const correctionCues: string[] = [];
+
+  if (isMatch) {
+    if (reference.hasMovement && !hasValidMotion) {
+      feedback = `Configuração de mão da Letra ${targetUpper} correta! Agora execute o movimento oficial: ${reference.movementInstructions || "movimento do sinal"}.`;
+    } else {
+      feedback = `Excelente! O sinal da Letra ${targetUpper} está idêntico ao modelo oficial de referência! 🎉`;
+    }
+  } else if (detectedUpper !== "-" && detectedUpper !== "?") {
+    feedback = `Você está realizando o sinal da Letra ${detectedUpper}. Para a Letra ${targetUpper}: ${reference.pedagogicalTip}`;
+    reference.correctionCues.forEach((c) => correctionCues.push(`${c.rule}: ${c.correction}`));
+  } else {
+    feedback = `Ajuste sua mão para o modelo da Letra ${targetUpper}: ${reference.pedagogicalTip}`;
+    reference.correctionCues.forEach((c) => correctionCues.push(c.correction));
+  }
+
+  const accuracyStars = isMatch ? (hasValidMotion ? 3 : 2) : 1;
+  const orientationScore = detection.orientation === "UP" ? 3 : 2;
+  const stabilityScore = isMatch ? 3 : 1;
+  const overallScore = isMatch ? (hasValidMotion ? 100 : 85) : 40;
+
+  return {
+    isTargetMatch: isMatch && hasValidMotion,
+    targetLetter: targetUpper,
+    detectedLetter: detectedUpper,
+    overallScore,
+    accuracyStars,
+    orientationScore,
+    stabilityScore,
+    motionScore,
+    feedback,
+    correctionCues,
+    reference,
   };
 }
 

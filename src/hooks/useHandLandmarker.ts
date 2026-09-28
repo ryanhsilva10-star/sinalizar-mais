@@ -86,8 +86,9 @@ export function useHandLandmarker(options?: UseHandLandmarkerOptions) {
 
       try {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const mediapipeUrl: string = "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm";
         const { HandLandmarker, FilesetResolver }: any = await import(
-          /* @vite-ignore */ "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/+esm"
+          /* @vite-ignore */ mediapipeUrl
         );
 
         if (!isMounted) return;

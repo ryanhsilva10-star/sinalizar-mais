@@ -14,6 +14,7 @@ import { Route as LicaoRouteImport } from './routes/licao'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as TrilhaRouteImport } from './routes/trilha'
+import { Route as TurmaRouteImport } from './routes/turma'
 import { Route as StudentProfileRouteImport } from './routes/student/profile'
 import { Route as OnboardingCoresAmareloRouteImport } from './routes/onboarding/cores/amarelo'
 import { Route as OnboardingCoresAzulRouteImport } from './routes/onboarding/cores/azul'
@@ -44,6 +45,11 @@ const OnboardingRoute = OnboardingRouteImport.update({
 const TrilhaRoute = TrilhaRouteImport.update({
   id: '/trilha',
   path: '/trilha',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TurmaRoute = TurmaRouteImport.update({
+  id: '/turma',
+  path: '/turma',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudentProfileRoute = StudentProfileRouteImport.update({
@@ -83,6 +89,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/trilha': typeof TrilhaRoute
+  '/turma': typeof TurmaRoute
   '/student/profile': typeof StudentProfileRoute
   '/onboarding/cores/amarelo': typeof OnboardingCoresAmareloRoute
   '/onboarding/cores/azul': typeof OnboardingCoresAzulRoute
@@ -96,6 +103,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/trilha': typeof TrilhaRoute
+  '/turma': typeof TurmaRoute
   '/student/profile': typeof StudentProfileRoute
   '/onboarding/cores/amarelo': typeof OnboardingCoresAmareloRoute
   '/onboarding/cores/azul': typeof OnboardingCoresAzulRoute
@@ -110,6 +118,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRouteWithChildren
   '/trilha': typeof TrilhaRoute
+  '/turma': typeof TurmaRoute
   '/student/profile': typeof StudentProfileRoute
   '/onboarding/cores/amarelo': typeof OnboardingCoresAmareloRoute
   '/onboarding/cores/azul': typeof OnboardingCoresAzulRoute
@@ -125,6 +134,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/trilha'
+    | '/turma'
     | '/student/profile'
     | '/onboarding/cores/amarelo'
     | '/onboarding/cores/azul'
@@ -138,6 +148,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/trilha'
+    | '/turma'
     | '/student/profile'
     | '/onboarding/cores/amarelo'
     | '/onboarding/cores/azul'
@@ -151,6 +162,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/trilha'
+    | '/turma'
     | '/student/profile'
     | '/onboarding/cores/amarelo'
     | '/onboarding/cores/azul'
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRouteWithChildren
   TrilhaRoute: typeof TrilhaRoute
+  TurmaRoute: typeof TurmaRoute
   StudentProfileRoute: typeof StudentProfileRoute
 }
 
@@ -203,6 +216,13 @@ declare module '@tanstack/react-router' {
       path: '/trilha'
       fullPath: '/trilha'
       preLoaderRoute: typeof TrilhaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/turma': {
+      id: '/turma'
+      path: '/turma'
+      fullPath: '/turma'
+      preLoaderRoute: typeof TurmaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/student/profile': {
@@ -276,6 +296,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRouteWithChildren,
   TrilhaRoute: TrilhaRoute,
+  TurmaRoute: TurmaRoute,
   StudentProfileRoute: StudentProfileRoute,
 }
 export const routeTree = rootRouteImport

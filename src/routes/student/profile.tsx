@@ -429,6 +429,13 @@ function StudentProfilePage() {
                     Seu professor tem livre acesso ao seu progresso e notas nesta sala.
                   </p>
 
+                  <Link
+                    to="/turma"
+                    className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-primary py-3 text-xs font-extrabold text-primary-foreground shadow-soft hover:bg-primary/90 transition-all"
+                  >
+                    <span>🛡️ Acessar Painel da Turma/Clã →</span>
+                  </Link>
+
                   <button
                     type="button"
                     onClick={handleLeaveClassroom}
