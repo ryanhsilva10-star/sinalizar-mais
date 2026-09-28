@@ -7,6 +7,7 @@ import { soundFx } from "@/lib/sound-effects";
 import { getActiveUser, loginUser, logoutUser, User } from "@/lib/user-store";
 import { toast } from "sonner";
 import { JoinClassroomFab } from "@/components/JoinClassroomFab";
+import { TurmaClaNavbarButton } from "@/components/TurmaClaNavbarButton";
 import { BookOpen } from "lucide-react";
 
 type TrilhaSearch = {
@@ -668,6 +669,9 @@ function TrailUserAuthControls() {
 
   return (
     <div className="flex items-center gap-2">
+      {/* Botão Turma/Clã estritamente para alunos logados */}
+      <TurmaClaNavbarButton />
+
       <Link
         to={currentUser.role === "professor" ? "/onboarding" : "/student/profile"}
         className="flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-extrabold hover:bg-muted"

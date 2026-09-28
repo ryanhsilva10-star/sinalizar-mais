@@ -29,6 +29,7 @@ function LandingPage() {
 }
 
 import { getActiveUser, logoutUser } from "@/lib/user-store";
+import { TurmaClaNavbarButton } from "@/components/TurmaClaNavbarButton";
 import { toast } from "sonner";
 import { Menu, X } from "lucide-react";
 
@@ -63,6 +64,9 @@ function Header() {
         <div className="hidden md:block">
           {currentUser ? (
             <div className="flex items-center gap-3">
+              {/* Botão Turma/Clã estritamente para alunos logados */}
+              <TurmaClaNavbarButton />
+
               <Link
                 to={currentUser.role === "professor" ? "/onboarding" : "/student/profile"}
                 className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-extrabold hover:bg-muted"
@@ -81,12 +85,12 @@ function Header() {
             <div className="flex items-center gap-3">
               <Link
                 to="/login"
-                className="text-sm font-extrabold text-muted-foreground hover:text-foreground px-3 py-2"
+                className="text-sm font-extrabold text-muted-foreground hover:text-foreground px-3 py-2 transition-colors"
               >
-                Entrar
+                Área do Professor
               </Link>
               <Link
-                to="/login"
+                to="/trilha"
                 className="inline-flex items-center rounded-full bg-foreground px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-0.5"
               >
                 Começar agora
@@ -118,6 +122,8 @@ function Header() {
           <div className="border-t border-border/60 pt-4 mt-2">
             {currentUser ? (
               <div className="flex flex-col gap-3">
+                <TurmaClaNavbarButton isMobile={true} />
+
                 <Link
                   to={currentUser.role === "professor" ? "/onboarding" : "/student/profile"}
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -140,10 +146,10 @@ function Header() {
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="w-full rounded-full border border-border bg-card px-4 py-3 text-sm font-extrabold justify-center flex items-center text-center"
                 >
-                  Entrar
+                  Área do Professor
                 </Link>
                 <Link
-                  to="/login"
+                  to="/trilha"
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="w-full rounded-full bg-foreground px-4 py-3 text-sm font-extrabold text-primary-foreground justify-center flex items-center text-center shadow-chunky"
                 >
