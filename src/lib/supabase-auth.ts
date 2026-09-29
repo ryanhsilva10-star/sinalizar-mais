@@ -58,7 +58,7 @@ export async function logoutWithSupabase() {
 export async function fetchProfileFromSupabase(userId: string): Promise<User | null> {
   if (!isSupabaseConfigured()) return null;
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("profiles")
     .select("*")
     .eq("id", userId)
@@ -92,7 +92,7 @@ export async function fetchProfileFromSupabase(userId: string): Promise<User | n
 export async function fetchClassroomsFromSupabase(): Promise<Classroom[]> {
   if (!isSupabaseConfigured()) return [];
 
-  const { data, error } = await supabase.from("classrooms").select("*");
+  const { data, error } = await (supabase as any).from("classrooms").select("*");
   if (error || !data) return [];
 
   return data.map((c: any) => ({
@@ -119,7 +119,7 @@ export async function createClassroomInSupabase(classroom: {
 }) {
   if (!isSupabaseConfigured()) return null;
 
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from("classrooms")
     .insert({
       code: classroom.code,

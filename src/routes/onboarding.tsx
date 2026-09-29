@@ -216,13 +216,6 @@ function OnboardingPage() {
     if (!userToDelete) return;
     deleteUser(userToDelete.id);
     refreshUserData();
-<<<<<<< HEAD
-    toast.success(`Usuário "${userToDelete.name}" excluído com sucesso.`);
-    setUserToDelete(null);
-  };
-
-  const handleCreateClassroom = (e: React.FormEvent) => {
-=======
     toast.success(`Conta do(a) professor(a) "${userToDelete.name}" foi excluída.`);
     setUserToDelete(null);
   };
@@ -252,7 +245,6 @@ function OnboardingPage() {
   };
 
   const handleSaveClassroomSubmit = (e: React.FormEvent) => {
->>>>>>> ce0466bf3df4371dbf54d1c1b456ed409603801d
     e.preventDefault();
     if (!classroomName.trim()) {
       toast.error("Por favor, informe o nome da sala de aula.");
