@@ -9,32 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
-import { Route as LicaoRouteImport } from './routes/licao'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as OnboardingRouteImport } from './routes/onboarding'
-import { Route as TrilhaRouteImport } from './routes/trilha'
 import { Route as TurmaRouteImport } from './routes/turma'
+import { Route as TrilhaRouteImport } from './routes/trilha'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as LicaoRouteImport } from './routes/licao'
+import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudentProfileRouteImport } from './routes/student/profile'
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LicaoRoute = LicaoRouteImport.update({
-  id: '/licao',
-  path: '/licao',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingRoute = OnboardingRouteImport.update({
-  id: '/onboarding',
-  path: '/onboarding',
+const TurmaRoute = TurmaRouteImport.update({
+  id: '/turma',
+  path: '/turma',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TrilhaRoute = TrilhaRouteImport.update({
@@ -42,9 +27,24 @@ const TrilhaRoute = TrilhaRouteImport.update({
   path: '/trilha',
   getParentRoute: () => rootRouteImport,
 } as any)
-const TurmaRoute = TurmaRouteImport.update({
-  id: '/turma',
-  path: '/turma',
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LicaoRoute = LicaoRouteImport.update({
+  id: '/licao',
+  path: '/licao',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const StudentProfileRoute = StudentProfileRouteImport.update({
@@ -123,32 +123,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/licao': {
-      id: '/licao'
-      path: '/licao'
-      fullPath: '/licao'
-      preLoaderRoute: typeof LicaoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/onboarding': {
-      id: '/onboarding'
-      path: '/onboarding'
-      fullPath: '/onboarding'
-      preLoaderRoute: typeof OnboardingRouteImport
+    '/turma': {
+      id: '/turma'
+      path: '/turma'
+      fullPath: '/turma'
+      preLoaderRoute: typeof TurmaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/trilha': {
@@ -158,11 +137,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrilhaRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/turma': {
-      id: '/turma'
-      path: '/turma'
-      fullPath: '/turma'
-      preLoaderRoute: typeof TurmaRouteImport
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/licao': {
+      id: '/licao'
+      path: '/licao'
+      fullPath: '/licao'
+      preLoaderRoute: typeof LicaoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/student/profile': {
