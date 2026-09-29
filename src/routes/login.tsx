@@ -40,6 +40,8 @@ const USER_AVATARS = [
   { icon: "👾", label: "Gamer Teen" },
 ];
 
+import { loginWithSupabase, registerWithSupabase, isSupabaseConfigured } from "@/lib/supabase-auth";
+
 function LoginPage() {
   const navigate = useNavigate();
   const search = Route.useSearch();
@@ -76,11 +78,20 @@ function LoginPage() {
     }
   }, [navigate]);
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
       toast.error("Por favor, informe seu e-mail.");
       return;
+    }
+
+    if (isSupabaseConfigured()) {
+      try {
+        await loginWithSupabase({ email, password });
+      } catch (err: any) {
+        toast.error(err.message || "Erro de autenticação no Supabase.");
+        return;
+      }
     }
 
     const user = loginUser(email, password);
@@ -98,7 +109,7 @@ function LoginPage() {
     }
   };
 
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim()) {
       toast.error("Por favor, preencha o nome e o e-mail.");
@@ -106,6 +117,19 @@ function LoginPage() {
     }
 
     try {
+      if (isSupabaseConfigured()) {
+        await registerWithSupabase({
+          email,
+          password,
+          name,
+          role: accountRole,
+          world,
+          avatar: selectedAvatar,
+          discipline,
+          classroomCode,
+        });
+      }
+
       if (accountRole === "aluno") {
         const saved = saveUser({
           name,
