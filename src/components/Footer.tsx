@@ -55,11 +55,11 @@ const FOOTER_COLUMNS = [
     id: "produtos",
     title: "Aplicativos",
     links: [
-      { label: "SinaLINK para iOS", href: "#" },
-      { label: "SinaLINK para Android", href: "#" },
-      { label: "SinaLINK Kids (EF1)", href: "#" },
-      { label: "SinaLINK Teen (EF2)", href: "#" },
-      { label: "SinaLINK para Escolas", href: "#" },
+      { label: "Sinalizar mais para iOS", href: "#" },
+      { label: "Sinalizar mais para Android", href: "#" },
+      { label: "Sinalizar mais Kids (EF1)", href: "#" },
+      { label: "Sinalizar mais Teen (EF2)", href: "#" },
+      { label: "Sinalizar mais para Escolas", href: "#" },
     ],
   },
   {
@@ -288,7 +288,7 @@ export function Footer() {
         {/* Rodapé Inferior: Copyright e Links Finais */}
         <div className="mt-12 pt-8 border-t border-[#232e38] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-[#6d778d] text-center sm:text-left">
           <div className="flex items-center gap-2">
-            <span>© {new Date().getFullYear()} SinaLINK / Duolingo Style UI. Todos os direitos reservados.</span>
+            <span>© {new Date().getFullYear()} Sinalizar mais / Duolingo Style UI. Todos os direitos reservados.</span>
           </div>
 
           <div className="flex items-center gap-1">

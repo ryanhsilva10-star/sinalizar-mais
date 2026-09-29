@@ -40,9 +40,9 @@ export interface User {
   createdAt: string;
 }
 
-const STORAGE_KEY = "sinalink_users_v1";
-const CLASSROOMS_KEY = "sinalink_classrooms_v1";
-const ACTIVE_USER_KEY = "sinalink_active_user_id_v1";
+const STORAGE_KEY = "sinalizar_mais_users_v1";
+const CLASSROOMS_KEY = "sinalizar_mais_classrooms_v1";
+const ACTIVE_USER_KEY = "sinalizar_mais_active_user_id_v1";
 
 export const DEFAULT_CLASSROOMS: Classroom[] = [
   {
@@ -73,7 +73,7 @@ const DEFAULT_USERS: User[] = [
   {
     id: "usr_1",
     name: "Luizinho Explorer",
-    email: "luizinho@sinalink.com",
+    email: "luizinho@sinalizarmais.com",
     password: "123",
     role: "aluno",
     world: "ef1",
@@ -97,7 +97,7 @@ const DEFAULT_USERS: User[] = [
   {
     id: "usr_2",
     name: "Nova Teen",
-    email: "nova@sinalink.com",
+    email: "nova@sinalizarmais.com",
     password: "123",
     role: "aluno",
     world: "ef2",
@@ -130,7 +130,7 @@ const DEFAULT_USERS: User[] = [
   {
     id: "usr_prof_1",
     name: "Profe. Helena Silva",
-    email: "helena.prof@sinalink.com",
+    email: "helena.prof@sinalizarmais.com",
     password: "123",
     role: "professor",
     discipline: "LIBRAS & Inclusão",
@@ -288,6 +288,7 @@ export function saveUser(userData: Partial<User> & { name: string; email: string
 
   if (typeof window !== "undefined") {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+    notifyUserChanges({ type: "saveUser", user: updatedUser });
   }
 
   return updatedUser;
@@ -302,6 +303,8 @@ export function deleteUser(userId: string): void {
     const activeId = getActiveUserId();
     if (activeId === userId) {
       logoutUser();
+    } else {
+      notifyUserChanges({ type: "deleteUser", userId });
     }
   }
 }
@@ -316,6 +319,7 @@ export function getActiveUserId(): string | null {
 export function setActiveUserId(userId: string): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(ACTIVE_USER_KEY, userId);
+  notifyUserChanges({ type: "setActiveUser", userId });
 }
 
 export function getActiveUser(): User | null {
@@ -339,6 +343,7 @@ export function touchActiveUser(): void {
 export function logoutUser(): void {
   if (typeof window === "undefined") return;
   localStorage.removeItem(ACTIVE_USER_KEY);
+  notifyUserChanges({ type: "logout" });
 }
 
 export function loginUser(email: string, password?: string): User | null {
@@ -447,17 +452,17 @@ export function saveClassroom(
       ...classrooms[existingIdx],
       ...classroomData,
       name: classroomData.name.trim(),
-      code: normalizedCode,
+      code: code,
     };
     classrooms[existingIdx] = updatedClassroom;
 
     // Se o código mudou, atualiza os alunos que estavam no código antigo
-    if (oldCode !== normalizedCode) {
+    if (oldCode !== code) {
       const users = getUsers();
       let changed = false;
       for (let i = 0; i < users.length; i++) {
         if (users[i].classroomCode === oldCode) {
-          users[i].classroomCode = normalizedCode;
+          users[i].classroomCode = code;
           changed = true;
         }
       }
@@ -468,7 +473,7 @@ export function saveClassroom(
   } else {
     updatedClassroom = {
       id: classroomData.id || `cls_${Date.now()}_${Math.random().toString(36).substr(2, 4)}`,
-      code: normalizedCode,
+      code: code,
       name: classroomData.name.trim(),
       teacherId: classroomData.teacherId,
       teacherName: classroomData.teacherName || "Professor",
@@ -482,6 +487,7 @@ export function saveClassroom(
 
   if (typeof window !== "undefined") {
     localStorage.setItem(CLASSROOMS_KEY, JSON.stringify(classrooms));
+    notifyUserChanges({ type: "saveClassroom", classroom: updatedClassroom });
   }
 
   return updatedClassroom;
@@ -508,6 +514,7 @@ export function deleteClassroom(classroomId: string): void {
     if (changed) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
     }
+    notifyUserChanges({ type: "deleteClassroom", classroomId });
   }
 }
 
@@ -565,6 +572,7 @@ export function joinClassroom(
 
   if (typeof window !== "undefined") {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+    notifyUserChanges({ type: "joinClassroom", studentId, code: normalizedCode });
   }
 
   return {
@@ -588,6 +596,7 @@ export function leaveClassroom(studentId: string): void {
     };
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+      notifyUserChanges({ type: "leaveClassroom", studentId });
     }
   }
 }
@@ -614,4 +623,170 @@ export function isUserOnline(user: User): boolean {
   }
   return false;
 }
+
+// ==========================================
+// OBSERVER PATTERN (SUBSCRIPTION & REACTIVITY)
+// ==========================================
+
+export function notifyUserChanges(detail?: any): void {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new CustomEvent("sinalizar-mais:user-changed", { detail }));
+}
+
+export function subscribeToUserChanges(callback: () => void): () => void {
+  if (typeof window === "undefined") return () => {};
+  const handler = () => callback();
+  window.addEventListener("sinalizar-mais:user-changed", handler);
+  window.addEventListener("storage", handler);
+  return () => {
+    window.removeEventListener("sinalizar-mais:user-changed", handler);
+    window.removeEventListener("storage", handler);
+  };
+}
+
+// ==========================================
+// MÉTRICAS AGREGADAS DA TURMA / CLÃ (PRIVACIDADE REFORÇADA)
+// ==========================================
+
+export interface ActivityAggregatedMetric {
+  nodeId: number;
+  world: 1 | 2;
+  title: string;
+  subtitle: string;
+  icon: string;
+  kind: "licao" | "revisao" | "espelho" | "chefe";
+  myScore: number;
+  myCompleted: boolean;
+  turmaAverageScore: number;
+  turmaCompletionPercentage: number;
+  turmaCompletedCount: number;
+}
+
+export interface ClanAggregatedDashboard {
+  classroom: Classroom;
+  totalMembers: number;
+  clanTotalXp: number;
+  clanAverageLevel: number;
+  clanOverallCompletionRate: number;
+  myOverallCompletionRate: number;
+  myCompletedCount: number;
+  activities: ActivityAggregatedMetric[];
+}
+
+export const ALL_TRAIL_ACTIVITIES = [
+  // MUNDO 1 (1-12)
+  { nodeId: 1, world: 1 as const, title: "Letras A, B, C", subtitle: "Primeiras Letras em LIBRAS", icon: "🦫", kind: "licao" as const },
+  { nodeId: 2, world: 1 as const, title: "Letras D, E, F", subtitle: "Apresentação e Meu Nome", icon: "🦖", kind: "licao" as const },
+  { nodeId: 3, world: 1 as const, title: "Revisão: A, B, C", subtitle: "Revisão relâmpago: Saudações", icon: "⚡", kind: "revisao" as const },
+  { nodeId: 4, world: 1 as const, title: "Chefe: D, E, F", subtitle: "Desafio do Chefe: Cumprimentos", icon: "🏆", kind: "chefe" as const },
+  { nodeId: 5, world: 1 as const, title: "Letras G, H, I", subtitle: "Cores Quentes em LIBRAS", icon: "🦒", kind: "licao" as const },
+  { nodeId: 6, world: 1 as const, title: "Letras J, K, L", subtitle: "Cores Frias em LIBRAS", icon: "🦁", kind: "licao" as const },
+  { nodeId: 7, world: 1 as const, title: "Espelho IA: G, H, I", subtitle: "Desafio do espelho com IA", icon: "🪞", kind: "espelho" as const },
+  { nodeId: 8, world: 1 as const, title: "Chefe: J, K, L", subtitle: "Desafio do Chefe: Arco-íris", icon: "👑", kind: "chefe" as const },
+  { nodeId: 9, world: 1 as const, title: "Letras M, N, O", subtitle: "Bichos de casa em LIBRAS", icon: "🐵", kind: "licao" as const },
+  { nodeId: 10, world: 1 as const, title: "Letras P, Q, R", subtitle: "Bichos da fazenda em LIBRAS", icon: "🐼", kind: "licao" as const },
+  { nodeId: 11, world: 1 as const, title: "Revisão: M, N, O", subtitle: "Revisão relâmpago: Animais", icon: "⚡", kind: "revisao" as const },
+  { nodeId: 12, world: 1 as const, title: "Chefe Mundo 1: P, Q, R", subtitle: "Desafio do Chefe: Castelo do Saber", icon: "🏰", kind: "chefe" as const },
+  // MUNDO 2 (13-24)
+  { nodeId: 13, world: 2 as const, title: "Letras S, T, U", subtitle: "Ilha dos Bichos Aventureiros", icon: "🐸", kind: "licao" as const },
+  { nodeId: 14, world: 2 as const, title: "Letras V, W, X", subtitle: "Sinais Avançados de Aventura", icon: "🐮", kind: "licao" as const },
+  { nodeId: 15, world: 2 as const, title: "Revisão: S, T, U", subtitle: "Revisão relâmpago: Bichos II", icon: "⚡", kind: "revisao" as const },
+  { nodeId: 16, world: 2 as const, title: "Chefe: V, W, X", subtitle: "Desafio do Chefe Aventureiro", icon: "🏠", kind: "chefe" as const },
+  { nodeId: 17, world: 2 as const, title: "Letras Y, Z, A", subtitle: "Ilha dos Sinais Dinâmicos", icon: "🦬", kind: "licao" as const },
+  { nodeId: 18, world: 2 as const, title: "Dinâmicos: H, J, Z", subtitle: "Movimentos & Polegar", icon: "🔄", kind: "licao" as const },
+  { nodeId: 19, world: 2 as const, title: "Espelho IA: F, T, S", subtitle: "Câmera e Visão Computacional", icon: "🪞", kind: "espelho" as const },
+  { nodeId: 20, world: 2 as const, title: "Chefe: K, P, D", subtitle: "Desafio do Guardião dos Sinais", icon: "🕊️", kind: "chefe" as const },
+  { nodeId: 21, world: 2 as const, title: "Dedos Unidos: R, U, V", subtitle: "Portão Real do Trono A-Z", icon: "✌️", kind: "licao" as const },
+  { nodeId: 22, world: 2 as const, title: "Dedos p/ Baixo: M, N, W", subtitle: "Configurações de Mão Invertidas", icon: "👇", kind: "licao" as const },
+  { nodeId: 23, world: 2 as const, title: "Super Revisão: A, L, Y", subtitle: "Desafio de Velocidade e Precisão", icon: "⚡", kind: "revisao" as const },
+  { nodeId: 24, world: 2 as const, title: "Grande Trono: X, Y, Z", subtitle: "Mestre Supremo do Alfabeto LIBRAS", icon: "👑", kind: "chefe" as const },
+];
+
+/**
+ * Retorna as métricas agregadas da turma/clã de forma 100% segura e anônima.
+ * O aluno NUNCA recebe nomes, avatares ou dados individuais de colegas.
+ */
+export function getClassroomAggregatedDashboard(
+  classroomCode: string,
+  currentUserId: string
+): ClanAggregatedDashboard | null {
+  if (!classroomCode) return null;
+
+  const classroom = getClassroomByCode(classroomCode);
+  if (!classroom) return null;
+
+  const users = getUsers();
+  const currentUser = users.find((u) => u.id === currentUserId);
+  const clanMembers = users.filter(
+    (u) => u.role === "aluno" && u.classroomCode && u.classroomCode.toUpperCase() === classroomCode.toUpperCase()
+  );
+
+  const totalMembers = clanMembers.length;
+  const clanTotalXp = clanMembers.reduce((acc, m) => acc + (m.xp || 0), 0);
+  const clanAverageLevel = totalMembers > 0 ? Math.round(clanMembers.reduce((acc, m) => acc + (m.level || 1), 0) / totalMembers) : 1;
+
+  let myCompletedCount = 0;
+  let totalClanCompletionSum = 0;
+
+  const activities: ActivityAggregatedMetric[] = ALL_TRAIL_ACTIVITIES.map((act) => {
+    const nodeKey = `trail_node_${act.nodeId}`;
+    const legacyKey = `les_${act.nodeId}`;
+
+    // Progresso do próprio aluno logado
+    const myLesson = currentUser?.completedLessons?.find(
+      (l) => l.id === nodeKey || l.id === legacyKey
+    );
+    const myCompleted = !!myLesson;
+    const myScore = myLesson ? myLesson.score : 0;
+    if (myCompleted) myCompletedCount++;
+
+    // Média e taxa percentual agregada da turma
+    let completedInClan = 0;
+    let scoreSumInClan = 0;
+
+    for (const member of clanMembers) {
+      const memLesson = member.completedLessons?.find(
+        (l) => l.id === nodeKey || l.id === legacyKey
+      );
+      if (memLesson) {
+        completedInClan++;
+        scoreSumInClan += memLesson.score;
+      }
+    }
+
+    const turmaCompletionPercentage = totalMembers > 0 ? Math.round((completedInClan / totalMembers) * 100) : 0;
+    const turmaAverageScore = completedInClan > 0 ? Math.round(scoreSumInClan / completedInClan) : 0;
+
+    totalClanCompletionSum += turmaCompletionPercentage;
+
+    return {
+      nodeId: act.nodeId,
+      world: act.world,
+      title: act.title,
+      subtitle: act.subtitle,
+      icon: act.icon,
+      kind: act.kind,
+      myScore,
+      myCompleted,
+      turmaAverageScore,
+      turmaCompletionPercentage,
+      turmaCompletedCount: completedInClan,
+    };
+  });
+
+  const clanOverallCompletionRate = activities.length > 0 ? Math.round(totalClanCompletionSum / activities.length) : 0;
+  const myOverallCompletionRate = activities.length > 0 ? Math.round((myCompletedCount / activities.length) * 100) : 0;
+
+  return {
+    classroom,
+    totalMembers,
+    clanTotalXp,
+    clanAverageLevel,
+    clanOverallCompletionRate,
+    myOverallCompletionRate,
+    myCompletedCount,
+    activities,
+  };
+}
+
 

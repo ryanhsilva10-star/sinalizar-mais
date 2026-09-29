@@ -2,71 +2,96 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import React, { useState, useEffect } from "react";
 import { toast } from "sonner";
 import {
-  getUsers,
   loginUser,
   saveUser,
   getActiveUser,
-  User,
 } from "@/lib/user-store";
 import Footer from "@/components/Footer";
 
+type LoginSearch = {
+  mode?: "login" | "register";
+};
+
 export const Route = createFileRoute("/login")({
+  validateSearch: (search: Record<string, unknown>): LoginSearch => {
+    return {
+      mode: search?.mode === "register" ? "register" : "login",
+    };
+  },
   head: () => ({
     meta: [
-      { title: "Entrar & Acessar · SinaLINK LIBRAS" },
+      { title: "Acesso e Cadastro · Sinalizar mais LIBRAS" },
       {
         name: "description",
-        content: "Entre na sua conta de Aluno ou Professor para acessar as trilhas de LIBRAS.",
+        content: "Área de login e cadastro no Sinalizar mais para alunos e professores gerenciarem seu progresso e salas de aula.",
       },
     ],
   }),
   component: LoginPage,
 });
 
-const AVATARS = [
+const USER_AVATARS = [
   { icon: "🦊", label: "Luvi Raposa" },
   { icon: "🚀", label: "Nova Astro" },
-  { icon: "🧑‍🏫", label: "Professora / Professor" },
+  { icon: "🧑‍🏫", label: "Professor(a)" },
   { icon: "🐼", label: "Panda Sinais" },
   { icon: "🦁", label: "Leão Corajoso" },
+  { icon: "🦉", label: "Coruja Sábia" },
+  { icon: "👾", label: "Gamer Teen" },
 ];
+
+import { loginWithSupabase, registerWithSupabase, isSupabaseConfigured } from "@/lib/supabase-auth";
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [usersList, setUsersList] = useState<User[]>([]);
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const search = Route.useSearch();
+  const [mode, setMode] = useState<"login" | "register">(search.mode || "login");
 
-  // Form State
+  // Sync mode with URL search params
+  useEffect(() => {
+    if (search.mode) {
+      setMode(search.mode);
+    }
+  }, [search.mode]);
+
+  // Login State
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  
+
   // Register State
+  const [accountRole, setAccountRole] = useState<"aluno" | "professor">("aluno");
   const [name, setName] = useState("");
-  const [role, setRole] = useState<"aluno" | "professor">("aluno");
   const [discipline, setDiscipline] = useState("");
   const [world, setWorld] = useState<"ef1" | "ef2">("ef1");
   const [selectedAvatar, setSelectedAvatar] = useState("🦊");
+  const [classroomCode, setClassroomCode] = useState("");
 
   useEffect(() => {
-    const list = getUsers();
-    setUsersList(list);
-
-    // Se já houver um usuário autenticado, redireciona para a página apropriada
+    // Se já houver um usuário autenticado
     const current = getActiveUser();
     if (current) {
       if (current.role === "professor") {
         navigate({ to: "/onboarding", replace: true });
       } else {
-        navigate({ to: "/student/profile", replace: true });
+        navigate({ to: "/trilha", replace: true });
       }
     }
   }, [navigate]);
 
-  const handleLoginSubmit = (e: React.FormEvent) => {
+  const handleLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
       toast.error("Por favor, informe seu e-mail.");
       return;
+    }
+
+    if (isSupabaseConfigured()) {
+      try {
+        await loginWithSupabase({ email, password });
+      } catch (err: any) {
+        toast.error(err.message || "Erro de autenticação no Supabase.");
+        return;
+      }
     }
 
     const user = loginUser(email, password);
@@ -75,54 +100,68 @@ function LoginPage() {
       return;
     }
 
-    toast.success(`Bem-vindo(a) de volta, ${user.name}!`);
-
     if (user.role === "professor") {
+      toast.success(`Bem-vindo(a) de volta, Professor(a) ${user.name}!`);
       navigate({ to: "/onboarding", replace: true });
     } else {
-      navigate({ to: "/student/profile", replace: true });
+      toast.success(`Bem-vindo(a) de volta, ${user.name}! 🎉`);
+      navigate({ to: "/trilha", replace: true });
     }
   };
 
-  const handleQuickLogin = (usr: User) => {
-    const logged = loginUser(usr.email, usr.password);
-    if (logged) {
-      toast.success(`Logado como ${logged.name} (${logged.role === "professor" ? "Professor" : "Aluno"})`);
-      if (logged.role === "professor") {
-        navigate({ to: "/onboarding", replace: true });
-      } else {
-        navigate({ to: "/student/profile", replace: true });
-      }
-    }
-  };
-
-  const handleRegisterSubmit = (e: React.FormEvent) => {
+  const handleRegisterSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !email.trim()) {
-      toast.error("Preencha os campos obrigatórios.");
+      toast.error("Por favor, preencha o nome e o e-mail.");
       return;
     }
 
     try {
-      const saved = saveUser({
-        name,
-        email,
-        password,
-        role,
-        discipline: role === "professor" ? discipline : undefined,
-        world,
-        avatar: selectedAvatar,
-      });
+      if (isSupabaseConfigured()) {
+        await registerWithSupabase({
+          email,
+          password,
+          name,
+          role: accountRole,
+          world,
+          avatar: selectedAvatar,
+          discipline,
+          classroomCode,
+        });
+      }
 
-      // efetua o login explícito com o usuário cadastrado
-      loginUser(saved.email, saved.password);
+      if (accountRole === "aluno") {
+        const saved = saveUser({
+          name,
+          email,
+          password,
+          role: "aluno",
+          world,
+          avatar: selectedAvatar,
+          classroomCode: classroomCode.trim().toUpperCase() || undefined,
+          level: 1,
+          xp: 100,
+          streak: 1,
+          completedLessons: [],
+        });
 
-      toast.success(`Conta criada com sucesso! Bem-vindo(a), ${saved.name}.`);
-
-      if (saved.role === "professor") {
-        navigate({ to: "/onboarding", replace: true });
+        loginUser(saved.email, saved.password);
+        toast.success(`Conta de Aluno criada com sucesso! Bem-vindo(a), ${saved.name}! 🚀`);
+        navigate({ to: "/trilha", replace: true });
       } else {
-        navigate({ to: "/student/profile", replace: true });
+        const saved = saveUser({
+          name,
+          email,
+          password,
+          role: "professor",
+          discipline: discipline.trim() || "LIBRAS & Inclusão",
+          world,
+          avatar: selectedAvatar,
+        });
+
+        loginUser(saved.email, saved.password);
+        toast.success(`Conta de Professor(a) criada com sucesso! Bem-vindo(a), ${saved.name}. 🎉`);
+        navigate({ to: "/onboarding", replace: true });
       }
     } catch (error: any) {
       toast.error(error.message || "Ocorreu um erro ao criar a conta.");
@@ -138,13 +177,13 @@ function LoginPage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
               S
             </span>
-            <span className="font-display text-2xl font-extrabold">SinaLINK</span>
+            <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
           </Link>
           <Link
             to="/trilha"
-            className="rounded-full border border-border px-4 py-2 text-xs font-extrabold hover:bg-muted"
+            className="rounded-full border border-border px-4 py-2 text-xs font-extrabold hover:bg-muted transition-colors"
           >
-            🗺️ Trilha Pública
+            🗺️ Trilha Pública de Sinais
           </Link>
         </div>
       </header>
@@ -163,7 +202,7 @@ function LoginPage() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                🔑 Entrar
+                🔑 Entrar / Login
               </button>
               <button
                 onClick={() => setMode("register")}
@@ -173,7 +212,7 @@ function LoginPage() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                ➕ Criar Conta
+                ➕ Cadastrar Usuário
               </button>
             </div>
           </div>
@@ -181,25 +220,28 @@ function LoginPage() {
           {mode === "login" ? (
             <div>
               <div className="text-center">
-                <span className="text-xs font-extrabold uppercase tracking-widest text-primary">
-                  Acesso à Plataforma
+                <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-2xl mb-3 shadow-inner">
+                  🔑
                 </span>
-                <h1 className="mt-1 font-display text-3xl font-extrabold">Entrar no SinaLINK</h1>
+                <span className="text-xs font-extrabold uppercase tracking-widest text-primary">
+                  Identificação do Usuário
+                </span>
+                <h1 className="mt-1 font-display text-3xl font-extrabold">Acessar Conta</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Identifique-se com seu e-mail para acessar seu perfil ou onboarding.
+                  Entre com seu e-mail e senha de aluno ou professor para acessar seu painel.
                 </p>
               </div>
 
               <form onSubmit={handleLoginSubmit} className="mt-6 flex flex-col gap-4">
                 <div>
                   <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    E-mail
+                    E-mail do Usuário
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="seu@email.com"
+                    placeholder="seu.email@exemplo.com"
                     required
                     className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
                   />
@@ -222,13 +264,21 @@ function LoginPage() {
                   type="submit"
                   className="mt-2 w-full rounded-full bg-primary py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1 active:translate-y-0.5"
                 >
-                  Entrar na Plataforma →
+                  Entrar na Conta →
                 </button>
               </form>
 
-              {/* Quick Select Preset Account */}
-              {/* REMOVED: Quick select preset accounts to prevent displaying users in general on the web */}
-
+              <div className="mt-6 border-t border-border/60 pt-4 text-center">
+                <p className="text-xs text-muted-foreground">
+                  Ainda não tem conta?{" "}
+                  <button
+                    onClick={() => setMode("register")}
+                    className="font-extrabold text-primary hover:underline cursor-pointer"
+                  >
+                    Cadastre-se gratuitamente agora →
+                  </button>
+                </p>
+              </div>
             </div>
           ) : (
             <div>
@@ -238,39 +288,72 @@ function LoginPage() {
                 </span>
                 <h1 className="mt-1 font-display text-3xl font-extrabold">Criar Nova Conta</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Selecione o perfil desejado para começar a usar o SinaLINK.
+                  Escolha o tipo de perfil e cadastre-se para aprender ou ensinar LIBRAS.
                 </p>
               </div>
 
-              <form onSubmit={handleRegisterSubmit} className="mt-6 flex flex-col gap-4">
-                {/* Role Switcher */}
+              {/* Selector de Perfil: Aluno vs Professor */}
+              <div className="mt-6 mb-4">
+                <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">
+                  Sou um(a):
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAccountRole("aluno");
+                      setSelectedAvatar("🦊");
+                    }}
+                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${
+                      accountRole === "aluno"
+                        ? "border-primary bg-primary/10 shadow-soft scale-[1.02]"
+                        : "border-border bg-background hover:bg-muted/50"
+                    }`}
+                  >
+                    <span className="text-2xl">🎓</span>
+                    <span className="mt-1 font-display font-extrabold text-sm">Aluno(a)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAccountRole("professor");
+                      setSelectedAvatar("🧑‍🏫");
+                    }}
+                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${
+                      accountRole === "professor"
+                        ? "border-primary bg-primary/10 shadow-soft scale-[1.02]"
+                        : "border-border bg-background hover:bg-muted/50"
+                    }`}
+                  >
+                    <span className="text-2xl">🧑‍🏫</span>
+                    <span className="mt-1 font-display font-extrabold text-sm">Professor(a)</span>
+                  </button>
+                </div>
+              </div>
+
+              <form onSubmit={handleRegisterSubmit} className="mt-4 flex flex-col gap-4">
+                {/* Avatar */}
                 <div>
                   <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Tipo de Perfil:
+                    Escolha seu Avatar:
                   </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setRole("aluno")}
-                      className={`flex items-center justify-center gap-2 rounded-2xl border-2 p-3 font-extrabold transition-all ${
-                        role === "aluno"
-                          ? "border-primary bg-primary/10 text-foreground"
-                          : "border-border bg-background text-muted-foreground"
-                      }`}
-                    >
-                      <span>🎒 Aluno</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setRole("professor")}
-                      className={`flex items-center justify-center gap-2 rounded-2xl border-2 p-3 font-extrabold transition-all ${
-                        role === "professor"
-                          ? "border-blue-500 bg-blue-500/10 text-foreground"
-                          : "border-border bg-background text-muted-foreground"
-                      }`}
-                    >
-                      <span>🧑‍🏫 Professor</span>
-                    </button>
+                  <div className="flex flex-wrap justify-center gap-2">
+                    {USER_AVATARS.map((av) => (
+                      <button
+                        key={av.icon}
+                        type="button"
+                        onClick={() => setSelectedAvatar(av.icon)}
+                        className={`flex h-11 w-11 items-center justify-center rounded-2xl text-xl transition-all ${
+                          selectedAvatar === av.icon
+                            ? "bg-primary text-primary-foreground ring-4 ring-primary/30 scale-110 shadow-md"
+                            : "bg-muted hover:bg-muted/80"
+                        }`}
+                        title={av.label}
+                      >
+                        {av.icon}
+                      </button>
+                    ))}
                   </div>
                 </div>
 
@@ -283,27 +366,54 @@ function LoginPage() {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Seu nome"
+                    placeholder={accountRole === "aluno" ? "Ex: Luizinho Silva" : "Ex: Profe. Helena Silva"}
                     required
                     className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
                   />
                 </div>
 
-                {/* Discipline (for Professor) */}
-                {role === "professor" && (
+                {accountRole === "professor" && (
                   <div>
                     <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                      Disciplina / Matéria
+                      Disciplina / Área *
                     </label>
                     <input
                       type="text"
                       value={discipline}
                       onChange={(e) => setDiscipline(e.target.value)}
                       placeholder="Ex: LIBRAS & Inclusão"
+                      required
                       className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
                     />
                   </div>
                 )}
+
+                {/* Trilha/Mundo */}
+                <div>
+                  <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                    Trilha de Ensino / Nível:
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setWorld("ef1")}
+                      className={`rounded-xl border-2 py-2 px-3 text-xs font-extrabold transition-all ${
+                        world === "ef1" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      🌈 EF1 (1º ao 5º Ano)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWorld("ef2")}
+                      className={`rounded-xl border-2 py-2 px-3 text-xs font-extrabold transition-all ${
+                        world === "ef2" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      🚀 EF2 (6º ao 9º Ano)
+                    </button>
+                  </div>
+                </div>
 
                 {/* Email */}
                 <div>
@@ -314,7 +424,7 @@ function LoginPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="seu@email.com"
+                    placeholder="usuario@exemplo.com"
                     required
                     className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
                   />
@@ -338,9 +448,21 @@ function LoginPage() {
                   type="submit"
                   className="mt-2 w-full rounded-full bg-primary py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1 active:translate-y-0.5"
                 >
-                  Criar Minha Conta →
+                  {accountRole === "aluno" ? "Cadastrar Aluno e Começar →" : "Criar Conta de Professor →"}
                 </button>
               </form>
+
+              <div className="mt-6 border-t border-border/60 pt-4 text-center">
+                <p className="text-xs text-muted-foreground">
+                  Já possui uma conta?{" "}
+                  <button
+                    onClick={() => setMode("login")}
+                    className="font-extrabold text-primary hover:underline cursor-pointer"
+                  >
+                    Fazer Login →
+                  </button>
+                </p>
+              </div>
             </div>
           )}
         </div>

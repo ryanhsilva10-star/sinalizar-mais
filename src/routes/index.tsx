@@ -29,6 +29,7 @@ function LandingPage() {
 }
 
 import { getActiveUser, logoutUser } from "@/lib/user-store";
+import { TurmaClaNavbarButton } from "@/components/TurmaClaNavbarButton";
 import { toast } from "sonner";
 import { Menu, X } from "lucide-react";
 
@@ -51,7 +52,7 @@ function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link to="/" className="flex items-center gap-2">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">S</span>
-          <span className="font-display text-2xl font-extrabold">SinaLINK</span>
+          <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-bold text-muted-foreground md:flex text-secondary-foreground">
           <a href="#mundos" className="hover:text-foreground">Mundos</a>
@@ -63,6 +64,9 @@ function Header() {
         <div className="hidden md:block">
           {currentUser ? (
             <div className="flex items-center gap-3">
+              {/* Botão Turma/Clã estritamente para alunos logados */}
+              <TurmaClaNavbarButton />
+
               <Link
                 to={currentUser.role === "professor" ? "/onboarding" : "/student/profile"}
                 className="flex items-center gap-2 rounded-full border border-border bg-card px-4 py-2 text-xs font-extrabold hover:bg-muted"
@@ -78,18 +82,20 @@ function Header() {
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Link
                 to="/login"
-                className="text-sm font-extrabold text-muted-foreground hover:text-foreground px-3 py-2"
+                search={{ mode: "register" }}
+                className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-0.5"
               >
-                Entrar
+                ➕ Cadastrar Novo Usuário
               </Link>
               <Link
                 to="/login"
-                className="inline-flex items-center rounded-full bg-foreground px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-0.5"
+                search={{ mode: "login" }}
+                className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2.5 text-sm font-extrabold text-foreground hover:bg-muted transition-colors"
               >
-                Começar agora
+                🔑 Login
               </Link>
             </div>
           )}
@@ -118,6 +124,8 @@ function Header() {
           <div className="border-t border-border/60 pt-4 mt-2">
             {currentUser ? (
               <div className="flex flex-col gap-3">
+                <TurmaClaNavbarButton isMobile={true} />
+
                 <Link
                   to={currentUser.role === "professor" ? "/onboarding" : "/student/profile"}
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -137,17 +145,19 @@ function Header() {
               <div className="flex flex-col gap-3">
                 <Link
                   to="/login"
+                  search={{ mode: "register" }}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full rounded-full border border-border bg-card px-4 py-3 text-sm font-extrabold justify-center flex items-center text-center"
+                  className="w-full rounded-full bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground justify-center flex items-center text-center shadow-chunky"
                 >
-                  Entrar
+                  ➕ Cadastrar Novo Usuário
                 </Link>
                 <Link
                   to="/login"
+                  search={{ mode: "login" }}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full rounded-full bg-foreground px-4 py-3 text-sm font-extrabold text-primary-foreground justify-center flex items-center text-center shadow-chunky"
+                  className="w-full rounded-full border border-border bg-card px-4 py-3 text-sm font-extrabold justify-center flex items-center text-center hover:bg-muted"
                 >
-                  Começar agora
+                  🔑 Login / Entrar
                 </Link>
               </div>
             )}
@@ -184,25 +194,29 @@ function Hero({ helpMode, setHelpMode }: { helpMode: boolean; setHelpMode: (v: b
           </p>
           <div className="mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-start gap-3">
             <Link
-              to="/trilha"
-              search={{ world: 1 }}
+              to="/login"
+              search={{ mode: "register" }}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1"
             >
-              Começar trilha grátis →
+              ➕ Cadastrar Novo Usuário →
+            </Link>
+            <Link
+              to="/login"
+              search={{ mode: "login" }}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border-2 border-foreground/10 bg-card px-7 py-4 text-base font-extrabold text-foreground shadow-soft transition-transform hover:-translate-y-1"
+            >
+              🔑 Fazer Login
             </Link>
             <div className="flex flex-col items-center gap-1 w-full sm:w-auto">
               <button
                 onClick={() => setHelpMode(!helpMode)}
-                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border-2 px-7 py-4 text-base font-extrabold shadow-soft transition-all ${helpMode
+                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border-2 px-5 py-3.5 text-sm font-extrabold shadow-soft transition-all ${helpMode
                     ? "border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                    : "border-foreground/10 bg-card text-foreground hover:-translate-y-1"
+                    : "border-foreground/10 bg-muted/60 text-foreground hover:-translate-y-1"
                   }`}
               >
                 <span>🤔</span> Como funciona?
               </button>
-              <span className={`text-[10px] font-black uppercase tracking-wider transition-colors ${helpMode ? "text-blue-500" : "text-muted-foreground/60"}`}>
-                Modo Ajuda: {helpMode ? "Ligado" : "Desligado"}
-              </span>
             </div>
           </div>
           <div className="mt-10 flex flex-wrap items-center justify-center md:justify-start gap-6 text-sm text-muted-foreground">
@@ -218,7 +232,7 @@ function Hero({ helpMode, setHelpMode }: { helpMode: boolean; setHelpMode: (v: b
           <div className="relative animate-float">
             <img
               src={luviMascot}
-              alt="Luvi, mascote tatu-bola do SinaLINK, acenando"
+              alt="Luvi, mascote tatu-bola do Sinalizar mais, acenando"
               width={1024}
               height={1024}
               className="mx-auto w-full max-w-xs sm:max-w-md drop-shadow-2xl"
@@ -480,7 +494,7 @@ function ActivitiesSection({ helpMode }: { helpMode: boolean }) {
             <Link
               key={a.title}
               to="/licao"
-              search={{ lesson: a.lesson }}
+              search={{ nodeId: a.lesson }}
               className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur transition-all hover:-translate-y-2 hover:bg-white/10 hover:border-white/25 hover:shadow-glow-teen focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon"
               aria-label={`${a.title} — ${a.label}`}
             >
@@ -525,7 +539,7 @@ function ActivitiesSection({ helpMode }: { helpMode: boolean }) {
         <div className="mt-10 text-center">
           <Link
             to="/licao"
-            search={{ lesson: 1 }}
+            search={{ nodeId: 1 }}
             className="inline-flex items-center gap-2 rounded-full bg-neon px-8 py-4 font-teen text-base font-bold text-teen-bg shadow-glow-teen transition-transform hover:-translate-y-1 active:scale-95"
           >
             ▶ Começar pela Lição 1
@@ -560,18 +574,19 @@ function LessonCTA({ helpMode }: { helpMode: boolean }) {
             </p>
             <div className="mt-8 flex flex-col sm:flex-row flex-wrap justify-center md:justify-start gap-3">
               <Link
-                to="/trilha"
-                search={{ world: 1 }}
+                to="/login"
+                search={{ mode: "register" }}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-7 py-4 text-base font-extrabold text-background shadow-chunky transition-transform hover:-translate-y-1"
               >
-                Aprenda sozinho →
+                ➕ Cadastrar Novo Usuário →
               </Link>
-              <a
-                href="#"
+              <Link
+                to="/login"
+                search={{ mode: "login" }}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border-2 border-white/40 bg-white/10 px-7 py-4 text-base font-extrabold text-white backdrop-blur transition-transform hover:-translate-y-1"
               >
-                Jogar com a sala →
-              </a>
+                🔑 Fazer Login →
+              </Link>
             </div>
           </div>
           <div className="relative">

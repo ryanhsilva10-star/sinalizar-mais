@@ -6,6 +6,7 @@ import {
   useRouter,
   HeadContent,
   Scripts,
+  type ErrorComponentProps,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 
@@ -35,7 +36,7 @@ function NotFoundComponent() {
   );
 }
 
-function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
+function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
   useEffect(() => {
@@ -70,10 +71,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "SinaLINK — Aprenda LIBRAS brincando" },
+      { title: "Sinalizar mais — Aprenda LIBRAS brincando" },
       { name: "description", content: "Plataforma gamificada de LIBRAS para crianças e adolescentes. Trilhas, avatares e IA para aprender a Língua Brasileira de Sinais brincando." },
-      { name: "author", content: "SinaLINK" },
-      { property: "og:title", content: "SinaLINK — Aprenda LIBRAS brincando" },
+      { name: "author", content: "Sinalizar mais" },
+      { property: "og:title", content: "Sinalizar mais — Aprenda LIBRAS brincando" },
       { property: "og:description", content: "Trilhas de LIBRAS gamificadas para o Ensino Fundamental. Aprenda a Língua Brasileira de Sinais com avatares, streaks e desafios." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

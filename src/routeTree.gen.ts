@@ -14,12 +14,8 @@ import { Route as LicaoRouteImport } from './routes/licao'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as TrilhaRouteImport } from './routes/trilha'
+import { Route as TurmaRouteImport } from './routes/turma'
 import { Route as StudentProfileRouteImport } from './routes/student/profile'
-import { Route as OnboardingCoresAmareloRouteImport } from './routes/onboarding/cores/amarelo'
-import { Route as OnboardingCoresAzulRouteImport } from './routes/onboarding/cores/azul'
-import { Route as OnboardingCoresRoxoRouteImport } from './routes/onboarding/cores/roxo'
-import { Route as OnboardingCoresVerdeRouteImport } from './routes/onboarding/cores/verde'
-import { Route as OnboardingCoresVermelhoRouteImport } from './routes/onboarding/cores/vermelho'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -46,76 +42,44 @@ const TrilhaRoute = TrilhaRouteImport.update({
   path: '/trilha',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TurmaRoute = TurmaRouteImport.update({
+  id: '/turma',
+  path: '/turma',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudentProfileRoute = StudentProfileRouteImport.update({
   id: '/student/profile',
   path: '/student/profile',
   getParentRoute: () => rootRouteImport,
-} as any)
-const OnboardingCoresAmareloRoute = OnboardingCoresAmareloRouteImport.update({
-  id: '/cores/amarelo',
-  path: '/cores/amarelo',
-  getParentRoute: () => OnboardingRoute,
-} as any)
-const OnboardingCoresAzulRoute = OnboardingCoresAzulRouteImport.update({
-  id: '/cores/azul',
-  path: '/cores/azul',
-  getParentRoute: () => OnboardingRoute,
-} as any)
-const OnboardingCoresRoxoRoute = OnboardingCoresRoxoRouteImport.update({
-  id: '/cores/roxo',
-  path: '/cores/roxo',
-  getParentRoute: () => OnboardingRoute,
-} as any)
-const OnboardingCoresVerdeRoute = OnboardingCoresVerdeRouteImport.update({
-  id: '/cores/verde',
-  path: '/cores/verde',
-  getParentRoute: () => OnboardingRoute,
-} as any)
-const OnboardingCoresVermelhoRoute = OnboardingCoresVermelhoRouteImport.update({
-  id: '/cores/vermelho',
-  path: '/cores/vermelho',
-  getParentRoute: () => OnboardingRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
   '/login': typeof LoginRoute
-  '/onboarding': typeof OnboardingRouteWithChildren
+  '/onboarding': typeof OnboardingRoute
   '/trilha': typeof TrilhaRoute
+  '/turma': typeof TurmaRoute
   '/student/profile': typeof StudentProfileRoute
-  '/onboarding/cores/amarelo': typeof OnboardingCoresAmareloRoute
-  '/onboarding/cores/azul': typeof OnboardingCoresAzulRoute
-  '/onboarding/cores/roxo': typeof OnboardingCoresRoxoRoute
-  '/onboarding/cores/verde': typeof OnboardingCoresVerdeRoute
-  '/onboarding/cores/vermelho': typeof OnboardingCoresVermelhoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
   '/login': typeof LoginRoute
-  '/onboarding': typeof OnboardingRouteWithChildren
+  '/onboarding': typeof OnboardingRoute
   '/trilha': typeof TrilhaRoute
+  '/turma': typeof TurmaRoute
   '/student/profile': typeof StudentProfileRoute
-  '/onboarding/cores/amarelo': typeof OnboardingCoresAmareloRoute
-  '/onboarding/cores/azul': typeof OnboardingCoresAzulRoute
-  '/onboarding/cores/roxo': typeof OnboardingCoresRoxoRoute
-  '/onboarding/cores/verde': typeof OnboardingCoresVerdeRoute
-  '/onboarding/cores/vermelho': typeof OnboardingCoresVermelhoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/licao': typeof LicaoRoute
   '/login': typeof LoginRoute
-  '/onboarding': typeof OnboardingRouteWithChildren
+  '/onboarding': typeof OnboardingRoute
   '/trilha': typeof TrilhaRoute
+  '/turma': typeof TurmaRoute
   '/student/profile': typeof StudentProfileRoute
-  '/onboarding/cores/amarelo': typeof OnboardingCoresAmareloRoute
-  '/onboarding/cores/azul': typeof OnboardingCoresAzulRoute
-  '/onboarding/cores/roxo': typeof OnboardingCoresRoxoRoute
-  '/onboarding/cores/verde': typeof OnboardingCoresVerdeRoute
-  '/onboarding/cores/vermelho': typeof OnboardingCoresVermelhoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -125,12 +89,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/trilha'
+    | '/turma'
     | '/student/profile'
-    | '/onboarding/cores/amarelo'
-    | '/onboarding/cores/azul'
-    | '/onboarding/cores/roxo'
-    | '/onboarding/cores/verde'
-    | '/onboarding/cores/vermelho'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -138,12 +98,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/trilha'
+    | '/turma'
     | '/student/profile'
-    | '/onboarding/cores/amarelo'
-    | '/onboarding/cores/azul'
-    | '/onboarding/cores/roxo'
-    | '/onboarding/cores/verde'
-    | '/onboarding/cores/vermelho'
   id:
     | '__root__'
     | '/'
@@ -151,20 +107,17 @@ export interface FileRouteTypes {
     | '/login'
     | '/onboarding'
     | '/trilha'
+    | '/turma'
     | '/student/profile'
-    | '/onboarding/cores/amarelo'
-    | '/onboarding/cores/azul'
-    | '/onboarding/cores/roxo'
-    | '/onboarding/cores/verde'
-    | '/onboarding/cores/vermelho'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   LicaoRoute: typeof LicaoRoute
   LoginRoute: typeof LoginRoute
-  OnboardingRoute: typeof OnboardingRouteWithChildren
+  OnboardingRoute: typeof OnboardingRoute
   TrilhaRoute: typeof TrilhaRoute
+  TurmaRoute: typeof TurmaRoute
   StudentProfileRoute: typeof StudentProfileRoute
 }
 
@@ -205,6 +158,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TrilhaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/turma': {
+      id: '/turma'
+      path: '/turma'
+      fullPath: '/turma'
+      preLoaderRoute: typeof TurmaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/student/profile': {
       id: '/student/profile'
       path: '/student/profile'
@@ -212,70 +172,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StudentProfileRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/onboarding/cores/amarelo': {
-      id: '/onboarding/cores/amarelo'
-      path: '/cores/amarelo'
-      fullPath: '/onboarding/cores/amarelo'
-      preLoaderRoute: typeof OnboardingCoresAmareloRouteImport
-      parentRoute: typeof OnboardingRoute
-    }
-    '/onboarding/cores/azul': {
-      id: '/onboarding/cores/azul'
-      path: '/cores/azul'
-      fullPath: '/onboarding/cores/azul'
-      preLoaderRoute: typeof OnboardingCoresAzulRouteImport
-      parentRoute: typeof OnboardingRoute
-    }
-    '/onboarding/cores/roxo': {
-      id: '/onboarding/cores/roxo'
-      path: '/cores/roxo'
-      fullPath: '/onboarding/cores/roxo'
-      preLoaderRoute: typeof OnboardingCoresRoxoRouteImport
-      parentRoute: typeof OnboardingRoute
-    }
-    '/onboarding/cores/verde': {
-      id: '/onboarding/cores/verde'
-      path: '/cores/verde'
-      fullPath: '/onboarding/cores/verde'
-      preLoaderRoute: typeof OnboardingCoresVerdeRouteImport
-      parentRoute: typeof OnboardingRoute
-    }
-    '/onboarding/cores/vermelho': {
-      id: '/onboarding/cores/vermelho'
-      path: '/cores/vermelho'
-      fullPath: '/onboarding/cores/vermelho'
-      preLoaderRoute: typeof OnboardingCoresVermelhoRouteImport
-      parentRoute: typeof OnboardingRoute
-    }
   }
 }
-
-interface OnboardingRouteChildren {
-  OnboardingCoresAmareloRoute: typeof OnboardingCoresAmareloRoute
-  OnboardingCoresAzulRoute: typeof OnboardingCoresAzulRoute
-  OnboardingCoresRoxoRoute: typeof OnboardingCoresRoxoRoute
-  OnboardingCoresVerdeRoute: typeof OnboardingCoresVerdeRoute
-  OnboardingCoresVermelhoRoute: typeof OnboardingCoresVermelhoRoute
-}
-
-const OnboardingRouteChildren: OnboardingRouteChildren = {
-  OnboardingCoresAmareloRoute: OnboardingCoresAmareloRoute,
-  OnboardingCoresAzulRoute: OnboardingCoresAzulRoute,
-  OnboardingCoresRoxoRoute: OnboardingCoresRoxoRoute,
-  OnboardingCoresVerdeRoute: OnboardingCoresVerdeRoute,
-  OnboardingCoresVermelhoRoute: OnboardingCoresVermelhoRoute,
-}
-
-const OnboardingRouteWithChildren = OnboardingRoute._addFileChildren(
-  OnboardingRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   LicaoRoute: LicaoRoute,
   LoginRoute: LoginRoute,
-  OnboardingRoute: OnboardingRouteWithChildren,
+  OnboardingRoute: OnboardingRoute,
   TrilhaRoute: TrilhaRoute,
+  TurmaRoute: TurmaRoute,
   StudentProfileRoute: StudentProfileRoute,
 }
 export const routeTree = rootRouteImport

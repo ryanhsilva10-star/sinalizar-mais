@@ -1240,7 +1240,7 @@ export const Route = createFileRoute("/licao")({
   },
   head: () => ({
     meta: [
-      { title: "Lição do Alfabeto em LIBRAS com Mascotes · SinaLINK" },
+      { title: "Lição do Alfabeto em LIBRAS com Mascotes · Sinalizar mais" },
       {
         name: "description",
         content:
