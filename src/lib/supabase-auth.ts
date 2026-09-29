@@ -35,7 +35,39 @@ export async function registerWithSupabase(params: {
   });
 
   if (error) throw error;
-  return data.user;
+
+  const authUser = data.user;
+  if (!authUser) return null;
+
+  // Inserir o registro na tabela correspondente do banco de dados
+  if (params.role === "aluno") {
+    const { error: insertError } = await supabase.from("alunos").insert({
+      nome: params.name,
+      matricula: params.email, // usa o email como matrícula temporária
+      celular: 0, // campo obrigatório, valor padrão
+      nascimento: null,
+      user_id: authUser.id,
+      alunos_sala_id: null,
+    });
+
+    if (insertError) {
+      console.error("Erro ao inserir aluno na tabela:", insertError);
+    }
+  } else {
+    const { error: insertError } = await supabase.from("professor").insert({
+      nome: params.name,
+      email: params.email,
+      senha: null, // a senha real fica no Auth
+      user_id: authUser.id,
+      sala_id: null,
+    });
+
+    if (insertError) {
+      console.error("Erro ao inserir professor na tabela:", insertError);
+    }
+  }
+
+  return authUser;
 }
 
 export async function loginWithSupabase(params: { email: string; password?: string }) {
