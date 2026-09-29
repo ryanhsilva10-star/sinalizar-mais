@@ -82,18 +82,20 @@ function Header() {
               </button>
             </div>
           ) : (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
               <Link
                 to="/login"
-                className="text-sm font-extrabold text-muted-foreground hover:text-foreground px-3 py-2 transition-colors"
+                search={{ mode: "register" }}
+                className="inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-0.5"
               >
-                Área do Professor
+                ➕ Cadastrar Novo Usuário
               </Link>
               <Link
-                to="/trilha"
-                className="inline-flex items-center rounded-full bg-foreground px-5 py-2.5 text-sm font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-0.5"
+                to="/login"
+                search={{ mode: "login" }}
+                className="inline-flex items-center rounded-full border border-border bg-card px-4 py-2.5 text-sm font-extrabold text-foreground hover:bg-muted transition-colors"
               >
-                Começar agora
+                🔑 Login
               </Link>
             </div>
           )}
@@ -143,17 +145,19 @@ function Header() {
               <div className="flex flex-col gap-3">
                 <Link
                   to="/login"
+                  search={{ mode: "register" }}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full rounded-full border border-border bg-card px-4 py-3 text-sm font-extrabold justify-center flex items-center text-center"
+                  className="w-full rounded-full bg-primary px-4 py-3 text-sm font-extrabold text-primary-foreground justify-center flex items-center text-center shadow-chunky"
                 >
-                  Área do Professor
+                  ➕ Cadastrar Novo Usuário
                 </Link>
                 <Link
-                  to="/trilha"
+                  to="/login"
+                  search={{ mode: "login" }}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full rounded-full bg-foreground px-4 py-3 text-sm font-extrabold text-primary-foreground justify-center flex items-center text-center shadow-chunky"
+                  className="w-full rounded-full border border-border bg-card px-4 py-3 text-sm font-extrabold justify-center flex items-center text-center hover:bg-muted"
                 >
-                  Começar agora
+                  🔑 Login / Entrar
                 </Link>
               </div>
             )}
@@ -190,25 +194,29 @@ function Hero({ helpMode, setHelpMode }: { helpMode: boolean; setHelpMode: (v: b
           </p>
           <div className="mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-start gap-3">
             <Link
-              to="/trilha"
-              search={{ world: 1 }}
+              to="/login"
+              search={{ mode: "register" }}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1"
             >
-              Começar trilha grátis →
+              ➕ Cadastrar Novo Usuário →
+            </Link>
+            <Link
+              to="/login"
+              search={{ mode: "login" }}
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border-2 border-foreground/10 bg-card px-7 py-4 text-base font-extrabold text-foreground shadow-soft transition-transform hover:-translate-y-1"
+            >
+              🔑 Fazer Login
             </Link>
             <div className="flex flex-col items-center gap-1 w-full sm:w-auto">
               <button
                 onClick={() => setHelpMode(!helpMode)}
-                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border-2 px-7 py-4 text-base font-extrabold shadow-soft transition-all ${helpMode
+                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border-2 px-5 py-3.5 text-sm font-extrabold shadow-soft transition-all ${helpMode
                     ? "border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                    : "border-foreground/10 bg-card text-foreground hover:-translate-y-1"
+                    : "border-foreground/10 bg-muted/60 text-foreground hover:-translate-y-1"
                   }`}
               >
                 <span>🤔</span> Como funciona?
               </button>
-              <span className={`text-[10px] font-black uppercase tracking-wider transition-colors ${helpMode ? "text-blue-500" : "text-muted-foreground/60"}`}>
-                Modo Ajuda: {helpMode ? "Ligado" : "Desligado"}
-              </span>
             </div>
           </div>
           <div className="mt-10 flex flex-wrap items-center justify-center md:justify-start gap-6 text-sm text-muted-foreground">
@@ -566,18 +574,19 @@ function LessonCTA({ helpMode }: { helpMode: boolean }) {
             </p>
             <div className="mt-8 flex flex-col sm:flex-row flex-wrap justify-center md:justify-start gap-3">
               <Link
-                to="/trilha"
-                search={{ world: 1 }}
+                to="/login"
+                search={{ mode: "register" }}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-7 py-4 text-base font-extrabold text-background shadow-chunky transition-transform hover:-translate-y-1"
               >
-                Aprenda sozinho →
+                ➕ Cadastrar Novo Usuário →
               </Link>
-              <a
-                href="#"
+              <Link
+                to="/login"
+                search={{ mode: "login" }}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border-2 border-white/40 bg-white/10 px-7 py-4 text-base font-extrabold text-white backdrop-blur transition-transform hover:-translate-y-1"
               >
-                Jogar com a sala →
-              </a>
+                🔑 Fazer Login →
+              </Link>
             </div>
           </div>
           <div className="relative">

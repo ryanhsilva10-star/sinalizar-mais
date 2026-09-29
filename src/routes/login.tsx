@@ -8,71 +8,94 @@ import {
 } from "@/lib/user-store";
 import Footer from "@/components/Footer";
 
+type LoginSearch = {
+  mode?: "login" | "register";
+};
+
 export const Route = createFileRoute("/login")({
+  validateSearch: (search: Record<string, unknown>): LoginSearch => {
+    return {
+      mode: search?.mode === "register" ? "register" : "login",
+    };
+  },
   head: () => ({
     meta: [
-      { title: "Acesso do Professor · Sinalizar mais LIBRAS" },
+      { title: "Acesso e Cadastro · Sinalizar mais LIBRAS" },
       {
         name: "description",
-        content: "Área de login e cadastro exclusiva para professores gerenciarem suas turmas e salas de aula no Sinalizar mais.",
+        content: "Área de login e cadastro no Sinalizar mais para alunos e professores gerenciarem seu progresso e salas de aula.",
       },
     ],
   }),
   component: LoginPage,
 });
 
-const PROFESSOR_AVATARS = [
-  { icon: "🧑‍🏫", label: "Professor(a) Geral" },
-  { icon: "👩‍🏫", label: "Professora LIBRAS" },
-  { icon: "👨‍🏫", label: "Professor Mestre" },
-  { icon: "🎓", label: "Educador Inclusivo" },
-  { icon: "📚", label: "Mestre dos Sinais" },
-  { icon: "🦊", label: "Luvi Guia" },
+const USER_AVATARS = [
+  { icon: "🦊", label: "Luvi Raposa" },
   { icon: "🚀", label: "Nova Astro" },
+  { icon: "🧑‍🏫", label: "Professor(a)" },
+  { icon: "🐼", label: "Panda Sinais" },
+  { icon: "🦁", label: "Leão Corajoso" },
+  { icon: "🦉", label: "Coruja Sábia" },
+  { icon: "👾", label: "Gamer Teen" },
 ];
 
 function LoginPage() {
   const navigate = useNavigate();
-  const [mode, setMode] = useState<"login" | "register">("login");
+  const search = Route.useSearch();
+  const [mode, setMode] = useState<"login" | "register">(search.mode || "login");
+
+  // Sync mode with URL search params
+  useEffect(() => {
+    if (search.mode) {
+      setMode(search.mode);
+    }
+  }, [search.mode]);
 
   // Login State
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   // Register State
+  const [accountRole, setAccountRole] = useState<"aluno" | "professor">("aluno");
   const [name, setName] = useState("");
   const [discipline, setDiscipline] = useState("");
   const [world, setWorld] = useState<"ef1" | "ef2">("ef1");
-  const [selectedAvatar, setSelectedAvatar] = useState("🧑‍🏫");
+  const [selectedAvatar, setSelectedAvatar] = useState("🦊");
+  const [classroomCode, setClassroomCode] = useState("");
 
   useEffect(() => {
-    // Se já houver um professor autenticado, redireciona para o onboarding
+    // Se já houver um usuário autenticado
     const current = getActiveUser();
-    if (current && current.role === "professor") {
-      navigate({ to: "/onboarding", replace: true });
+    if (current) {
+      if (current.role === "professor") {
+        navigate({ to: "/onboarding", replace: true });
+      } else {
+        navigate({ to: "/trilha", replace: true });
+      }
     }
   }, [navigate]);
 
   const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!email.trim()) {
-      toast.error("Por favor, informe seu e-mail de professor.");
+      toast.error("Por favor, informe seu e-mail.");
       return;
     }
 
     const user = loginUser(email, password);
     if (!user) {
-      toast.error("Credenciais inválidas ou conta de professor não encontrada.");
+      toast.error("Credenciais inválidas ou usuário não encontrado.");
       return;
     }
 
-    if (user.role !== "professor") {
-      toast.error("🔒 Este acesso é exclusivo para professores. Alunos podem acessar a Trilha diretamente!");
-      return;
+    if (user.role === "professor") {
+      toast.success(`Bem-vindo(a) de volta, Professor(a) ${user.name}!`);
+      navigate({ to: "/onboarding", replace: true });
+    } else {
+      toast.success(`Bem-vindo(a) de volta, ${user.name}! 🎉`);
+      navigate({ to: "/trilha", replace: true });
     }
-
-    toast.success(`Bem-vindo(a) de volta, Professor(a) ${user.name}!`);
-    navigate({ to: "/onboarding", replace: true });
   };
 
   const handleRegisterSubmit = (e: React.FormEvent) => {
@@ -83,23 +106,41 @@ function LoginPage() {
     }
 
     try {
-      const saved = saveUser({
-        name,
-        email,
-        password,
-        role: "professor",
-        discipline: discipline.trim() || "LIBRAS & Inclusão",
-        world,
-        avatar: selectedAvatar,
-      });
+      if (accountRole === "aluno") {
+        const saved = saveUser({
+          name,
+          email,
+          password,
+          role: "aluno",
+          world,
+          avatar: selectedAvatar,
+          classroomCode: classroomCode.trim().toUpperCase() || undefined,
+          level: 1,
+          xp: 100,
+          streak: 1,
+          completedLessons: [],
+        });
 
-      // Efetua login com o novo professor
-      loginUser(saved.email, saved.password);
+        loginUser(saved.email, saved.password);
+        toast.success(`Conta de Aluno criada com sucesso! Bem-vindo(a), ${saved.name}! 🚀`);
+        navigate({ to: "/trilha", replace: true });
+      } else {
+        const saved = saveUser({
+          name,
+          email,
+          password,
+          role: "professor",
+          discipline: discipline.trim() || "LIBRAS & Inclusão",
+          world,
+          avatar: selectedAvatar,
+        });
 
-      toast.success(`Conta de Professor(a) criada com sucesso! Bem-vindo(a), ${saved.name}. 🎉`);
-      navigate({ to: "/onboarding", replace: true });
+        loginUser(saved.email, saved.password);
+        toast.success(`Conta de Professor(a) criada com sucesso! Bem-vindo(a), ${saved.name}. 🎉`);
+        navigate({ to: "/onboarding", replace: true });
+      }
     } catch (error: any) {
-      toast.error(error.message || "Ocorreu um erro ao criar a conta de professor.");
+      toast.error(error.message || "Ocorreu um erro ao criar a conta.");
     }
   };
 
@@ -137,7 +178,7 @@ function LoginPage() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                🔑 Entrar
+                🔑 Entrar / Login
               </button>
               <button
                 onClick={() => setMode("register")}
@@ -147,7 +188,7 @@ function LoginPage() {
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
-                ➕ Cadastrar Professor
+                ➕ Cadastrar Usuário
               </button>
             </div>
           </div>
@@ -156,27 +197,27 @@ function LoginPage() {
             <div>
               <div className="text-center">
                 <span className="mx-auto grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-2xl mb-3 shadow-inner">
-                  🧑‍🏫
+                  🔑
                 </span>
                 <span className="text-xs font-extrabold uppercase tracking-widest text-primary">
-                  Área do Professor
+                  Identificação do Usuário
                 </span>
-                <h1 className="mt-1 font-display text-3xl font-extrabold">Painel do Professor</h1>
+                <h1 className="mt-1 font-display text-3xl font-extrabold">Acessar Conta</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Acesse com sua conta de professor para gerenciar salas de aula e códigos de turma.
+                  Entre com seu e-mail e senha de aluno ou professor para acessar seu painel.
                 </p>
               </div>
 
               <form onSubmit={handleLoginSubmit} className="mt-6 flex flex-col gap-4">
                 <div>
                   <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    E-mail do Professor
+                    E-mail do Usuário
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="professor@sinalizarmais.com"
+                    placeholder="seu.email@exemplo.com"
                     required
                     className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
                   />
@@ -199,16 +240,19 @@ function LoginPage() {
                   type="submit"
                   className="mt-2 w-full rounded-full bg-primary py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1 active:translate-y-0.5"
                 >
-                  Entrar no Painel →
+                  Entrar na Conta →
                 </button>
               </form>
 
               <div className="mt-6 border-t border-border/60 pt-4 text-center">
                 <p className="text-xs text-muted-foreground">
-                  É um aluno?{" "}
-                  <Link to="/trilha" className="font-extrabold text-primary hover:underline">
-                    Acessar Trilha de Sinais diretamente →
-                  </Link>
+                  Ainda não tem conta?{" "}
+                  <button
+                    onClick={() => setMode("register")}
+                    className="font-extrabold text-primary hover:underline cursor-pointer"
+                  >
+                    Cadastre-se gratuitamente agora →
+                  </button>
                 </p>
               </div>
             </div>
@@ -216,22 +260,62 @@ function LoginPage() {
             <div>
               <div className="text-center">
                 <span className="text-xs font-extrabold uppercase tracking-widest text-primary">
-                  Novo Professor
+                  Novo Cadastro
                 </span>
-                <h1 className="mt-1 font-display text-3xl font-extrabold">Criar Conta Docente</h1>
+                <h1 className="mt-1 font-display text-3xl font-extrabold">Criar Nova Conta</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Cadastre-se como professor para criar salas e acompanhar alunos no Sinalizar mais.
+                  Escolha o tipo de perfil e cadastre-se para aprender ou ensinar LIBRAS.
                 </p>
               </div>
 
-              <form onSubmit={handleRegisterSubmit} className="mt-6 flex flex-col gap-4">
+              {/* Selector de Perfil: Aluno vs Professor */}
+              <div className="mt-6 mb-4">
+                <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground text-center">
+                  Sou um(a):
+                </label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAccountRole("aluno");
+                      setSelectedAvatar("🦊");
+                    }}
+                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${
+                      accountRole === "aluno"
+                        ? "border-primary bg-primary/10 shadow-soft scale-[1.02]"
+                        : "border-border bg-background hover:bg-muted/50"
+                    }`}
+                  >
+                    <span className="text-2xl">🎓</span>
+                    <span className="mt-1 font-display font-extrabold text-sm">Aluno(a)</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setAccountRole("professor");
+                      setSelectedAvatar("🧑‍🏫");
+                    }}
+                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${
+                      accountRole === "professor"
+                        ? "border-primary bg-primary/10 shadow-soft scale-[1.02]"
+                        : "border-border bg-background hover:bg-muted/50"
+                    }`}
+                  >
+                    <span className="text-2xl">🧑‍🏫</span>
+                    <span className="mt-1 font-display font-extrabold text-sm">Professor(a)</span>
+                  </button>
+                </div>
+              </div>
+
+              <form onSubmit={handleRegisterSubmit} className="mt-4 flex flex-col gap-4">
                 {/* Avatar */}
                 <div>
                   <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
                     Escolha seu Avatar:
                   </label>
                   <div className="flex flex-wrap justify-center gap-2">
-                    {PROFESSOR_AVATARS.map((av) => (
+                    {USER_AVATARS.map((av) => (
                       <button
                         key={av.icon}
                         type="button"
@@ -258,37 +342,65 @@ function LoginPage() {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    placeholder="Ex: Profe. Helena Silva"
+                    placeholder={accountRole === "aluno" ? "Ex: Luizinho Silva" : "Ex: Profe. Helena Silva"}
                     required
                     className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
                   />
                 </div>
 
-                {/* Discipline */}
+                {accountRole === "professor" && (
+                  <div>
+                    <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Disciplina / Área *
+                    </label>
+                    <input
+                      type="text"
+                      value={discipline}
+                      onChange={(e) => setDiscipline(e.target.value)}
+                      placeholder="Ex: LIBRAS & Inclusão"
+                      required
+                      className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
+                    />
+                  </div>
+                )}
+
+                {/* Trilha/Mundo */}
                 <div>
                   <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    Disciplina / Área de Atuação *
+                    Trilha de Ensino / Nível:
                   </label>
-                  <input
-                    type="text"
-                    value={discipline}
-                    onChange={(e) => setDiscipline(e.target.value)}
-                    placeholder="Ex: LIBRAS & Inclusão, Educação Básica"
-                    required
-                    className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
-                  />
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setWorld("ef1")}
+                      className={`rounded-xl border-2 py-2 px-3 text-xs font-extrabold transition-all ${
+                        world === "ef1" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      🌈 EF1 (1º ao 5º Ano)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setWorld("ef2")}
+                      className={`rounded-xl border-2 py-2 px-3 text-xs font-extrabold transition-all ${
+                        world === "ef2" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
+                      }`}
+                    >
+                      🚀 EF2 (6º ao 9º Ano)
+                    </button>
+                  </div>
                 </div>
 
                 {/* Email */}
                 <div>
                   <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                    E-mail Institucional ou Pessoal *
+                    E-mail *
                   </label>
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="professor@escola.com"
+                    placeholder="usuario@exemplo.com"
                     required
                     className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
                   />
@@ -312,16 +424,19 @@ function LoginPage() {
                   type="submit"
                   className="mt-2 w-full rounded-full bg-primary py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1 active:translate-y-0.5"
                 >
-                  Criar Conta de Professor →
+                  {accountRole === "aluno" ? "Cadastrar Aluno e Começar →" : "Criar Conta de Professor →"}
                 </button>
               </form>
 
               <div className="mt-6 border-t border-border/60 pt-4 text-center">
                 <p className="text-xs text-muted-foreground">
-                  É um aluno?{" "}
-                  <Link to="/trilha" className="font-extrabold text-primary hover:underline">
-                    Acessar Trilha de Sinais diretamente →
-                  </Link>
+                  Já possui uma conta?{" "}
+                  <button
+                    onClick={() => setMode("login")}
+                    className="font-extrabold text-primary hover:underline cursor-pointer"
+                  >
+                    Fazer Login →
+                  </button>
                 </p>
               </div>
             </div>
