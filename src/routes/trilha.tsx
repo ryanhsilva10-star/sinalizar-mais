@@ -24,13 +24,13 @@ export const Route = createFileRoute("/trilha")({
   },
   head: () => ({
     meta: [
-      { title: "Minha Trilha de LIBRAS com Mapa 3D · SinaLINK" },
+      { title: "Minha Trilha de LIBRAS com Mapa 3D · Sinalizar mais" },
       {
         name: "description",
         content:
           "Mapa interativo de aventura com micro-lições de LIBRAS: saudações, alfabeto, cores, bichos e família com efeitos de parallax e gamificação.",
       },
-      { property: "og:title", content: "Minha Trilha de LIBRAS · SinaLINK" },
+      { property: "og:title", content: "Minha Trilha de LIBRAS · Sinalizar mais" },
       {
         property: "og:description",
         content: "Avance pelo mapa interativo aprendendo LIBRAS com micro-lições gamificadas.",
@@ -177,7 +177,7 @@ function TrailPage() {
 
     // 1. Não autenticado -> Concede acesso direto com Aluno de demonstração para acesso sem fricção
     if (!user) {
-      user = loginUser("luizinho@sinalink.com", "123");
+      user = loginUser("luizinho@sinalizarmais.com", "123");
       if (user) {
         toast.info("👋 Bem-vindo(a) à sua primeira trilha de LIBRAS!");
       } else {
@@ -303,7 +303,7 @@ function TrailPage() {
         <section className="mb-6 flex flex-col items-center gap-4 rounded-4xl bg-card p-6 shadow-soft sm:flex-row sm:gap-6">
           <img
             src={luviMascot}
-            alt="Luvi, mascote do SinaLINK, acenando"
+            alt="Luvi, mascote do Sinalizar mais, acenando"
             width={1024}
             height={1024}
             className="w-20 shrink-0 animate-bounce-soft sm:w-24"
@@ -574,11 +574,11 @@ function TrailHeader({
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link to="/" className="flex items-center gap-2" aria-label="SinaLINK, início">
+        <Link to="/" className="flex items-center gap-2" aria-label="Sinalizar mais, início">
           <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-rainbow font-display text-lg font-extrabold text-primary-foreground shadow-sm">
             S
           </span>
-          <span className="hidden font-display text-lg font-extrabold sm:block">SinaLINK</span>
+          <span className="hidden font-display text-lg font-extrabold sm:block">Sinalizar mais</span>
         </Link>
 
         {/* View Mode switcher */}

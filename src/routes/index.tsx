@@ -52,7 +52,7 @@ function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link to="/" className="flex items-center gap-2">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">S</span>
-          <span className="font-display text-2xl font-extrabold">SinaLINK</span>
+          <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-bold text-muted-foreground md:flex text-secondary-foreground">
           <a href="#mundos" className="hover:text-foreground">Mundos</a>
@@ -224,7 +224,7 @@ function Hero({ helpMode, setHelpMode }: { helpMode: boolean; setHelpMode: (v: b
           <div className="relative animate-float">
             <img
               src={luviMascot}
-              alt="Luvi, mascote tatu-bola do SinaLINK, acenando"
+              alt="Luvi, mascote tatu-bola do Sinalizar mais, acenando"
               width={1024}
               height={1024}
               className="mx-auto w-full max-w-xs sm:max-w-md drop-shadow-2xl"
@@ -486,7 +486,7 @@ function ActivitiesSection({ helpMode }: { helpMode: boolean }) {
             <Link
               key={a.title}
               to="/licao"
-              search={{ lesson: a.lesson }}
+              search={{ nodeId: a.lesson }}
               className="group relative flex flex-col overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur transition-all hover:-translate-y-2 hover:bg-white/10 hover:border-white/25 hover:shadow-glow-teen focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-neon"
               aria-label={`${a.title} — ${a.label}`}
             >
@@ -531,7 +531,7 @@ function ActivitiesSection({ helpMode }: { helpMode: boolean }) {
         <div className="mt-10 text-center">
           <Link
             to="/licao"
-            search={{ lesson: 1 }}
+            search={{ nodeId: 1 }}
             className="inline-flex items-center gap-2 rounded-full bg-neon px-8 py-4 font-teen text-base font-bold text-teen-bg shadow-glow-teen transition-transform hover:-translate-y-1 active:scale-95"
           >
             ▶ Começar pela Lição 1

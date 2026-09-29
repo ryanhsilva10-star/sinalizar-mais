@@ -40,9 +40,9 @@ export interface User {
   createdAt: string;
 }
 
-const STORAGE_KEY = "sinalink_users_v1";
-const CLASSROOMS_KEY = "sinalink_classrooms_v1";
-const ACTIVE_USER_KEY = "sinalink_active_user_id_v1";
+const STORAGE_KEY = "sinalizar_mais_users_v1";
+const CLASSROOMS_KEY = "sinalizar_mais_classrooms_v1";
+const ACTIVE_USER_KEY = "sinalizar_mais_active_user_id_v1";
 
 export const DEFAULT_CLASSROOMS: Classroom[] = [
   {
@@ -73,7 +73,7 @@ const DEFAULT_USERS: User[] = [
   {
     id: "usr_1",
     name: "Luizinho Explorer",
-    email: "luizinho@sinalink.com",
+    email: "luizinho@sinalizarmais.com",
     password: "123",
     role: "aluno",
     world: "ef1",
@@ -97,7 +97,7 @@ const DEFAULT_USERS: User[] = [
   {
     id: "usr_2",
     name: "Nova Teen",
-    email: "nova@sinalink.com",
+    email: "nova@sinalizarmais.com",
     password: "123",
     role: "aluno",
     world: "ef2",
@@ -130,7 +130,7 @@ const DEFAULT_USERS: User[] = [
   {
     id: "usr_prof_1",
     name: "Profe. Helena Silva",
-    email: "helena.prof@sinalink.com",
+    email: "helena.prof@sinalizarmais.com",
     password: "123",
     role: "professor",
     discipline: "LIBRAS & Inclusão",
@@ -629,16 +629,16 @@ export function isUserOnline(user: User): boolean {
 
 export function notifyUserChanges(detail?: any): void {
   if (typeof window === "undefined") return;
-  window.dispatchEvent(new CustomEvent("sinalink:user-changed", { detail }));
+  window.dispatchEvent(new CustomEvent("sinalizar-mais:user-changed", { detail }));
 }
 
 export function subscribeToUserChanges(callback: () => void): () => void {
   if (typeof window === "undefined") return () => {};
   const handler = () => callback();
-  window.addEventListener("sinalink:user-changed", handler);
+  window.addEventListener("sinalizar-mais:user-changed", handler);
   window.addEventListener("storage", handler);
   return () => {
-    window.removeEventListener("sinalink:user-changed", handler);
+    window.removeEventListener("sinalizar-mais:user-changed", handler);
     window.removeEventListener("storage", handler);
   };
 }

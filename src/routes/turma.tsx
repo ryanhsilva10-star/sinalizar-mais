@@ -30,7 +30,7 @@ import {
 export const Route = createFileRoute("/turma")({
   head: () => ({
     meta: [
-      { title: "Painel da Turma / Clã · SinaLINK LIBRAS" },
+      { title: "Painel da Turma / Clã · Sinalizar mais LIBRAS" },
       {
         name: "description",
         content:
@@ -103,7 +103,7 @@ function TurmaDashboardPage() {
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
                 S
               </span>
-              <span className="font-display text-2xl font-extrabold">SinaLINK</span>
+              <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
             </Link>
             <Link
               to="/trilha"
@@ -167,7 +167,7 @@ function TurmaDashboardPage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
               S
             </span>
-            <span className="font-display text-2xl font-extrabold">SinaLINK</span>
+            <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
           </Link>
 
           <div className="flex items-center gap-3">
@@ -429,7 +429,7 @@ function TurmaDashboardPage() {
                 <div className="mt-4 pt-3 border-t border-border/60 flex items-center justify-end">
                   <Link
                     to="/licao"
-                    search={{ nodeId: act.nodeId, world: act.world }}
+                    search={{ nodeId: act.nodeId }}
                     className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-extrabold transition-transform hover:-translate-y-0.5 active:translate-y-0.5 shadow-soft ${
                       act.myCompleted
                         ? "border border-border bg-background hover:bg-muted text-foreground"

@@ -11,10 +11,10 @@ import Footer from "@/components/Footer";
 export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
-      { title: "Acesso do Professor · SinaLINK LIBRAS" },
+      { title: "Acesso do Professor · Sinalizar mais LIBRAS" },
       {
         name: "description",
-        content: "Área de login e cadastro exclusiva para professores gerenciarem suas turmas e salas de aula no SinaLINK.",
+        content: "Área de login e cadastro exclusiva para professores gerenciarem suas turmas e salas de aula no Sinalizar mais.",
       },
     ],
   }),
@@ -112,7 +112,7 @@ function LoginPage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
               S
             </span>
-            <span className="font-display text-2xl font-extrabold">SinaLINK</span>
+            <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
           </Link>
           <Link
             to="/trilha"
@@ -176,7 +176,7 @@ function LoginPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="professor@sinalink.com"
+                    placeholder="professor@sinalizarmais.com"
                     required
                     className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
                   />
@@ -220,7 +220,7 @@ function LoginPage() {
                 </span>
                 <h1 className="mt-1 font-display text-3xl font-extrabold">Criar Conta Docente</h1>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Cadastre-se como professor para criar salas e acompanhar alunos no SinaLINK.
+                  Cadastre-se como professor para criar salas e acompanhar alunos no Sinalizar mais.
                 </p>
               </div>
 

@@ -16,7 +16,7 @@ import Footer from "@/components/Footer";
 export const Route = createFileRoute("/student/profile")({
   head: () => ({
     meta: [
-      { title: "Meu Perfil de Aluno · SinaLINK LIBRAS" },
+      { title: "Meu Perfil de Aluno · Sinalizar mais LIBRAS" },
       {
         name: "description",
         content: "Gerencie suas informações cadastrais e acompanhe seu progresso de aprendizado em LIBRAS.",
@@ -175,7 +175,7 @@ function StudentProfilePage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
               S
             </span>
-            <span className="font-display text-2xl font-extrabold">SinaLINK</span>
+            <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
           </Link>
 
           <div className="flex items-center gap-3">

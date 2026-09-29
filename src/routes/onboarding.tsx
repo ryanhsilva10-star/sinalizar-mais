@@ -38,11 +38,11 @@ import { ALL_TRAIL_ACTIVITIES } from "@/lib/user-store";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "Painel do Professor · SinaLINK LIBRAS" },
+      { title: "Painel do Professor · Sinalizar mais LIBRAS" },
       {
         name: "description",
         content:
-          "Área exclusiva para professores gerenciarem salas de aula, turmas e professores no SinaLINK.",
+          "Área exclusiva para professores gerenciarem salas de aula, turmas e professores no Sinalizar mais.",
       },
     ],
   }),
@@ -147,7 +147,7 @@ function OnboardingPage() {
         (c) =>
           c.teacherId === activeUser.id ||
           c.teacherName === activeUser.name ||
-          (activeUser.email === "helena.prof@sinalink.com" && c.teacherId === "usr_prof_1")
+          (activeUser.email === "helena.prof@sinalizarmais.com" && c.teacherId === "usr_prof_1")
       )
     : [];
 
@@ -316,7 +316,7 @@ function OnboardingPage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
               S
             </span>
-            <span className="font-display text-2xl font-extrabold">SinaLINK</span>
+            <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
           </Link>
 
           <div className="flex items-center gap-3">
@@ -450,7 +450,7 @@ function OnboardingPage() {
                 </span>
                 <h3 className="mt-4 font-display text-xl font-extrabold">Nenhuma sala de aula cadastrada</h3>
                 <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
-                  Crie sua primeira sala para gerar um código de acesso e permitir que seus alunos se conectem à turma pelo SinaLINK.
+                  Crie sua primeira sala para gerar um código de acesso e permitir que seus alunos se conectem à turma pelo Sinalizar mais.
                 </p>
                 <button
                   onClick={handleOpenAddClassroomModal}
@@ -646,7 +646,7 @@ function OnboardingPage() {
                   </span>
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Professores possuem autorização para criar salas de aula e monitorar turmas no SinaLINK.
+                  Professores possuem autorização para criar salas de aula e monitorar turmas no Sinalizar mais.
                 </p>
               </div>
               <button
@@ -660,7 +660,6 @@ function OnboardingPage() {
                 <span>Cadastrar Novo Professor</span>
               </button>
             </div>
->>>>>>> b392be52a43bf50e1e6ede205c1ad56fcd4118ab
 
             {teachersList.length === 0 ? (
               <div className="rounded-3xl border border-dashed border-border p-12 text-center">
@@ -750,7 +749,7 @@ function OnboardingPage() {
                   {editingId ? `Editando: ${name}` : "Cadastrar Professor(a)"}
                 </h1>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Cadastre novos professores para gerenciar turmas e salas no SinaLINK.
+                  Cadastre novos professores para gerenciar turmas e salas no Sinalizar mais.
                 </p>
               </div>
 
@@ -854,7 +853,7 @@ function OnboardingPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="professor@sinalink.com"
+                    placeholder="professor@sinalizarmais.com"
                     required
                     className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
                   />
