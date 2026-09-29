@@ -365,9 +365,6 @@ function OnboardingPage() {
                   : "text-muted-foreground hover:text-foreground"
               }`}
             >
-<<<<<<< HEAD
-              🏫 Gerenciador de Salas
-=======
               <span>🏫 Minhas Salas</span>
               <span
                 className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
@@ -378,7 +375,6 @@ function OnboardingPage() {
               >
                 {teacherClassrooms.length}
               </span>
->>>>>>> b392be52a43bf50e1e6ede205c1ad56fcd4118ab
             </button>
 
             <button
@@ -417,9 +413,6 @@ function OnboardingPage() {
           </div>
         </div>
 
-<<<<<<< HEAD
-        {/* MODES CONTENT */}
-=======
         {/* ========================================== */}
         {/* ABA: MINHAS SALAS                         */}
         {/* ========================================== */}
