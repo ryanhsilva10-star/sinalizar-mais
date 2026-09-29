@@ -660,7 +660,6 @@ function OnboardingPage() {
                 <span>Cadastrar Novo Professor</span>
               </button>
             </div>
->>>>>>> b392be52a43bf50e1e6ede205c1ad56fcd4118ab
 
             {teachersList.length === 0 ? (
               <div className="rounded-3xl border border-dashed border-border p-12 text-center">
