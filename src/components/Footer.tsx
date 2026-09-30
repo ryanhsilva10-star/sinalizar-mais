@@ -104,12 +104,10 @@ export function Footer() {
       <div className="border-b border-[#2b3544] bg-[#14232c] py-8 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-2xl bg-[#58cc02] text-white flex items-center justify-center font-black text-2xl shadow-[0_4px_0_0_#46a302] transform -rotate-3 transition-transform hover:rotate-0">
-              S
-            </div>
+            <img src="/sinaliza-mais-logo.jpg" alt="Sinaliza Mais - Logo" className="w-14 h-14 rounded-2xl object-cover shadow-[0_4px_0_0_#46a302] transform -rotate-3 transition-transform hover:rotate-0" />
             <div>
               <h3 className="text-xl sm:text-2xl font-black text-white tracking-wide">
-                Aprenda LIBRAS de graça, para sempre.
+                O mundo fala de várias formas. Aprenda a sinalizar o seu!
               </h3>
               <p className="text-sm font-semibold text-[#8492a6] mt-0.5">
                 Mais de 10.000 alunos já estão praticando sinais todos os dias.
@@ -212,8 +210,8 @@ export function Footer() {
                           setIsLangOpen(false);
                         }}
                         className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-bold transition-colors ${isSelected
-                            ? "bg-[#58cc02] text-white font-extrabold shadow-[0_2px_0_0_#46a302]"
-                            : "text-[#939bb0] hover:bg-[#233342] hover:text-white"
+                          ? "bg-[#58cc02] text-white font-extrabold shadow-[0_2px_0_0_#46a302]"
+                          : "text-[#939bb0] hover:bg-[#233342] hover:text-white"
                           }`}
                       >
                         <div className="flex items-center gap-2.5">

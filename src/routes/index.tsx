@@ -51,7 +51,7 @@ function Header() {
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">S</span>
+          <img src="/sinaliza-mais-logo.jpg" alt="Sinaliza Mais - Logo" className="h-16 w-16 rounded-xl object-cover shadow-soft" />
           <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-bold text-muted-foreground md:flex text-secondary-foreground">
