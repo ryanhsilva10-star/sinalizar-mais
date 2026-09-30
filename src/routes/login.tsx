@@ -40,7 +40,7 @@ const USER_AVATARS = [
   { icon: "👾", label: "Gamer Teen" },
 ];
 
-import { loginWithSupabase, registerWithSupabase, isSupabaseConfigured } from "@/lib/supabase-auth";
+import { loginWithSupabase, registerWithSupabase, isSupabaseConfigured, fetchProfileFromSupabase } from "@/lib/supabase-auth";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -87,7 +87,26 @@ function LoginPage() {
 
     if (isSupabaseConfigured()) {
       try {
-        await loginWithSupabase({ email, password });
+        const authUser = await loginWithSupabase({ email, password });
+        if (authUser) {
+          // Sync user profile from Supabase to local storage so loginUser doesn't fail
+          const profile = await fetchProfileFromSupabase(authUser.id);
+          if (profile) {
+            saveUser({ ...profile, password });
+          } else {
+            saveUser({
+              id: authUser.id,
+              email: authUser.email!,
+              name: authUser.user_metadata?.name || "Usuário",
+              role: authUser.user_metadata?.role || "aluno",
+              world: authUser.user_metadata?.world || "ef1",
+              avatar: authUser.user_metadata?.avatar || "🦊",
+              discipline: authUser.user_metadata?.discipline,
+              classroomCode: authUser.user_metadata?.classroom_code,
+              password: password,
+            });
+          }
+        }
       } catch (err: any) {
         toast.error(err.message || "Erro de autenticação no Supabase.");
         return;
