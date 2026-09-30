@@ -30,7 +30,7 @@ import {
 export const Route = createFileRoute("/turma")({
   head: () => ({
     meta: [
-      { title: "Painel da Turma / Clã · Sinalizar mais LIBRAS" },
+      { title: "Painel da Turma / Clã · sinaliza mais LIBRAS" },
       {
         name: "description",
         content:
@@ -103,7 +103,7 @@ function TurmaDashboardPage() {
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
                 S
               </span>
-              <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
+              <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
             </Link>
             <Link
               to="/trilha"
@@ -167,7 +167,7 @@ function TurmaDashboardPage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
               S
             </span>
-            <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
+            <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
           </Link>
 
           <div className="flex items-center gap-3">
@@ -297,31 +297,28 @@ function TurmaDashboardPage() {
           <div className="inline-flex rounded-2xl bg-muted/60 p-1 shadow-inner gap-1">
             <button
               onClick={() => setFilterWorld("all")}
-              className={`rounded-xl px-3.5 py-1.5 text-xs font-extrabold transition-all ${
-                filterWorld === "all"
+              className={`rounded-xl px-3.5 py-1.5 text-xs font-extrabold transition-all ${filterWorld === "all"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               Todas ({activities.length})
             </button>
             <button
               onClick={() => setFilterWorld("world1")}
-              className={`rounded-xl px-3.5 py-1.5 text-xs font-extrabold transition-all ${
-                filterWorld === "world1"
+              className={`rounded-xl px-3.5 py-1.5 text-xs font-extrabold transition-all ${filterWorld === "world1"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               🦊 Mundo 1 (12)
             </button>
             <button
               onClick={() => setFilterWorld("world2")}
-              className={`rounded-xl px-3.5 py-1.5 text-xs font-extrabold transition-all ${
-                filterWorld === "world2"
+              className={`rounded-xl px-3.5 py-1.5 text-xs font-extrabold transition-all ${filterWorld === "world2"
                   ? "bg-primary text-primary-foreground shadow-sm"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               🚀 Mundo 2 (12)
             </button>
@@ -355,23 +352,22 @@ function TurmaDashboardPage() {
                     </div>
 
                     <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[9px] font-black uppercase ${
-                        act.kind === "chefe"
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[9px] font-black uppercase ${act.kind === "chefe"
                           ? "bg-amber-500/20 text-amber-600 dark:text-amber-400"
                           : act.kind === "espelho"
-                          ? "bg-purple-500/20 text-purple-600 dark:text-purple-400"
-                          : act.kind === "revisao"
-                          ? "bg-sky-500/20 text-sky-600 dark:text-sky-400"
-                          : "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                      }`}
+                            ? "bg-purple-500/20 text-purple-600 dark:text-purple-400"
+                            : act.kind === "revisao"
+                              ? "bg-sky-500/20 text-sky-600 dark:text-sky-400"
+                              : "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                        }`}
                     >
                       {act.kind === "chefe"
                         ? "Chefe"
                         : act.kind === "espelho"
-                        ? "Espelho IA"
-                        : act.kind === "revisao"
-                        ? "Revisão"
-                        : "Micro-lição"}
+                          ? "Espelho IA"
+                          : act.kind === "revisao"
+                            ? "Revisão"
+                            : "Micro-lição"}
                     </span>
                   </div>
 
@@ -384,18 +380,16 @@ function TurmaDashboardPage() {
                           <span>👤</span> Meu Progresso:
                         </span>
                         <span
-                          className={`font-black text-xs ${
-                            act.myCompleted ? "text-emerald-500" : "text-muted-foreground"
-                          }`}
+                          className={`font-black text-xs ${act.myCompleted ? "text-emerald-500" : "text-muted-foreground"
+                            }`}
                         >
                           {act.myCompleted ? `Concluído (${act.myScore}%)` : "Pendente (0%)"}
                         </span>
                       </div>
                       <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
                         <div
-                          className={`h-full rounded-full transition-all duration-500 ${
-                            act.myCompleted ? "bg-emerald-500" : "bg-muted-foreground/20"
-                          }`}
+                          className={`h-full rounded-full transition-all duration-500 ${act.myCompleted ? "bg-emerald-500" : "bg-muted-foreground/20"
+                            }`}
                           style={{ width: `${act.myCompleted ? act.myScore : 0}%` }}
                         />
                       </div>
@@ -430,11 +424,10 @@ function TurmaDashboardPage() {
                   <Link
                     to="/licao"
                     search={{ nodeId: act.nodeId }}
-                    className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-extrabold transition-transform hover:-translate-y-0.5 active:translate-y-0.5 shadow-soft ${
-                      act.myCompleted
+                    className={`inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-extrabold transition-transform hover:-translate-y-0.5 active:translate-y-0.5 shadow-soft ${act.myCompleted
                         ? "border border-border bg-background hover:bg-muted text-foreground"
                         : "bg-primary text-primary-foreground shadow-chunky"
-                    }`}
+                      }`}
                   >
                     {act.myCompleted ? (
                       <>

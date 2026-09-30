@@ -38,11 +38,11 @@ import { ALL_TRAIL_ACTIVITIES } from "@/lib/user-store";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "Painel do Professor · Sinalizar mais LIBRAS" },
+      { title: "Painel do Professor · sinaliza mais LIBRAS" },
       {
         name: "description",
         content:
-          "Área exclusiva para professores gerenciarem salas de aula, turmas e professores no Sinalizar mais.",
+          "Área exclusiva para professores gerenciarem salas de aula, turmas e professores no sinaliza mais.",
       },
     ],
   }),
@@ -144,11 +144,11 @@ function OnboardingPage() {
   // Filtra as salas pertencentes ao professor logado
   const teacherClassrooms = activeUser
     ? classroomsList.filter(
-        (c) =>
-          c.teacherId === activeUser.id ||
-          c.teacherName === activeUser.name ||
-          (activeUser.email === "helena.prof@sinalizarmais.com" && c.teacherId === "usr_prof_1")
-      )
+      (c) =>
+        c.teacherId === activeUser.id ||
+        c.teacherName === activeUser.name ||
+        (activeUser.email === "helena.prof@sinalizamais.com" && c.teacherId === "usr_prof_1")
+    )
     : [];
 
   // ==========================================
@@ -316,7 +316,7 @@ function OnboardingPage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
               S
             </span>
-            <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
+            <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
           </Link>
 
           <div className="flex items-center gap-3">
@@ -359,19 +359,17 @@ function OnboardingPage() {
           <div className="inline-flex flex-wrap justify-center rounded-2xl bg-muted/60 p-1.5 shadow-inner gap-1">
             <button
               onClick={() => setMode("classrooms")}
-              className={`rounded-xl px-5 py-2.5 text-xs md:text-sm font-extrabold transition-all flex items-center gap-2 ${
-                mode === "classrooms"
+              className={`rounded-xl px-5 py-2.5 text-xs md:text-sm font-extrabold transition-all flex items-center gap-2 ${mode === "classrooms"
                   ? "bg-primary text-primary-foreground shadow-md"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               <span>🏫 Minhas Salas</span>
               <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
-                  mode === "classrooms"
+                className={`rounded-full px-2 py-0.5 text-[10px] font-black ${mode === "classrooms"
                     ? "bg-white/25 text-white"
                     : "bg-primary/15 text-primary"
-                }`}
+                  }`}
               >
                 {teacherClassrooms.length}
               </span>
@@ -379,19 +377,17 @@ function OnboardingPage() {
 
             <button
               onClick={() => setMode("teachers")}
-              className={`rounded-xl px-5 py-2.5 text-xs md:text-sm font-extrabold transition-all flex items-center gap-2 ${
-                mode === "teachers"
+              className={`rounded-xl px-5 py-2.5 text-xs md:text-sm font-extrabold transition-all flex items-center gap-2 ${mode === "teachers"
                   ? "bg-primary text-primary-foreground shadow-md"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               <span>🧑‍🏫 Professores</span>
               <span
-                className={`rounded-full px-2 py-0.5 text-[10px] font-black ${
-                  mode === "teachers"
+                className={`rounded-full px-2 py-0.5 text-[10px] font-black ${mode === "teachers"
                     ? "bg-white/25 text-white"
                     : "bg-blue-500/15 text-blue-600 dark:text-blue-400"
-                }`}
+                  }`}
               >
                 {teachersList.length}
               </span>
@@ -402,11 +398,10 @@ function OnboardingPage() {
                 resetProfessorForm();
                 setMode("create");
               }}
-              className={`rounded-xl px-5 py-2.5 text-xs md:text-sm font-extrabold transition-all ${
-                mode === "create"
+              className={`rounded-xl px-5 py-2.5 text-xs md:text-sm font-extrabold transition-all ${mode === "create"
                   ? "bg-primary text-primary-foreground shadow-md"
                   : "text-muted-foreground hover:text-foreground"
-              }`}
+                }`}
             >
               ➕ {editingId ? "Editar Professor" : "Cadastrar Professor"}
             </button>
@@ -450,7 +445,7 @@ function OnboardingPage() {
                 </span>
                 <h3 className="mt-4 font-display text-xl font-extrabold">Nenhuma sala de aula cadastrada</h3>
                 <p className="mt-2 text-sm text-muted-foreground max-w-md mx-auto">
-                  Crie sua primeira sala para gerar um código de acesso e permitir que seus alunos se conectem à turma pelo Sinalizar mais.
+                  Crie sua primeira sala para gerar um código de acesso e permitir que seus alunos se conectem à turma pelo sinaliza mais.
                 </p>
                 <button
                   onClick={handleOpenAddClassroomModal}
@@ -473,8 +468,8 @@ function OnboardingPage() {
                     cls.world === "ef2"
                       ? "Mundo EF2 • Teen (6º ao 9º)"
                       : cls.world === "ef1"
-                      ? "Mundo EF1 • Infantil (1º ao 5º)"
-                      : "Todos os Níveis (EF1 & EF2)";
+                        ? "Mundo EF1 • Infantil (1º ao 5º)"
+                        : "Todos os Níveis (EF1 & EF2)";
 
                   return (
                     <div
@@ -499,13 +494,12 @@ function OnboardingPage() {
                           </div>
 
                           <span
-                            className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-black uppercase ${
-                              cls.world === "ef2"
+                            className={`shrink-0 rounded-full px-2.5 py-1 text-[10px] font-black uppercase ${cls.world === "ef2"
                                 ? "bg-indigo-500/20 text-indigo-500 dark:text-indigo-400"
                                 : cls.world === "ef1"
-                                ? "bg-amber-500/20 text-amber-600 dark:text-amber-400"
-                                : "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
-                            }`}
+                                  ? "bg-amber-500/20 text-amber-600 dark:text-amber-400"
+                                  : "bg-emerald-500/20 text-emerald-600 dark:text-emerald-400"
+                              }`}
                           >
                             {cls.world === "ef2" ? "EF2 Teen" : cls.world === "ef1" ? "EF1 Infantil" : "Geral"}
                           </span>
@@ -542,11 +536,10 @@ function OnboardingPage() {
 
                             <button
                               onClick={() => handleCopyCode(cls.code)}
-                              className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold transition-all shadow-sm ${
-                                copiedCode === cls.code
+                              className={`flex items-center gap-1.5 rounded-xl px-3.5 py-2 text-xs font-extrabold transition-all shadow-sm ${copiedCode === cls.code
                                   ? "bg-emerald-500 text-white scale-105"
                                   : "bg-primary text-primary-foreground hover:bg-primary/90"
-                              }`}
+                                }`}
                               title="Copiar código da sala"
                             >
                               {copiedCode === cls.code ? (
@@ -646,7 +639,7 @@ function OnboardingPage() {
                   </span>
                 </h1>
                 <p className="text-sm text-muted-foreground">
-                  Professores possuem autorização para criar salas de aula e monitorar turmas no Sinalizar mais.
+                  Professores possuem autorização para criar salas de aula e monitorar turmas no sinaliza mais.
                 </p>
               </div>
               <button
@@ -676,11 +669,10 @@ function OnboardingPage() {
                   return (
                     <div
                       key={prof.id}
-                      className={`relative flex flex-col justify-between rounded-3xl border-2 p-5 transition-all ${
-                        isActive
+                      className={`relative flex flex-col justify-between rounded-3xl border-2 p-5 transition-all ${isActive
                           ? "border-blue-500 bg-blue-500/10 shadow-md"
                           : "border-border bg-card hover:border-border/80"
-                      }`}
+                        }`}
                     >
                       <div>
                         <div className="flex items-start justify-between">
@@ -749,7 +741,7 @@ function OnboardingPage() {
                   {editingId ? `Editando: ${name}` : "Cadastrar Professor(a)"}
                 </h1>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Cadastre novos professores para gerenciar turmas e salas no Sinalizar mais.
+                  Cadastre novos professores para gerenciar turmas e salas no sinaliza mais.
                 </p>
               </div>
 
@@ -765,11 +757,10 @@ function OnboardingPage() {
                         key={av.icon}
                         type="button"
                         onClick={() => setSelectedAvatar(av.icon)}
-                        className={`flex h-12 w-12 items-center justify-center rounded-2xl text-2xl transition-all ${
-                          selectedAvatar === av.icon
+                        className={`flex h-12 w-12 items-center justify-center rounded-2xl text-2xl transition-all ${selectedAvatar === av.icon
                             ? "bg-primary text-primary-foreground ring-4 ring-primary/30 scale-110 shadow-md"
                             : "bg-muted hover:bg-muted/80"
-                        }`}
+                          }`}
                         title={av.label}
                       >
                         {av.icon}
@@ -817,11 +808,10 @@ function OnboardingPage() {
                     <button
                       type="button"
                       onClick={() => setWorld("ef1")}
-                      className={`flex flex-col items-center justify-center rounded-2xl border-2 p-4 transition-all ${
-                        world === "ef1"
+                      className={`flex flex-col items-center justify-center rounded-2xl border-2 p-4 transition-all ${world === "ef1"
                           ? "border-primary bg-primary/10 shadow-soft scale-[1.02]"
                           : "border-border bg-background hover:bg-muted/50"
-                      }`}
+                        }`}
                     >
                       <span className="text-2xl">🦊</span>
                       <span className="mt-1 font-display font-extrabold text-sm">EF1 • Infantil</span>
@@ -831,11 +821,10 @@ function OnboardingPage() {
                     <button
                       type="button"
                       onClick={() => setWorld("ef2")}
-                      className={`flex flex-col items-center justify-center rounded-2xl border-2 p-4 transition-all ${
-                        world === "ef2"
+                      className={`flex flex-col items-center justify-center rounded-2xl border-2 p-4 transition-all ${world === "ef2"
                           ? "border-indigo-500 bg-indigo-500/10 shadow-soft scale-[1.02]"
                           : "border-border bg-background hover:bg-muted/50"
-                      }`}
+                        }`}
                     >
                       <span className="text-2xl">🚀</span>
                       <span className="mt-1 font-display font-extrabold text-sm">EF2 • Teen</span>
@@ -853,7 +842,7 @@ function OnboardingPage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    placeholder="professor@sinalizarmais.com"
+                    placeholder="professor@sinalizamais.com"
                     required
                     className="w-full rounded-2xl border-2 border-border bg-background px-4 py-3 font-medium outline-none transition-colors focus:border-primary"
                   />
@@ -968,11 +957,10 @@ function OnboardingPage() {
                   <button
                     type="button"
                     onClick={() => setClassroomWorld("ef1")}
-                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${
-                      classroomWorld === "ef1"
+                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${classroomWorld === "ef1"
                         ? "border-primary bg-primary/10 shadow-soft font-extrabold"
                         : "border-border bg-background hover:bg-muted/50 text-muted-foreground"
-                    }`}
+                      }`}
                   >
                     <span className="text-xl">🦊</span>
                     <span className="mt-1 text-xs">EF1 Infantil</span>
@@ -981,11 +969,10 @@ function OnboardingPage() {
                   <button
                     type="button"
                     onClick={() => setClassroomWorld("ef2")}
-                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${
-                      classroomWorld === "ef2"
+                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${classroomWorld === "ef2"
                         ? "border-indigo-500 bg-indigo-500/10 shadow-soft font-extrabold text-indigo-400"
                         : "border-border bg-background hover:bg-muted/50 text-muted-foreground"
-                    }`}
+                      }`}
                   >
                     <span className="text-xl">🚀</span>
                     <span className="mt-1 text-xs">EF2 Teen</span>
@@ -994,11 +981,10 @@ function OnboardingPage() {
                   <button
                     type="button"
                     onClick={() => setClassroomWorld("all")}
-                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${
-                      classroomWorld === "all"
+                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${classroomWorld === "all"
                         ? "border-emerald-500 bg-emerald-500/10 shadow-soft font-extrabold text-emerald-600 dark:text-emerald-400"
                         : "border-border bg-background hover:bg-muted/50 text-muted-foreground"
-                    }`}
+                      }`}
                   >
                     <span className="text-xl">🎓</span>
                     <span className="mt-1 text-xs">Todos / Geral</span>
@@ -1157,11 +1143,10 @@ function OnboardingPage() {
                       <button
                         key={f}
                         onClick={() => setStudentModalWorldFilter(f)}
-                        className={`rounded-lg px-2.5 py-1 text-[10px] font-extrabold transition-all ${
-                          studentModalWorldFilter === f
+                        className={`rounded-lg px-2.5 py-1 text-[10px] font-extrabold transition-all ${studentModalWorldFilter === f
                             ? "bg-primary text-primary-foreground shadow-sm"
                             : "text-muted-foreground hover:text-foreground"
-                        }`}
+                          }`}
                       >
                         {f === "all" ? "Todos" : f === "world1" ? "🌍 EF1" : "🚀 EF2"}
                       </button>
@@ -1548,7 +1533,7 @@ function OnboardingPage() {
 
             <div className="mt-4 max-h-80 overflow-y-auto space-y-3 pr-1">
               {!selectedStudentForLessons.completedLessons ||
-              selectedStudentForLessons.completedLessons.length === 0 ? (
+                selectedStudentForLessons.completedLessons.length === 0 ? (
                 <p className="text-center text-sm text-muted-foreground py-6">
                   Nenhuma lição registrada para este aluno ainda.
                 </p>

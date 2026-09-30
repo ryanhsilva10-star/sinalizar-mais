@@ -24,13 +24,13 @@ export const Route = createFileRoute("/trilha")({
   },
   head: () => ({
     meta: [
-      { title: "Minha Trilha de LIBRAS com Mapa 3D · Sinalizar mais" },
+      { title: "Minha Trilha de LIBRAS com Mapa 3D · sinaliza mais" },
       {
         name: "description",
         content:
           "Mapa interativo de aventura com micro-lições de LIBRAS: saudações, alfabeto, cores, bichos e família com efeitos de parallax e gamificação.",
       },
-      { property: "og:title", content: "Minha Trilha de LIBRAS · Sinalizar mais" },
+      { property: "og:title", content: "Minha Trilha de LIBRAS · sinaliza mais" },
       {
         property: "og:description",
         content: "Avance pelo mapa interativo aprendendo LIBRAS com micro-lições gamificadas.",
@@ -177,7 +177,7 @@ function TrailPage() {
 
     // 1. Não autenticado -> Concede acesso direto com Aluno de demonstração para acesso sem fricção
     if (!user) {
-      user = loginUser("luizinho@sinalizarmais.com", "123");
+      user = loginUser("luizinho@sinalizamais.com", "123");
       if (user) {
         toast.info("👋 Bem-vindo(a) à sua primeira trilha de LIBRAS!");
       } else {
@@ -272,11 +272,10 @@ function TrailPage() {
         <div className="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
           <button
             onClick={() => handleSelectWorld(1)}
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${
-              activeWorld === 1
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${activeWorld === 1
                 ? "bg-primary text-primary-foreground shadow-chunky scale-105"
                 : "bg-card text-muted-foreground hover:bg-muted hover:text-foreground shadow-soft"
-            }`}
+              }`}
           >
             <span>🐾</span>
             <span>Mundo 1: Alfabeto dos Bichinhos (A-R)</span>
@@ -284,13 +283,12 @@ function TrailPage() {
 
           <button
             onClick={() => handleSelectWorld(2)}
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${
-              activeWorld === 2
+            className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${activeWorld === 2
                 ? "bg-gradient-rainbow text-white shadow-chunky scale-105"
                 : isWorld2Unlocked
-                ? "bg-card text-foreground hover:bg-muted shadow-soft"
-                : "bg-muted/80 text-muted-foreground cursor-pointer shadow-soft opacity-80"
-            }`}
+                  ? "bg-card text-foreground hover:bg-muted shadow-soft"
+                  : "bg-muted/80 text-muted-foreground cursor-pointer shadow-soft opacity-80"
+              }`}
           >
             <span>👑</span>
             <span>Mundo 2: O Trono do Alfabeto (S-Z)</span>
@@ -303,7 +301,7 @@ function TrailPage() {
         <section className="mb-6 flex flex-col items-center gap-4 rounded-4xl bg-card p-6 shadow-soft sm:flex-row sm:gap-6">
           <img
             src={luviMascot}
-            alt="Luvi, mascote do Sinalizar mais, acenando"
+            alt="Luvi, mascote do sinaliza mais, acenando"
             width={1024}
             height={1024}
             className="w-20 shrink-0 animate-bounce-soft sm:w-24"
@@ -325,8 +323,8 @@ function TrailPage() {
                   ? "Bem-vindo(a)! Aprenda o alfabeto em LIBRAS, 3 letras por lição com os bichinhos! 🐾"
                   : `Você completou ${completedCount} de ${trailNodes.length} lições do Mundo 1. Continue avançando! 🌟`
                 : isWorld2Unlocked
-                ? `Bem-vindo ao Trono Real! Você completou ${completedCount} de ${trailNodes.length} lições do Mundo 2! 👑`
-                : "Conclua a Fase 12 na Ilha das Letras do Castelo para abrir os portões do Mundo 2! 🔒"}
+                  ? `Bem-vindo ao Trono Real! Você completou ${completedCount} de ${trailNodes.length} lições do Mundo 2! 👑`
+                  : "Conclua a Fase 12 na Ilha das Letras do Castelo para abrir os portões do Mundo 2! 🔒"}
             </p>
             <div className="mt-3 flex items-center gap-3">
               <div className="h-3.5 flex-1 overflow-hidden rounded-full bg-muted shadow-inner">
@@ -362,11 +360,10 @@ function TrailPage() {
                     setTimeOfDay("day");
                     soundFx.playPop();
                   }}
-                  className={`rounded-xl px-2.5 py-1 text-xs font-black transition-all ${
-                    timeOfDay === "day"
+                  className={`rounded-xl px-2.5 py-1 text-xs font-black transition-all ${timeOfDay === "day"
                       ? "bg-amber-400 text-amber-950 shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
-                  }`}
+                    }`}
                   title="Dia Ensolarado"
                 >
                   ☀️ Dia
@@ -376,11 +373,10 @@ function TrailPage() {
                     setTimeOfDay("sunset");
                     soundFx.playPop();
                   }}
-                  className={`rounded-xl px-2.5 py-1 text-xs font-black transition-all ${
-                    timeOfDay === "sunset"
+                  className={`rounded-xl px-2.5 py-1 text-xs font-black transition-all ${timeOfDay === "sunset"
                       ? "bg-orange-500 text-white shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
-                  }`}
+                    }`}
                   title="Pôr do Sol"
                 >
                   🌅 Ocaso
@@ -390,11 +386,10 @@ function TrailPage() {
                     setTimeOfDay("night");
                     soundFx.playPop();
                   }}
-                  className={`rounded-xl px-2.5 py-1 text-xs font-black transition-all ${
-                    timeOfDay === "night"
+                  className={`rounded-xl px-2.5 py-1 text-xs font-black transition-all ${timeOfDay === "night"
                       ? "bg-indigo-900 text-indigo-100 shadow-sm"
                       : "text-muted-foreground hover:text-foreground"
-                  }`}
+                    }`}
                   title="Noite Estrelada"
                 >
                   🌙 Noite
@@ -418,13 +413,12 @@ function TrailPage() {
                 return (
                   <div
                     key={island.id}
-                    className={`rounded-3xl border-2 p-4 transition-all ${
-                      isCurrent
+                    className={`rounded-3xl border-2 p-4 transition-all ${isCurrent
                         ? "border-emerald-300 bg-card/60 shadow-soft"
                         : doneCount === island.nodes.length
-                        ? "border-emerald-400  bg-card/60 shadow-soft"
-                        : "border-emerald-200 bg-card/60 shadow-soft"
-                    }`}
+                          ? "border-emerald-400  bg-card/60 shadow-soft"
+                          : "border-emerald-200 bg-card/60 shadow-soft"
+                      }`}
                   >
                     <div className="flex items-center gap-3">
                       <span
@@ -462,11 +456,10 @@ function TrailPage() {
         {activeWorld === 1 ? (
           <div
             onClick={() => handleSelectWorld(2)}
-            className={`mt-12 cursor-pointer rounded-4xl border-4 p-8 text-center backdrop-blur-sm shadow-lg transition-transform hover:scale-[1.01] ${
-              isWorld2Unlocked
+            className={`mt-12 cursor-pointer rounded-4xl border-4 p-8 text-center backdrop-blur-sm shadow-lg transition-transform hover:scale-[1.01] ${isWorld2Unlocked
                 ? "border-emerald-400 bg-emerald-500/10 dark:bg-emerald-950/20"
                 : "border-dashed border-border bg-card/40"
-            }`}
+              }`}
           >
             <div className="text-4xl animate-bounce-soft">
               {isWorld2Unlocked ? "🏰✨" : "🏰🔒"}
@@ -480,11 +473,10 @@ function TrailPage() {
                 : "Termine a jornada na Ilha dos Bichos (Fase 12) para cruzar o portão do castelo e desbloquear novas aventuras!"}
             </p>
             <button
-              className={`mt-4 rounded-full px-6 py-2.5 font-display text-xs font-black shadow-soft ${
-                isWorld2Unlocked
+              className={`mt-4 rounded-full px-6 py-2.5 font-display text-xs font-black shadow-soft ${isWorld2Unlocked
                   ? "bg-emerald-500 text-white hover:bg-emerald-600"
                   : "bg-primary text-primary-foreground hover:opacity-90"
-              }`}
+                }`}
             >
               {isWorld2Unlocked ? "Entrar no Castelo 🏰" : "Ver Portão do Castelo 🔒"}
             </button>
@@ -526,7 +518,7 @@ function TrailPage() {
                 }}
                 className="rounded-full bg-primary px-6 py-3 font-display text-sm font-black text-primary-foreground shadow-chunky transition-transform hover:scale-105"
               >
-                 Ir para a Fase 12 (Chefe da Ilha dos Bichos)
+                Ir para a Fase 12 (Chefe da Ilha dos Bichos)
               </button>
               <button
                 onClick={() => setShowLockModal(false)}
@@ -574,11 +566,11 @@ function TrailHeader({
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link to="/" className="flex items-center gap-2" aria-label="Sinalizar mais, início">
+        <Link to="/" className="flex items-center gap-2" aria-label="sinaliza mais, início">
           <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-rainbow font-display text-lg font-extrabold text-primary-foreground shadow-sm">
             S
           </span>
-          <span className="hidden font-display text-lg font-extrabold sm:block">Sinalizar mais</span>
+          <span className="hidden font-display text-lg font-extrabold sm:block">sinaliza mais</span>
         </Link>
 
         {/* View Mode switcher */}
@@ -588,11 +580,10 @@ function TrailHeader({
               onToggleView("map");
               soundFx.playPop();
             }}
-            className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all ${
-              viewMode === "map"
+            className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all ${viewMode === "map"
                 ? "bg-card text-primary shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
             <span>🗺️</span>
             <span>Mapa 3D</span>
@@ -602,11 +593,10 @@ function TrailHeader({
               onToggleView("list");
               soundFx.playPop();
             }}
-            className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all ${
-              viewMode === "list"
+            className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all ${viewMode === "list"
                 ? "bg-card text-primary shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
-            }`}
+              }`}
           >
             <span>📋</span>
             <span>Lista</span>

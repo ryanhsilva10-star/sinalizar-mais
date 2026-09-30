@@ -20,10 +20,10 @@ export const Route = createFileRoute("/login")({
   },
   head: () => ({
     meta: [
-      { title: "Acesso e Cadastro · Sinalizar mais LIBRAS" },
+      { title: "Acesso e Cadastro · sinaliza mais LIBRAS" },
       {
         name: "description",
-        content: "Área de login e cadastro no Sinalizar mais para alunos e professores gerenciarem seu progresso e salas de aula.",
+        content: "Área de login e cadastro no sinaliza mais para alunos e professores gerenciarem seu progresso e salas de aula.",
       },
     ],
   }),
@@ -177,7 +177,7 @@ function LoginPage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
               S
             </span>
-            <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
+            <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
           </Link>
           <Link
             to="/trilha"
@@ -196,21 +196,19 @@ function LoginPage() {
             <div className="inline-flex rounded-2xl bg-muted/60 p-1 shadow-inner w-full">
               <button
                 onClick={() => setMode("login")}
-                className={`w-1/2 rounded-xl py-2.5 text-xs sm:text-sm font-extrabold transition-all ${
-                  mode === "login"
+                className={`w-1/2 rounded-xl py-2.5 text-xs sm:text-sm font-extrabold transition-all ${mode === "login"
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 🔑 Entrar / Login
               </button>
               <button
                 onClick={() => setMode("register")}
-                className={`w-1/2 rounded-xl py-2.5 text-xs sm:text-sm font-extrabold transition-all ${
-                  mode === "register"
+                className={`w-1/2 rounded-xl py-2.5 text-xs sm:text-sm font-extrabold transition-all ${mode === "register"
                     ? "bg-primary text-primary-foreground shadow-md"
                     : "text-muted-foreground hover:text-foreground"
-                }`}
+                  }`}
               >
                 ➕ Cadastrar Usuário
               </button>
@@ -304,11 +302,10 @@ function LoginPage() {
                       setAccountRole("aluno");
                       setSelectedAvatar("🦊");
                     }}
-                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${
-                      accountRole === "aluno"
+                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${accountRole === "aluno"
                         ? "border-primary bg-primary/10 shadow-soft scale-[1.02]"
                         : "border-border bg-background hover:bg-muted/50"
-                    }`}
+                      }`}
                   >
                     <span className="text-2xl">🎓</span>
                     <span className="mt-1 font-display font-extrabold text-sm">Aluno(a)</span>
@@ -320,11 +317,10 @@ function LoginPage() {
                       setAccountRole("professor");
                       setSelectedAvatar("🧑‍🏫");
                     }}
-                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${
-                      accountRole === "professor"
+                    className={`flex flex-col items-center justify-center rounded-2xl border-2 p-3 transition-all ${accountRole === "professor"
                         ? "border-primary bg-primary/10 shadow-soft scale-[1.02]"
                         : "border-border bg-background hover:bg-muted/50"
-                    }`}
+                      }`}
                   >
                     <span className="text-2xl">🧑‍🏫</span>
                     <span className="mt-1 font-display font-extrabold text-sm">Professor(a)</span>
@@ -344,11 +340,10 @@ function LoginPage() {
                         key={av.icon}
                         type="button"
                         onClick={() => setSelectedAvatar(av.icon)}
-                        className={`flex h-11 w-11 items-center justify-center rounded-2xl text-xl transition-all ${
-                          selectedAvatar === av.icon
+                        className={`flex h-11 w-11 items-center justify-center rounded-2xl text-xl transition-all ${selectedAvatar === av.icon
                             ? "bg-primary text-primary-foreground ring-4 ring-primary/30 scale-110 shadow-md"
                             : "bg-muted hover:bg-muted/80"
-                        }`}
+                          }`}
                         title={av.label}
                       >
                         {av.icon}
@@ -397,18 +392,16 @@ function LoginPage() {
                     <button
                       type="button"
                       onClick={() => setWorld("ef1")}
-                      className={`rounded-xl border-2 py-2 px-3 text-xs font-extrabold transition-all ${
-                        world === "ef1" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
-                      }`}
+                      className={`rounded-xl border-2 py-2 px-3 text-xs font-extrabold transition-all ${world === "ef1" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
+                        }`}
                     >
                       🌈 EF1 (1º ao 5º Ano)
                     </button>
                     <button
                       type="button"
                       onClick={() => setWorld("ef2")}
-                      className={`rounded-xl border-2 py-2 px-3 text-xs font-extrabold transition-all ${
-                        world === "ef2" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
-                      }`}
+                      className={`rounded-xl border-2 py-2 px-3 text-xs font-extrabold transition-all ${world === "ef2" ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground"
+                        }`}
                     >
                       🚀 EF2 (6º ao 9º Ano)
                     </button>

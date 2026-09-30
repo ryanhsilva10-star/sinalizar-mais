@@ -16,7 +16,7 @@ import Footer from "@/components/Footer";
 export const Route = createFileRoute("/student/profile")({
   head: () => ({
     meta: [
-      { title: "Meu Perfil de Aluno · Sinalizar mais LIBRAS" },
+      { title: "Meu Perfil de Aluno · sinaliza mais LIBRAS" },
       {
         name: "description",
         content: "Gerencie suas informações cadastrais e acompanhe seu progresso de aprendizado em LIBRAS.",
@@ -54,7 +54,7 @@ function StudentProfilePage() {
   // Regra de Guarda de Autorização da Rota
   useEffect(() => {
     const active = getActiveUser();
-    
+
     // 1. Não autenticado -> redireciona para login
     if (!active) {
       toast.error("Sessão não encontrada. Por favor, faça login.");
@@ -164,9 +164,8 @@ function StudentProfilePage() {
 
   return (
     <div
-      className={`min-h-screen transition-colors duration-300 ${
-        isTeen ? "bg-slate-950 text-slate-100" : "bg-background text-foreground"
-      }`}
+      className={`min-h-screen transition-colors duration-300 ${isTeen ? "bg-slate-950 text-slate-100" : "bg-background text-foreground"
+        }`}
     >
       {/* Header com Botão de Log-off */}
       <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md">
@@ -175,7 +174,7 @@ function StudentProfilePage() {
             <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
               S
             </span>
-            <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
+            <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
           </Link>
 
           <div className="flex items-center gap-3">
@@ -264,11 +263,10 @@ function StudentProfilePage() {
                         key={av.icon}
                         type="button"
                         onClick={() => setAvatar(av.icon)}
-                        className={`flex h-11 w-11 items-center justify-center rounded-2xl text-2xl transition-all ${
-                          avatar === av.icon
+                        className={`flex h-11 w-11 items-center justify-center rounded-2xl text-2xl transition-all ${avatar === av.icon
                             ? "bg-primary text-primary-foreground ring-4 ring-primary/30 scale-105"
                             : "bg-muted hover:bg-muted/80"
-                        }`}
+                          }`}
                       >
                         {av.icon}
                       </button>

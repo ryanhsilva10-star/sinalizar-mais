@@ -1,4 +1,4 @@
--- Migration: Initial Schema for Sinalizar mais (Auth, Profiles, Classrooms, Lessons)
+-- Migration: Initial Schema for sinaliza mais (Auth, Profiles, Classrooms, Lessons)
 -- Date: 2026-09-28
 
 -- 1. Create Profiles Table (Linked to auth.users)

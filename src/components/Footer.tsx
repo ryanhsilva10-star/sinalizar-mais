@@ -55,11 +55,11 @@ const FOOTER_COLUMNS = [
     id: "produtos",
     title: "Aplicativos",
     links: [
-      { label: "Sinalizar mais para iOS", href: "#" },
-      { label: "Sinalizar mais para Android", href: "#" },
-      { label: "Sinalizar mais Kids (EF1)", href: "#" },
-      { label: "Sinalizar mais Teen (EF2)", href: "#" },
-      { label: "Sinalizar mais para Escolas", href: "#" },
+      { label: "sinaliza mais para iOS", href: "#" },
+      { label: "sinaliza mais para Android", href: "#" },
+      { label: "sinaliza mais Kids (EF1)", href: "#" },
+      { label: "sinaliza mais Teen (EF2)", href: "#" },
+      { label: "sinaliza mais para Escolas", href: "#" },
     ],
   },
   {
@@ -148,9 +148,8 @@ export function Footer() {
 
                 {/* Lista de Links */}
                 <ul
-                  className={`mt-3 space-y-2.5 transition-all duration-300 overflow-hidden md:max-h-none md:opacity-100 ${
-                    isOpen ? "max-h-96 opacity-100 py-1" : "max-h-0 opacity-0 md:max-h-none"
-                  }`}
+                  className={`mt-3 space-y-2.5 transition-all duration-300 overflow-hidden md:max-h-none md:opacity-100 ${isOpen ? "max-h-96 opacity-100 py-1" : "max-h-0 opacity-0 md:max-h-none"
+                    }`}
                 >
                   {col.links.map((link, idx) => (
                     <li key={idx}>
@@ -175,7 +174,7 @@ export function Footer() {
 
         {/* Linha Intermediária: Idiomas, Badges das Lojas & Redes Sociais */}
         <div className="mt-12 pt-8 border-t border-[#232e38] flex flex-col lg:flex-row items-center justify-between gap-8">
-          
+
           {/* Seletor de Idioma Customizado */}
           <div className="relative w-full sm:w-auto">
             <button
@@ -191,9 +190,8 @@ export function Footer() {
               </div>
               <ChevronDown
                 size={16}
-                className={`text-[#8492a6] transition-transform duration-200 ${
-                  isLangOpen ? "rotate-180" : ""
-                }`}
+                className={`text-[#8492a6] transition-transform duration-200 ${isLangOpen ? "rotate-180" : ""
+                  }`}
               />
             </button>
 
@@ -213,11 +211,10 @@ export function Footer() {
                           setSelectedLang(lang);
                           setIsLangOpen(false);
                         }}
-                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-bold transition-colors ${
-                          isSelected
+                        className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-sm font-bold transition-colors ${isSelected
                             ? "bg-[#58cc02] text-white font-extrabold shadow-[0_2px_0_0_#46a302]"
                             : "text-[#939bb0] hover:bg-[#233342] hover:text-white"
-                        }`}
+                          }`}
                       >
                         <div className="flex items-center gap-2.5">
                           <span className="text-base">{lang.flag}</span>
@@ -239,7 +236,7 @@ export function Footer() {
               className="group flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#182630] border-2 border-[#2b3846] text-white font-bold text-xs shadow-[0_3px_0_0_#2b3846] hover:bg-[#20313e] hover:border-[#1cb0f6] active:translate-y-0.5 active:shadow-none transition-all duration-150"
             >
               <svg className="w-6 h-6 fill-current text-white group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
-                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.73c.67-.82 1.12-1.96.99-3.1-.97.04-2.14.65-2.83 1.45-.62.72-1.16 1.88-1.01 3.01 1.08.08 2.18-.54 2.85-1.36z"/>
+                <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.73c.67-.82 1.12-1.96.99-3.1-.97.04-2.14.65-2.83 1.45-.62.72-1.16 1.88-1.01 3.01 1.08.08 2.18-.54 2.85-1.36z" />
               </svg>
               <div className="text-left leading-tight">
                 <span className="block text-[10px] text-[#8492a6] font-semibold uppercase">Baixe na</span>
@@ -252,7 +249,7 @@ export function Footer() {
               className="group flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#182630] border-2 border-[#2b3846] text-white font-bold text-xs shadow-[0_3px_0_0_#2b3846] hover:bg-[#20313e] hover:border-[#58cc02] active:translate-y-0.5 active:shadow-none transition-all duration-150"
             >
               <svg className="w-6 h-6 fill-current text-white group-hover:scale-110 transition-transform" viewBox="0 0 24 24">
-                <path d="M3.6 2.25c-.27.18-.4.49-.4.85v17.8c0 .36.13.67.4.85l9.44-9.44L3.6 2.25zm11.2 7.74l3.15-1.82c.87-.5 1.45-.5 1.93 0l-3.32 3.32-1.76-1.5zm-1.76 1.76l1.76 1.76 3.32 3.32c-.48.5-1.06.5-1.93 0l-3.15-1.82-1.76-1.5c1.76-1.76 1.76-1.76 1.76-1.76zM4.6 21.05l8.44-8.44L4.6 4.17v16.88z"/>
+                <path d="M3.6 2.25c-.27.18-.4.49-.4.85v17.8c0 .36.13.67.4.85l9.44-9.44L3.6 2.25zm11.2 7.74l3.15-1.82c.87-.5 1.45-.5 1.93 0l-3.32 3.32-1.76-1.5zm-1.76 1.76l1.76 1.76 3.32 3.32c-.48.5-1.06.5-1.93 0l-3.15-1.82-1.76-1.5c1.76-1.76 1.76-1.76 1.76-1.76zM4.6 21.05l8.44-8.44L4.6 4.17v16.88z" />
               </svg>
               <div className="text-left leading-tight">
                 <span className="block text-[10px] text-[#8492a6] font-semibold uppercase">Disponível no</span>
@@ -288,7 +285,7 @@ export function Footer() {
         {/* Rodapé Inferior: Copyright e Links Finais */}
         <div className="mt-12 pt-8 border-t border-[#232e38] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-bold text-[#6d778d] text-center sm:text-left">
           <div className="flex items-center gap-2">
-            <span>© {new Date().getFullYear()} Sinalizar mais / Duolingo Style UI. Todos os direitos reservados.</span>
+            <span>© {new Date().getFullYear()} sinaliza mais / Duolingo Style UI. Todos os direitos reservados.</span>
           </div>
 
           <div className="flex items-center gap-1">

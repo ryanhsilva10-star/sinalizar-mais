@@ -1,4 +1,4 @@
-// Sound Effects Synthesizer for Sinalizar mais using Web Audio API
+// Sound Effects Synthesizer for sinaliza mais using Web Audio API
 // Lightweight, zero external dependencies, playful tones for kids and gamification
 
 class SoundManager {

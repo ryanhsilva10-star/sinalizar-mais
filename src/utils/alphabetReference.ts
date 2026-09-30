@@ -490,7 +490,7 @@ export const ALPHABET_OFFICIAL_REFERENCES: Record<string, AlphabetLetterReferenc
         correction: "Feche bem os quatro dedos na palma da mão.",
       },
     ],
-    relatedSigns: ["SABER", "SAUDADE", "SINALIZAR", "SOL"],
+    relatedSigns: ["SABER", "SAUDADE", "sinaliza", "SOL"],
   },
   T: {
     letter: "T",

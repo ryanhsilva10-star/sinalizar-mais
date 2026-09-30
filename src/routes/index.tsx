@@ -52,7 +52,7 @@ function Header() {
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link to="/" className="flex items-center gap-2">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">S</span>
-          <span className="font-display text-2xl font-extrabold">Sinalizar mais</span>
+          <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-bold text-muted-foreground md:flex text-secondary-foreground">
           <a href="#mundos" className="hover:text-foreground">Mundos</a>
@@ -190,7 +190,7 @@ function Hero({ helpMode, setHelpMode }: { helpMode: boolean; setHelpMode: (v: b
             Aprender <span className="bg-gradient-rainbow bg-clip-text text-transparent">LIBRAS</span> virou brincadeira.
           </h1>
           <p className="mt-6 mx-auto md:mx-0 max-w-lg text-base sm:text-lg leading-relaxed text-muted-foreground">
-            Trilhas, avatares 3D e desafios com IA para o Ensino Fundamental sinalizar do jeito certo — e se divertir muito no caminho.
+            Trilhas, avatares 3D e desafios com IA para o Ensino Fundamental sinaliza do jeito certo — e se divertir muito no caminho.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-start gap-3">
             <Link
@@ -211,8 +211,8 @@ function Hero({ helpMode, setHelpMode }: { helpMode: boolean; setHelpMode: (v: b
               <button
                 onClick={() => setHelpMode(!helpMode)}
                 className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full border-2 px-5 py-3.5 text-sm font-extrabold shadow-soft transition-all ${helpMode
-                    ? "border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400"
-                    : "border-foreground/10 bg-muted/60 text-foreground hover:-translate-y-1"
+                  ? "border-blue-500 bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                  : "border-foreground/10 bg-muted/60 text-foreground hover:-translate-y-1"
                   }`}
               >
                 <span>🤔</span> Como funciona?
@@ -232,7 +232,7 @@ function Hero({ helpMode, setHelpMode }: { helpMode: boolean; setHelpMode: (v: b
           <div className="relative animate-float">
             <img
               src={luviMascot}
-              alt="Luvi, mascote tatu-bola do Sinalizar mais, acenando"
+              alt="Luvi, mascote tatu-bola do sinaliza mais, acenando"
               width={1024}
               height={1024}
               className="mx-auto w-full max-w-xs sm:max-w-md drop-shadow-2xl"
