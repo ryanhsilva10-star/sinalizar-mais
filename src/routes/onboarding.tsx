@@ -339,9 +339,11 @@ function OnboardingPage() {
       <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
           <Link to="/" className="flex items-center gap-2">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
-              S
-            </span>
+            <img
+              src="/sinaliza-mais-logo.jpg"
+              alt="Sinaliza Mais - Logo"
+              className="h-10 w-10 rounded-xl object-cover shadow-soft"
+            />
             <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
           </Link>
 
@@ -380,6 +382,21 @@ function OnboardingPage() {
 
       {/* Main Container */}
       <main className="mx-auto max-w-5xl px-4 py-10 md:py-16">
+        {/* Slogan / Banner do Sinaliza Mais */}
+        <div className="mb-10 flex flex-col items-center text-center animate-fade-in">
+          <img
+            src="/sinaliza-mais-logo.jpg"
+            alt="Sinaliza Mais - Aprenda LIBRAS de forma divertida!"
+            className="h-32 w-32 rounded-3xl object-cover shadow-xl ring-4 ring-primary/20 md:h-40 md:w-40 transition-transform hover:scale-105"
+          />
+          <h2 className="mt-4 font-display text-2xl font-extrabold md:text-3xl">
+            Painel do Professor
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground max-w-md">
+            Gerencie suas turmas, acompanhe o progresso dos alunos e ensine LIBRAS de forma inclusiva e divertida! 🤟
+          </p>
+        </div>
+
         {/* Navigation Mode Selector */}
         <div className="mb-8 flex justify-center">
           <div className="inline-flex flex-wrap justify-center rounded-2xl bg-muted/60 p-1.5 shadow-inner gap-1">
