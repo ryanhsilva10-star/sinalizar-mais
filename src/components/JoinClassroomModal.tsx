@@ -12,7 +12,9 @@ import {
   getActiveUser,
   joinClassroom,
   getClassroomByCode,
+  syncClassroomsFromSupabase,
 } from "@/lib/user-store";
+import { addAlunoToSalaInSupabase } from "@/lib/supabase-auth";
 import { Shield, Sparkles, ArrowRight } from "lucide-react";
 
 interface JoinClassroomModalProps {
@@ -31,7 +33,7 @@ export function JoinClassroomModal({
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMessage(null);
     const trimmed = code.trim().toUpperCase();
@@ -48,15 +50,6 @@ export function JoinClassroomModal({
       return;
     }
 
-    // Validação da existência da sala
-    const classroom = getClassroomByCode(trimmed);
-    if (!classroom) {
-      const err = `Código "${trimmed}" inválido ou não encontrado. Verifique com seu professor!`;
-      setErrorMessage(err);
-      toast.error(err);
-      return;
-    }
-
     const user = getActiveUser();
     if (!user) {
       toast.error("Você precisa estar conectado como aluno para ingressar.");
@@ -65,7 +58,31 @@ export function JoinClassroomModal({
 
     setLoading(true);
 
-    setTimeout(() => {
+    try {
+      // 1. Tenta achar sala localmente ou sincroniza do Supabase
+      let classroom = getClassroomByCode(trimmed);
+      if (!classroom) {
+        await syncClassroomsFromSupabase();
+        classroom = getClassroomByCode(trimmed);
+      }
+
+      if (!classroom) {
+        // Tenta vínculo direto no Supabase caso seja sala remota recém-criada
+        const supRes = await addAlunoToSalaInSupabase(user.id, trimmed);
+        if (supRes.success) {
+          await syncClassroomsFromSupabase();
+          classroom = getClassroomByCode(trimmed);
+        }
+      }
+
+      if (!classroom) {
+        const err = `Código "${trimmed}" não encontrado. Verifique com seu professor!`;
+        setErrorMessage(err);
+        toast.error(err);
+        setLoading(false);
+        return;
+      }
+
       const res = joinClassroom(user.id, trimmed);
       setLoading(false);
 
@@ -79,7 +96,10 @@ export function JoinClassroomModal({
         setErrorMessage(res.message);
         toast.error(res.message);
       }
-    }, 300);
+    } catch (err: any) {
+      setLoading(false);
+      toast.error(err.message || "Erro ao ingressar na sala.");
+    }
   };
 
   return (

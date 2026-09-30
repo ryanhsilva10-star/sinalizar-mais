@@ -12,8 +12,10 @@ import {
   joinClassroom,
   leaveClassroom,
   getClassroomByCode,
+  syncClassroomsFromSupabase,
   Classroom,
 } from "@/lib/user-store";
+import { addAlunoToSalaInSupabase } from "@/lib/supabase-auth";
 
 export function JoinClassroomFab() {
   const [open, setOpen] = useState(false);
@@ -28,7 +30,7 @@ export function JoinClassroomFab() {
     ? getClassroomByCode(user.classroomCode)
     : null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = code.trim().toUpperCase();
 
@@ -44,7 +46,21 @@ export function JoinClassroomFab() {
 
     setLoading(true);
 
-    setTimeout(() => {
+    try {
+      let classroom = getClassroomByCode(trimmed);
+      if (!classroom) {
+        await syncClassroomsFromSupabase();
+        classroom = getClassroomByCode(trimmed);
+      }
+
+      if (!classroom) {
+        const supRes = await addAlunoToSalaInSupabase(user.id, trimmed);
+        if (supRes.success) {
+          await syncClassroomsFromSupabase();
+          classroom = getClassroomByCode(trimmed);
+        }
+      }
+
       const res = joinClassroom(user.id, trimmed);
       setLoading(false);
 
@@ -55,7 +71,10 @@ export function JoinClassroomFab() {
       } else {
         toast.error(res.message);
       }
-    }, 400);
+    } catch (err: any) {
+      setLoading(false);
+      toast.error(err.message || "Erro ao entrar na sala.");
+    }
   };
 
   const handleLeave = () => {
