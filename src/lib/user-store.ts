@@ -1,3 +1,11 @@
+import {
+  createOrUpdateSalaInSupabase,
+  addAlunoToSalaInSupabase,
+  removeAlunoFromSalaInSupabase,
+  fetchSalasFromSupabase,
+  fetchAlunosFromSupabase,
+} from "./supabase-auth";
+
 export interface CompletedLesson {
   id: string;
   title: string;
@@ -185,6 +193,11 @@ export function seedDefaultUsers(): void {
 
     // 2. Seed Salas de Aula
     seedDefaultClassrooms();
+
+    // 3. Sincroniza salas e alunos cadastrados no Supabase
+    syncClassroomsFromSupabase().catch((err) =>
+      console.warn("Sincronização em background Supabase:", err)
+    );
   } catch (err) {
     console.error("Erro ao fazer seed:", err);
   }
@@ -412,12 +425,8 @@ export function getClassroomsByTeacher(teacherId: string): Classroom[] {
 }
 
 export function generateRandomClassroomCode(): string {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  let result = "";
-  for (let i = 0; i < 6; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+  // Gera código numérico de 6 dígitos para compatibilidade total com a coluna codigo_sala no Supabase
+  return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
 export function saveClassroom(
@@ -488,6 +497,10 @@ export function saveClassroom(
   if (typeof window !== "undefined") {
     localStorage.setItem(CLASSROOMS_KEY, JSON.stringify(classrooms));
     notifyUserChanges({ type: "saveClassroom", classroom: updatedClassroom });
+    // Sincroniza com Supabase tabela 'sala' e 'professor'
+    createOrUpdateSalaInSupabase(updatedClassroom).catch((err) =>
+      console.warn("Aviso ao salvar sala no Supabase:", err)
+    );
   }
 
   return updatedClassroom;
@@ -573,6 +586,10 @@ export function joinClassroom(
   if (typeof window !== "undefined") {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
     notifyUserChanges({ type: "joinClassroom", studentId, code: normalizedCode });
+    // Sincroniza no Supabase: insere em 'alunos_sala' e atualiza 'alunos'
+    addAlunoToSalaInSupabase(studentId, normalizedCode).catch((err) =>
+      console.warn("Aviso ao vincular aluno na sala do Supabase:", err)
+    );
   }
 
   return {
@@ -597,7 +614,83 @@ export function leaveClassroom(studentId: string): void {
     if (typeof window !== "undefined") {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
       notifyUserChanges({ type: "leaveClassroom", studentId });
+      // Remove do Supabase
+      removeAlunoFromSalaInSupabase(studentId).catch((err) =>
+        console.warn("Aviso ao remover aluno da sala no Supabase:", err)
+      );
     }
+  }
+}
+
+/**
+ * Sincroniza salas e alunos cadastrados no Supabase com o armazenamento local,
+ * garantindo que salas criadas por professores apareçam para todos os alunos.
+ */
+export async function syncClassroomsFromSupabase(): Promise<void> {
+  if (typeof window === "undefined") return;
+  try {
+    const remoteSalas = await fetchSalasFromSupabase();
+    if (remoteSalas && remoteSalas.length > 0) {
+      const local = getClassrooms();
+      let changed = false;
+      for (const rem of remoteSalas) {
+        const idx = local.findIndex((c) => c.code === rem.code || c.id === rem.id);
+        if (idx === -1) {
+          local.push(rem);
+          changed = true;
+        } else {
+          local[idx] = { ...local[idx], ...rem };
+          changed = true;
+        }
+      }
+      if (changed) {
+        localStorage.setItem(CLASSROOMS_KEY, JSON.stringify(local));
+        notifyUserChanges({ type: "syncClassrooms" });
+      }
+    }
+
+    // Sincroniza alunos cadastrados no Supabase
+    const remoteAlunos = await fetchAlunosFromSupabase();
+    if (remoteAlunos && remoteAlunos.length > 0) {
+      const localUsers = getUsers();
+      let changed = false;
+      for (const ra of remoteAlunos) {
+        const uIdx = localUsers.findIndex(
+          (u) =>
+            (ra.userId && u.id === ra.userId) ||
+            u.id === ra.id ||
+            u.email.toLowerCase() === ra.matricula.toLowerCase()
+        );
+        const salaCode = ra.codigoSala ? String(ra.codigoSala) : undefined;
+        if (uIdx >= 0) {
+          if (salaCode && localUsers[uIdx].classroomCode !== salaCode) {
+            localUsers[uIdx].classroomCode = salaCode;
+            changed = true;
+          }
+        } else {
+          localUsers.push({
+            id: ra.userId || ra.id,
+            name: ra.nome,
+            email: ra.matricula,
+            role: "aluno",
+            world: "ef1",
+            avatar: "🦊",
+            level: 1,
+            xp: ra.pontuacaoTotal || 100,
+            streak: 1,
+            classroomCode: salaCode,
+            createdAt: new Date().toISOString(),
+          });
+          changed = true;
+        }
+      }
+      if (changed) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(localUsers));
+        notifyUserChanges({ type: "syncAlunos" });
+      }
+    }
+  } catch (err) {
+    console.warn("Erro ao sincronizar dados com Supabase:", err);
   }
 }
 

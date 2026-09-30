@@ -8,6 +8,7 @@ import {
   getClassroomByCode,
   joinClassroom,
   leaveClassroom,
+  syncClassroomsFromSupabase,
   Classroom,
   User,
 } from "@/lib/user-store";
@@ -89,7 +90,7 @@ function StudentProfilePage() {
   };
 
   // Entrar em sala via código no perfil
-  const handleJoinClassroom = (e: React.FormEvent) => {
+  const handleJoinClassroom = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentUser) return;
     const trimmed = roomCodeInput.trim().toUpperCase();
@@ -98,7 +99,13 @@ function StudentProfilePage() {
       return;
     }
     setIsJoiningRoom(true);
-    setTimeout(() => {
+    try {
+      let classroom = getClassroomByCode(trimmed);
+      if (!classroom) {
+        await syncClassroomsFromSupabase();
+        classroom = getClassroomByCode(trimmed);
+      }
+
       const res = joinClassroom(currentUser.id, trimmed);
       setIsJoiningRoom(false);
       if (res.success) {
@@ -109,7 +116,10 @@ function StudentProfilePage() {
       } else {
         toast.error(res.message);
       }
-    }, 400);
+    } catch (err: any) {
+      setIsJoiningRoom(false);
+      toast.error(err.message || "Erro ao entrar na sala.");
+    }
   };
 
   // Sair da sala atual

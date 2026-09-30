@@ -16,7 +16,9 @@ import {
   isUserOnline,
   generateRandomClassroomCode,
   Classroom,
+  joinClassroom,
 } from "@/lib/user-store";
+import { addAlunoToSalaInSupabase } from "@/lib/supabase-auth";
 import Footer from "@/components/Footer";
 import {
   Eye,
@@ -28,6 +30,7 @@ import {
   Edit3,
   X,
   UserMinus,
+  UserPlus,
   Maximize2,
   Minimize2,
   Search,
@@ -102,6 +105,29 @@ function OnboardingPage() {
   const [isStudentModalFullscreen, setIsStudentModalFullscreen] = useState(false);
   const [studentModalWorldFilter, setStudentModalWorldFilter] = useState<"all" | "world1" | "world2">("all");
   const [studentSearchQuery, setStudentSearchQuery] = useState("");
+
+  // Estado para matricular alunos diretamente na sala
+  const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
+  const [classroomToEnroll, setClassroomToEnroll] = useState<Classroom | null>(null);
+  const [studentAddSearch, setStudentAddSearch] = useState("");
+  const [enrollingLoading, setEnrollingLoading] = useState(false);
+
+  const handleEnrollStudent = async (studentId: string, classroom: Classroom) => {
+    if (!studentId || !classroom) return;
+    setEnrollingLoading(true);
+    try {
+      const res = joinClassroom(studentId, classroom.code);
+      await addAlunoToSalaInSupabase(studentId, classroom.code);
+      refreshUserData();
+      toast.success(res.message || `Aluno matriculado na sala "${classroom.name}" com sucesso! 🎉`);
+      setIsAddStudentModalOpen(false);
+      setStudentAddSearch("");
+    } catch (err: any) {
+      toast.error(err.message || "Erro ao matricular aluno.");
+    } finally {
+      setEnrollingLoading(false);
+    }
+  };
 
   const refreshUserData = () => {
     const list = getUsers();
@@ -591,12 +617,26 @@ function OnboardingPage() {
                             </div>
                           </div>
 
-                          <button
-                            onClick={() => setSelectedClassroomForStudents(cls)}
-                            className="shrink-0 rounded-xl border border-border bg-background px-3 py-1.5 text-xs font-extrabold text-foreground hover:bg-muted transition-colors shadow-sm"
-                          >
-                            Ver Alunos ({enrolledStudents.length})
-                          </button>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button
+                              onClick={() => {
+                                setClassroomToEnroll(cls);
+                                setIsAddStudentModalOpen(true);
+                              }}
+                              className="inline-flex items-center gap-1 rounded-xl bg-primary/10 border border-primary/30 px-2.5 py-1.5 text-xs font-extrabold text-primary hover:bg-primary/20 transition-colors shadow-sm"
+                              title="Adicionar aluno nesta sala"
+                            >
+                              <UserPlus className="h-3.5 w-3.5" />
+                              <span className="hidden sm:inline">+ Aluno</span>
+                            </button>
+
+                            <button
+                              onClick={() => setSelectedClassroomForStudents(cls)}
+                              className="rounded-xl border border-border bg-background px-3 py-1.5 text-xs font-extrabold text-foreground hover:bg-muted transition-colors shadow-sm"
+                            >
+                              Ver Alunos ({enrolledStudents.length})
+                            </button>
+                          </div>
                         </div>
                       </div>
 
@@ -1180,6 +1220,18 @@ function OnboardingPage() {
                     />
                   </div>
 
+                  {/* Botão Adicionar Aluno */}
+                  <button
+                    onClick={() => {
+                      setClassroomToEnroll(selectedClassroomForStudents);
+                      setIsAddStudentModalOpen(true);
+                    }}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3 py-1.5 text-xs font-extrabold text-primary-foreground shadow-sm hover:bg-primary/90 transition-all"
+                  >
+                    <UserPlus className="h-3.5 w-3.5" />
+                    <span className="hidden sm:inline">Adicionar Aluno</span>
+                  </button>
+
                   {/* Fullscreen toggle */}
                   <button
                     onClick={() => setIsStudentModalFullscreen((v) => !v)}
@@ -1234,13 +1286,25 @@ function OnboardingPage() {
                     <strong className="text-primary font-mono">{selectedClassroomForStudents.code}</strong>{" "}
                     com seus alunos para que eles possam ingressar.
                   </p>
-                  <button
-                    onClick={() => handleCopyCode(selectedClassroomForStudents.code)}
-                    className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/30 px-4 py-2 text-xs font-extrabold text-primary hover:bg-primary/20 transition-colors"
-                  >
-                    <Copy className="h-3.5 w-3.5" />
-                    Copiar Código
-                  </button>
+                  <div className="mt-5 flex items-center justify-center gap-2.5 flex-wrap">
+                    <button
+                      onClick={() => {
+                        setClassroomToEnroll(selectedClassroomForStudents);
+                        setIsAddStudentModalOpen(true);
+                      }}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-xs font-extrabold text-primary-foreground shadow-soft hover:bg-primary/90 transition-transform hover:-translate-y-0.5"
+                    >
+                      <UserPlus className="h-4 w-4" />
+                      Adicionar Aluno Nesta Sala
+                    </button>
+                    <button
+                      onClick={() => handleCopyCode(selectedClassroomForStudents.code)}
+                      className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 border border-primary/30 px-5 py-2.5 text-xs font-extrabold text-primary hover:bg-primary/20 transition-colors"
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                      Copiar Código ({selectedClassroomForStudents.code})
+                    </button>
+                  </div>
                 </div>
               ) : (
                 <div className="flex-1 overflow-auto">
@@ -1650,6 +1714,137 @@ function OnboardingPage() {
                 className="w-1/2 rounded-full bg-red-600 py-3 font-display text-sm font-extrabold text-white shadow-chunky transition-transform hover:-translate-y-0.5 active:translate-y-0.5"
               >
                 Sim, Deletar 🗑️
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================== */}
+      {/* MODAL: ADICIONAR / MATRICULAR ALUNO NA SALA */}
+      {/* ========================================== */}
+      {isAddStudentModalOpen && classroomToEnroll && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-lg rounded-3xl border-2 border-primary/30 bg-card p-6 shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+            <div className="flex items-start justify-between gap-3 border-b border-border/60 pb-4">
+              <div className="flex items-center gap-3">
+                <span className="grid h-12 w-12 place-items-center rounded-2xl bg-primary/10 text-2xl">
+                  🎒
+                </span>
+                <div>
+                  <h3 className="font-display text-xl font-extrabold">Matricular Aluno na Turma</h3>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Sala: <strong className="text-foreground">{classroomToEnroll.name}</strong> • Código: <strong className="text-primary font-mono">{classroomToEnroll.code}</strong>
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={() => {
+                  setIsAddStudentModalOpen(false);
+                  setClassroomToEnroll(null);
+                  setStudentAddSearch("");
+                }}
+                className="rounded-xl border border-border p-2 text-muted-foreground hover:bg-muted"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+
+            {/* Campo de Busca de Alunos */}
+            <div className="py-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Pesquisar por nome ou e-mail do aluno…"
+                  value={studentAddSearch}
+                  onChange={(e) => setStudentAddSearch(e.target.value)}
+                  className="w-full rounded-2xl border border-border bg-background pl-9 pr-4 py-2.5 text-xs font-medium outline-none focus:border-primary transition-all"
+                  autoFocus
+                />
+              </div>
+            </div>
+
+            {/* Lista de Alunos Elegíveis */}
+            <div className="flex-1 overflow-y-auto space-y-2.5 pr-1">
+              {(() => {
+                const allStudents = usersList.filter((u) => u.role === "aluno");
+                const currentEnrolledCodes = [classroomToEnroll.code.toUpperCase()];
+                const eligibleStudents = allStudents.filter((student) => {
+                  if (student.classroomCode && currentEnrolledCodes.includes(student.classroomCode.toUpperCase())) {
+                    return false;
+                  }
+                  if (!studentAddSearch.trim()) return true;
+                  const query = studentAddSearch.toLowerCase();
+                  return (
+                    student.name.toLowerCase().includes(query) ||
+                    student.email.toLowerCase().includes(query)
+                  );
+                });
+
+                if (eligibleStudents.length === 0) {
+                  return (
+                    <div className="rounded-2xl border border-dashed border-border p-8 text-center bg-muted/20">
+                      <span className="text-3xl block mb-2">👤</span>
+                      <p className="text-xs font-bold text-foreground">
+                        {allStudents.length === 0
+                          ? "Nenhum aluno cadastrado no sistema ainda."
+                          : "Todos os alunos cadastrados já estão nesta turma!"}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-1 max-w-xs mx-auto">
+                        Alunos que criarem conta ou acessarem pelo botão <strong>"Sala de Aula"</strong> com o código <span className="font-mono text-primary font-bold">{classroomToEnroll.code}</span> serão vinculados no Supabase.
+                      </p>
+                    </div>
+                  );
+                }
+
+                return eligibleStudents.map((st) => {
+                  const currentRoom = st.classroomCode ? getClassrooms().find((c) => c.code === st.classroomCode) : null;
+                  return (
+                    <div
+                      key={st.id}
+                      className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-background/60 p-3 hover:border-primary/50 transition-all"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <span className="text-2xl shrink-0">{st.avatar || "🦊"}</span>
+                        <div className="min-w-0">
+                          <p className="text-xs font-extrabold text-foreground truncate">{st.name}</p>
+                          <p className="text-[10px] text-muted-foreground truncate">{st.email}</p>
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-[9px] font-bold text-primary">Nv.{st.level}</span>
+                            <span className="text-[9px] text-muted-foreground">•</span>
+                            <span className="text-[9px] text-muted-foreground">
+                              {currentRoom ? `Sala atual: ${currentRoom.name}` : "Sem turma atribuída"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        disabled={enrollingLoading}
+                        onClick={() => handleEnrollStudent(st.id, classroomToEnroll)}
+                        className="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-extrabold text-primary-foreground hover:bg-primary/90 transition-all disabled:opacity-50"
+                      >
+                        <UserPlus className="h-3.5 w-3.5" />
+                        <span>Matricular</span>
+                      </button>
+                    </div>
+                  );
+                });
+              })()}
+            </div>
+
+            <div className="pt-4 border-t border-border/60 mt-3 flex justify-end">
+              <button
+                type="button"
+                onClick={() => {
+                  setIsAddStudentModalOpen(false);
+                  setClassroomToEnroll(null);
+                  setStudentAddSearch("");
+                }}
+                className="rounded-full border border-border px-5 py-2 text-xs font-extrabold text-muted-foreground hover:bg-muted"
+              >
+                Fechar
               </button>
             </div>
           </div>
