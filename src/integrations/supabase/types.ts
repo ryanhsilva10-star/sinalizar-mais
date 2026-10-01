@@ -23,6 +23,7 @@ export type Database = {
           nascimento: string | null
           nome: string
           pontuação_total: number
+          senha: string | null
           user_id: string | null
         }
         Insert: {
@@ -33,6 +34,7 @@ export type Database = {
           nascimento?: string | null
           nome: string
           pontuação_total?: number
+          senha?: string | null
           user_id?: string | null
         }
         Update: {
@@ -43,6 +45,7 @@ export type Database = {
           nascimento?: string | null
           nome?: string
           pontuação_total?: number
+          senha?: string | null
           user_id?: string | null
         }
         Relationships: [

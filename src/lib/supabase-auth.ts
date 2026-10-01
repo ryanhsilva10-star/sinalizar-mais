@@ -37,11 +37,11 @@ export async function registerWithSupabase(params: {
   discipline?: string;
   classroomCode?: string;
 }) {
-  if (!isSupabaseConfigured()) return null;
+  const userPassword = params.password || "123456";
 
   const { data, error } = await supabase.auth.signUp({
     email: params.email,
-    password: params.password || "123456",
+    password: userPassword,
     options: {
       data: {
         name: params.name,
@@ -50,6 +50,7 @@ export async function registerWithSupabase(params: {
         avatar: params.avatar || (params.role === "professor" ? "🧑‍🏫" : "🦊"),
         discipline: params.discipline || "LIBRAS & Inclusão",
         classroom_code: params.classroomCode,
+        senha: userPassword,
       },
     },
   });
@@ -62,18 +63,34 @@ export async function registerWithSupabase(params: {
   // Inserir o registro na tabela correspondente do banco de dados
   if (params.role === "aluno") {
     try {
-      const { data: insertedAluno, error: insertError } = await (supabase as any)
+      // Tenta inserir incluindo 'senha', caso a coluna exista no banco Supabase
+      const alunoPayload: any = {
+        nome: params.name,
+        matricula: params.email,
+        celular: 0,
+        nascimento: null,
+        user_id: authUser.id,
+        alunos_sala_id: null,
+        senha: userPassword,
+      };
+
+      let { data: insertedAluno, error: insertError } = await (supabase as any)
         .from("alunos")
-        .insert({
-          nome: params.name,
-          matricula: params.email,
-          celular: 0,
-          nascimento: null,
-          user_id: authUser.id,
-          alunos_sala_id: null,
-        })
+        .insert(alunoPayload)
         .select()
         .maybeSingle();
+
+      // Se a coluna 'senha' ainda não existir na tabela alunos, tenta novamente sem ela
+      if (insertError && insertError.message?.toLowerCase().includes("senha")) {
+        delete alunoPayload.senha;
+        const retryResult = await (supabase as any)
+          .from("alunos")
+          .insert(alunoPayload)
+          .select()
+          .maybeSingle();
+        insertError = retryResult.error;
+        insertedAluno = retryResult.data;
+      }
 
       if (insertError) {
         console.warn("Aviso ao inserir aluno na tabela:", insertError.message);
@@ -86,14 +103,15 @@ export async function registerWithSupabase(params: {
     } catch (e) {
       console.warn("Erro ao registrar aluno no Supabase:", e);
     }
-  } else {
+    } else {
     try {
+      const professorPassword = params.password || "123456";
       const { error: insertError } = await (supabase as any)
         .from("professor")
         .insert({
           nome: params.name,
           email: params.email,
-          senha: null,
+          senha: professorPassword,
           user_id: authUser.id,
           sala_id: null,
         });
@@ -112,12 +130,43 @@ export async function registerWithSupabase(params: {
 export async function loginWithSupabase(params: { email: string; password?: string }) {
   if (!isSupabaseConfigured()) return null;
 
+  const userPassword = params.password || "123456";
+
   const { data, error } = await supabase.auth.signInWithPassword({
     email: params.email,
-    password: params.password || "123456",
+    password: userPassword,
   });
 
   if (error) throw error;
+
+  // Atualiza ou preenche o campo 'senha' no Supabase
+  if (data?.user && params.password) {
+    try {
+      // 1. Atualiza nos metadados do auth do usuário
+      await supabase.auth.updateUser({
+        data: { senha: params.password },
+      });
+    } catch {}
+
+    try {
+      // 2. Atualiza na tabela professor
+      await (supabase as any)
+        .from("professor")
+        .update({ senha: params.password })
+        .or(`user_id.eq.${data.user.id},email.eq.${params.email}`);
+    } catch (e) {
+      console.warn("Aviso ao sincronizar senha do professor no Supabase:", e);
+    }
+
+    try {
+      // 3. Atualiza na tabela alunos caso a coluna senha exista
+      await (supabase as any)
+        .from("alunos")
+        .update({ senha: params.password })
+        .or(`user_id.eq.${data.user.id},matricula.eq.${params.email}`);
+    } catch {}
+  }
+
   return data.user;
 }
 

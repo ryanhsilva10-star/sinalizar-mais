@@ -85,10 +85,13 @@ function LoginPage() {
       return;
     }
 
+    let supabaseAuthSucceeded = false;
+
     if (isSupabaseConfigured()) {
       try {
         const authUser = await loginWithSupabase({ email, password });
         if (authUser) {
+          supabaseAuthSucceeded = true;
           // Sync user profile from Supabase to local storage so loginUser doesn't fail
           const profile = await fetchProfileFromSupabase(authUser.id);
           if (profile) {
@@ -108,14 +111,15 @@ function LoginPage() {
           }
         }
       } catch (err: any) {
-        toast.error(err.message || "Erro de autenticação no Supabase.");
-        return;
+        console.warn("[Login] Supabase auth attempt notice:", err?.message || err);
+        // Se o Supabase falhar (ex: confirmação de email pendente ou credencial diferente no cloud),
+        // tentamos autenticar localmente antes de disparar erro bloqueante.
       }
     }
 
     const user = loginUser(email, password);
     if (!user) {
-      toast.error("Credenciais inválidas ou usuário não encontrado.");
+      toast.error("Credenciais inválidas ou usuário não encontrado. Verifique seu e-mail e senha.");
       return;
     }
 
@@ -136,21 +140,32 @@ function LoginPage() {
     }
 
     try {
+      let authUserId: string | undefined;
       if (isSupabaseConfigured()) {
-        await registerWithSupabase({
-          email,
-          password,
-          name,
-          role: accountRole,
-          world,
-          avatar: selectedAvatar,
-          discipline,
-          classroomCode,
-        });
+        try {
+          const authUser = await registerWithSupabase({
+            email,
+            password,
+            name,
+            role: accountRole,
+            world,
+            avatar: selectedAvatar,
+            discipline,
+            classroomCode,
+          });
+          if (authUser?.id) {
+            authUserId = authUser.id;
+          }
+        } catch (supabaseErr: any) {
+          console.warn("[Register] Supabase sign up notice:", supabaseErr?.message || supabaseErr);
+          // Se for erro de usuário já cadastrado no Supabase ou outro erro temporário,
+          // tentamos salvar e autenticar localmente
+        }
       }
 
       if (accountRole === "aluno") {
         const saved = saveUser({
+          id: authUserId,
           name,
           email,
           password,
@@ -169,6 +184,7 @@ function LoginPage() {
         navigate({ to: "/trilha", replace: true });
       } else {
         const saved = saveUser({
+          id: authUserId,
           name,
           email,
           password,

@@ -1,14 +1,17 @@
+import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import luviMascot from "@/assets/luvi-mascot.png";
 import novaAvatar from "@/assets/nova-avatar.png";
 import Footer from "@/components/Footer";
 import { JoinClassroomFab } from "@/components/JoinClassroomFab";
+import { getActiveUser, logoutUser } from "@/lib/user-store";
+import { TurmaClaNavbarButton } from "@/components/TurmaClaNavbarButton";
+import { toast } from "sonner";
+import { Menu, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
 });
-
-import { useState, useEffect } from "react";
 
 function LandingPage() {
   const [helpMode, setHelpMode] = useState(false);
@@ -27,11 +30,6 @@ function LandingPage() {
     </div>
   );
 }
-
-import { getActiveUser, logoutUser } from "@/lib/user-store";
-import { TurmaClaNavbarButton } from "@/components/TurmaClaNavbarButton";
-import { toast } from "sonner";
-import { Menu, X } from "lucide-react";
 
 function Header() {
   const [currentUser, setCurrentUser] = useState(() => getActiveUser());
