@@ -101,12 +101,13 @@ const ISLANDS_WORLD2: Island[] = [
 /** Calcula o estado dinâmico dos nós com base nas lições concluídas do usuário e no mundo ativo. */
 function computeNodes(
   completedLessons: import("@/lib/user-store").CompletedLesson[],
-  world: 1 | 2
+  world: 1 | 2,
+  isTeacher: boolean = false
 ): TrailNode[] {
   const completedIds = new Set(completedLessons.map((l) => l.id));
   const baseNodes = world === 1 ? TRAIL_NODES_BASE_WORLD1 : TRAIL_NODES_BASE_WORLD2;
 
-  // No Mundo 2, se o Mundo 1 não foi concluído (Fase 12), todas as fases ficam travadas
+  // No Mundo 2, se o Mundo 1 não foi concluído (Fase 12), todas as fases ficam travadas (se não for professor)
   const isWorld1Completed = completedIds.has("trail_node_12") || completedIds.has("les_12");
 
   let foundCurrent = false;
@@ -120,6 +121,10 @@ function computeNodes(
       const lesson = completedLessons.find((l) => l.id === lessonId || l.id === legacyId);
       const stars = lesson ? (lesson.score >= 90 ? 3 : lesson.score >= 60 ? 2 : 1) : 1;
       return { ...base, state: "done" as const, stars };
+    }
+
+    if (isTeacher) {
+      return { ...base, state: "current" as const, stars: 0 };
     }
 
     if (world === 2 && !isWorld1Completed) {
@@ -187,24 +192,18 @@ function TrailPage() {
       }
     }
 
-    // 2. Professor -> Redireciona para /onboarding (Painel do Professor)
-    if (user.role === "professor") {
-      toast.info("🔒 Professores não possuem acesso direto à trilha de lições. Redirecionando para o Painel.");
-      navigate({ to: "/onboarding", replace: true });
-      return;
-    }
-
-    // 3. Aluno Autenticado -> Calcula progresso e concede acesso
+    // 3. Autenticado -> Calcula progresso e concede acesso
+    const isTeacher = user.role === "professor";
     const lessons = user.completedLessons ?? [];
     const completedSet = new Set(lessons.map((l) => l.id));
-    const unlocked2 = completedSet.has("trail_node_12") || completedSet.has("les_12");
+    const unlocked2 = isTeacher || completedSet.has("trail_node_12") || completedSet.has("les_12");
     setIsWorld2Unlocked(unlocked2);
 
     // Se o usuário especificou mundo na busca ou já concluiu o Mundo 1
     const targetWorld: 1 | 2 = (search.world as 1 | 2) || (unlocked2 ? 2 : 1);
     setActiveWorld(targetWorld);
 
-    const computed = computeNodes(lessons, targetWorld);
+    const computed = computeNodes(lessons, targetWorld, isTeacher);
     setTrailNodes(computed);
     setIslands(buildIslands(computed, targetWorld));
     setAuthorizedUser(user);
@@ -220,8 +219,9 @@ function TrailPage() {
     }
     setActiveWorld(worldNum);
     if (authorizedUser) {
+      const isTeacher = authorizedUser.role === "professor";
       const lessons = authorizedUser.completedLessons ?? [];
-      const computed = computeNodes(lessons, worldNum);
+      const computed = computeNodes(lessons, worldNum, isTeacher);
       setTrailNodes(computed);
       setIslands(buildIslands(computed, worldNum));
     }
