@@ -4,6 +4,7 @@ import {
   removeAlunoFromSalaInSupabase,
   fetchSalasFromSupabase,
   fetchAlunosFromSupabase,
+  updateAlunoPontuacaoInSupabase,
 } from "./supabase-auth";
 
 export interface CompletedLesson {
@@ -302,6 +303,18 @@ export function saveUser(userData: Partial<User> & { name: string; email: string
   if (typeof window !== "undefined") {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
     notifyUserChanges({ type: "saveUser", user: updatedUser });
+
+    // Sincroniza a pontuação do aluno no Supabase
+    if (updatedUser.role === "aluno") {
+      const pontuacao = updatedUser.xp ?? 0;
+      const lastLesson = updatedUser.completedLessons?.[updatedUser.completedLessons.length - 1];
+      updateAlunoPontuacaoInSupabase(
+        updatedUser.id,
+        pontuacao,
+        lastLesson ? { id: lastLesson.id, title: lastLesson.title, score: lastLesson.score } : undefined,
+        updatedUser.email
+      ).catch((err) => console.warn("Aviso ao sincronizar pontuação no Supabase:", err));
+    }
   }
 
   return updatedUser;

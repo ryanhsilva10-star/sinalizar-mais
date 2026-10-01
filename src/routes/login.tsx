@@ -95,7 +95,7 @@ function LoginPage() {
           // Sync user profile from Supabase to local storage so loginUser doesn't fail
           const profile = await fetchProfileFromSupabase(authUser.id);
           if (profile) {
-            saveUser({ ...profile, password });
+            saveUser({ ...profile, password, id: authUser.id });
           } else {
             saveUser({
               id: authUser.id,
@@ -117,9 +117,18 @@ function LoginPage() {
       }
     }
 
-    const user = loginUser(email, password);
+    // Se Supabase autenticou com sucesso, faz login local apenas pelo email
+    // (ignora senha local que pode estar desatualizada ou diferente)
+    const user = supabaseAuthSucceeded
+      ? loginUser(email)
+      : loginUser(email, password);
+
     if (!user) {
-      toast.error("Credenciais inválidas ou usuário não encontrado. Verifique seu e-mail e senha.");
+      if (supabaseAuthSucceeded) {
+        toast.error("Perfil não encontrado localmente. Tente novamente.");
+      } else {
+        toast.error("Credenciais inválidas ou usuário não encontrado. Verifique seu e-mail e senha.");
+      }
       return;
     }
 

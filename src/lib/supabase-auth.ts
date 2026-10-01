@@ -63,7 +63,7 @@ export async function registerWithSupabase(params: {
   // Inserir o registro na tabela correspondente do banco de dados
   if (params.role === "aluno") {
     try {
-      // Tenta inserir incluindo 'senha', caso a coluna exista no banco Supabase
+      // Tenta inserir incluindo 'senha' e 'pontuação_total'/'pontuacao', caso a coluna exista no banco Supabase
       const alunoPayload: any = {
         nome: params.name,
         matricula: params.email,
@@ -72,6 +72,8 @@ export async function registerWithSupabase(params: {
         user_id: authUser.id,
         alunos_sala_id: null,
         senha: userPassword,
+        pontuação_total: 100,
+        pontuacao: 100,
       };
 
       let { data: insertedAluno, error: insertError } = await (supabase as any)
@@ -80,9 +82,19 @@ export async function registerWithSupabase(params: {
         .select()
         .maybeSingle();
 
-      // Se a coluna 'senha' ainda não existir na tabela alunos, tenta novamente sem ela
-      if (insertError && insertError.message?.toLowerCase().includes("senha")) {
-        delete alunoPayload.senha;
+      // Se der erro por coluna desconhecida (ex: 'senha' ou 'pontuacao'), faz fallback removendo campos extras
+      if (insertError) {
+        const errorMsg = insertError.message?.toLowerCase() || "";
+        if (errorMsg.includes("pontuacao")) {
+          delete alunoPayload.pontuacao;
+        }
+        if (errorMsg.includes("senha")) {
+          delete alunoPayload.senha;
+        }
+        if (errorMsg.includes("pontuação_total") || errorMsg.includes("pontuacao_total")) {
+          delete alunoPayload.pontuação_total;
+        }
+
         const retryResult = await (supabase as any)
           .from("alunos")
           .insert(alunoPayload)
@@ -628,4 +640,76 @@ export async function createClassroomInSupabase(classroom: {
   description?: string;
 }) {
   return createOrUpdateSalaInSupabase(classroom);
+}
+
+/**
+ * Atualiza a pontuação do aluno no banco de dados Supabase
+ * Tenta gravar em 'pontuação_total' e 'pontuacao' na tabela 'alunos',
+ * e também atualiza o campo 'xp' na tabela 'profiles'.
+ */
+export async function updateAlunoPontuacaoInSupabase(
+  alunoIdentifier: string,
+  pontuacao: number,
+  completedLesson?: { id: string; title: string; score: number },
+  email?: string
+): Promise<boolean> {
+  if (!isSupabaseConfigured()) return true;
+
+  try {
+    // Monta filtro OR incluindo e-mail caso disponível
+    const isUUID = alunoIdentifier.includes("-") && alunoIdentifier.length === 36;
+    let filterParts = [`matricula.eq.${alunoIdentifier}`];
+    if (isUUID) {
+      filterParts.unshift(`user_id.eq.${alunoIdentifier}`, `id.eq.${alunoIdentifier}`);
+    }
+    if (email) {
+      filterParts.push(`matricula.eq.${email}`);
+    }
+    const orFilter = filterParts.join(",");
+
+    // 1. Tenta atualizar na tabela alunos (suportando variações de nome de coluna)
+    const updatePayloads = [
+      { pontuação_total: pontuacao },
+      { pontuacao: pontuacao },
+      { pontuacao_total: pontuacao },
+    ];
+
+    for (const payload of updatePayloads) {
+      try {
+        const { error } = await (supabase as any)
+          .from("alunos")
+          .update(payload)
+          .or(orFilter);
+        if (!error) break;
+      } catch {}
+    }
+
+    // 2. Atualiza na tabela profiles (campo xp)
+    try {
+      await (supabase as any)
+        .from("profiles")
+        .update({ xp: pontuacao, last_active_at: new Date().toISOString() })
+        .eq("id", alunoIdentifier);
+    } catch {}
+
+    // 3. Se uma lição foi concluída, registra em user_completed_lessons
+    if (completedLesson && alunoIdentifier.includes("-") && alunoIdentifier.length === 36) {
+      try {
+        await (supabase as any)
+          .from("user_completed_lessons")
+          .upsert({
+            user_id: alunoIdentifier,
+            lesson_id: completedLesson.id,
+            title: completedLesson.title,
+            score: completedLesson.score,
+            completed_at: new Date().toISOString(),
+          });
+      } catch {}
+    }
+
+    return true;
+  } catch (err) {
+    console.warn("Aviso ao atualizar pontuação do aluno no Supabase:", err);
+    return false;
+  }
 }
