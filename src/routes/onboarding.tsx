@@ -18,7 +18,7 @@ import {
   Classroom,
   joinClassroom,
 } from "@/lib/user-store";
-import { addAlunoToSalaInSupabase } from "@/lib/supabase-auth";
+import { addAlunoToSalaInSupabase, fetchCompletedLessonsForUsers } from "@/lib/supabase-auth";
 import Footer from "@/components/Footer";
 import {
   Eye,
@@ -105,6 +105,8 @@ function OnboardingPage() {
   const [isStudentModalFullscreen, setIsStudentModalFullscreen] = useState(false);
   const [studentModalWorldFilter, setStudentModalWorldFilter] = useState<"all" | "world1" | "world2">("all");
   const [studentSearchQuery, setStudentSearchQuery] = useState("");
+  // Map userId -> lições concluídas buscadas do Supabase para o modal do professor
+  const [studentLessonsMap, setStudentLessonsMap] = useState<Map<string, Array<{ id: string; title: string; score: number; completedAt: string }>>>(new Map());
 
   // Estado para matricular alunos diretamente na sala
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
@@ -158,6 +160,20 @@ function OnboardingPage() {
   useEffect(() => {
     refreshUserData();
   }, [navigate]);
+
+  // Quando o professor abre o modal de progresso, busca as lições do Supabase
+  useEffect(() => {
+    if (!selectedClassroomForStudents) {
+      setStudentLessonsMap(new Map());
+      return;
+    }
+    const students = getStudentsInClassroom(selectedClassroomForStudents.code);
+    const ids = students.map((s) => s.id).filter(Boolean);
+    if (ids.length === 0) return;
+    fetchCompletedLessonsForUsers(ids).then((map) => {
+      setStudentLessonsMap(map);
+    });
+  }, [selectedClassroomForStudents]);
 
   const handleLogout = () => {
     logoutUser();
@@ -1130,7 +1146,12 @@ function OnboardingPage() {
         });
 
         const getStudentScore = (student: (typeof allEnrolled)[0], nodeId: number): number | null => {
-          const lesson = student.completedLessons?.find(
+          // Prioriza os dados ao vivo do Supabase (studentLessonsMap)
+          const supabaseLessons = studentLessonsMap.get(student.id);
+          const lessonsSource = (supabaseLessons && supabaseLessons.length > 0)
+            ? supabaseLessons
+            : (student.completedLessons ?? []);
+          const lesson = lessonsSource.find(
             (l) => l.id === `trail_node_${nodeId}` || l.id === `les_${nodeId}`
           );
           return lesson ? lesson.score : null;
@@ -1401,7 +1422,7 @@ function OnboardingPage() {
                                         onClick={() => setSelectedStudentForLessons(student)}
                                         className="text-blue-500 hover:text-blue-600 hover:underline"
                                       >
-                                        📜{student.completedLessons?.length || 0} lições
+                                        📜{(studentLessonsMap.get(student.id)?.length ?? student.completedLessons?.length) || 0} lições
                                       </button>
                                     </div>
                                   </div>
@@ -1613,29 +1634,34 @@ function OnboardingPage() {
             </div>
 
             <div className="mt-4 max-h-80 overflow-y-auto space-y-3 pr-1">
-              {!selectedStudentForLessons.completedLessons ||
-                selectedStudentForLessons.completedLessons.length === 0 ? (
-                <p className="text-center text-sm text-muted-foreground py-6">
-                  Nenhuma lição registrada para este aluno ainda.
-                </p>
-              ) : (
-                selectedStudentForLessons.completedLessons.map((les) => (
-                  <div
-                    key={les.id}
-                    className="flex items-center justify-between rounded-2xl border border-border bg-background p-3.5 text-xs"
-                  >
-                    <div>
-                      <p className="font-bold text-sm">{les.title}</p>
-                      <p className="text-[10px] text-muted-foreground">Concluído em: {les.completedAt}</p>
+              {(() => {
+                const lessonsToShow =
+                  (studentLessonsMap.get(selectedStudentForLessons.id)?.length ?? 0) > 0
+                    ? studentLessonsMap.get(selectedStudentForLessons.id)!
+                    : (selectedStudentForLessons.completedLessons ?? []);
+                return lessonsToShow.length === 0 ? (
+                  <p className="text-center text-sm text-muted-foreground py-6">
+                    Nenhuma lição registrada para este aluno ainda.
+                  </p>
+                ) : (
+                  lessonsToShow.map((les) => (
+                    <div
+                      key={les.id}
+                      className="flex items-center justify-between rounded-2xl border border-border bg-background p-3.5 text-xs"
+                    >
+                      <div>
+                        <p className="font-bold text-sm">{les.title}</p>
+                        <p className="text-[10px] text-muted-foreground">Concluído em: {les.completedAt}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-black text-emerald-600 dark:text-emerald-400">
+                          ⭐ {les.score}%
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-black text-emerald-600 dark:text-emerald-400">
-                        ⭐ {les.score}%
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
+                  ))
+                );
+              })()}
             </div>
 
             <div className="mt-6 flex justify-end">

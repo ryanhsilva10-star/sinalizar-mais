@@ -713,3 +713,39 @@ export async function updateAlunoPontuacaoInSupabase(
     return false;
   }
 }
+
+/**
+ * Busca as lições concluídas de um conjunto de usuários (alunos) a partir da
+ * tabela 'user_completed_lessons' no Supabase.
+ * Retorna um Map<userId, CompletedLesson[]> para permitir merge rápido.
+ */
+export async function fetchCompletedLessonsForUsers(
+  userIds: string[]
+): Promise<Map<string, Array<{ id: string; title: string; score: number; completedAt: string }>>> {
+  const result = new Map<string, Array<{ id: string; title: string; score: number; completedAt: string }>>();
+  if (!isSupabaseConfigured() || userIds.length === 0) return result;
+
+  try {
+    const { data, error } = await (supabase as any)
+      .from("user_completed_lessons")
+      .select("user_id, lesson_id, title, score, completed_at")
+      .in("user_id", userIds);
+
+    if (error || !data) return result;
+
+    for (const row of data) {
+      const uid: string = row.user_id;
+      if (!result.has(uid)) result.set(uid, []);
+      result.get(uid)!.push({
+        id: row.lesson_id,
+        title: row.title || row.lesson_id,
+        score: row.score ?? 0,
+        completedAt: row.completed_at || new Date().toISOString(),
+      });
+    }
+  } catch (err) {
+    console.warn("Aviso ao buscar lições concluídas dos alunos no Supabase:", err);
+  }
+
+  return result;
+}
