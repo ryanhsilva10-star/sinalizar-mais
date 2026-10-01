@@ -33,8 +33,77 @@ export function ApresentacaoComponent() {
   const [activeTab, setActiveTab] = useState<string>("todos");
   const [selectedSlide, setSelectedSlide] = useState<number>(1);
   const [demoRole, setDemoRole] = useState<"aluno" | "professor">("aluno");
+  const [teamFilter, setTeamFilter] = useState<"todos" | "tech" | "pedagogia" | "gestao">("todos");
 
-  const totalSlides = 8;
+  const totalSlides = 9;
+
+  const teamMembers = [
+    {
+      name: "Rafael Melo de Oliveira",
+      initials: "RO",
+      role: "Desenvolvimento Front-end & Arquitetura Web",
+      area: "tech",
+      bio: "Especialista na construção de interfaces reativas e acessíveis (WAI-ARIA). Focado em TanStack, React 19 e performance de renderização no navegador.",
+      tags: ["React 19", "TanStack Router", "Acessibilidade", "Tailwind CSS"],
+      color: "from-blue-500 to-indigo-600",
+      accentBg: "bg-blue-50 text-blue-700 border-blue-200"
+    },
+    {
+      name: "Geovanna Brocco Sá Fortes Pignonato",
+      initials: "GP",
+      role: "Pesquisa Pedagógica, Inclusão & Libras",
+      area: "pedagogia",
+      bio: "Supervisão metodológica e curadoria dos sinais em Libras para crianças do EF1 e EF2. Conecta as diretrizes curriculares à linguagem visual e inclusiva.",
+      tags: ["Pedagogia Inclusiva", "Libras", "BNCC", "Módulo Kids"],
+      color: "from-amber-500 to-orange-600",
+      accentBg: "bg-amber-50 text-amber-700 border-amber-200"
+    },
+    {
+      name: "Manuela Almeida Silva",
+      initials: "MS",
+      role: "Design de Produto, UI/UX & Gamificação",
+      area: "pedagogia",
+      bio: "Responsável pelo design system, identidade visual do Passarinho dos Sinais e arquitetura de experiência focada no engajamento de crianças e professores.",
+      tags: ["UI/UX Design", "Design System", "Gamificação", "Psicologia Infantil"],
+      color: "from-pink-500 to-rose-600",
+      accentBg: "bg-pink-50 text-pink-700 border-pink-200"
+    },
+    {
+      name: "Laura Souza e Silva",
+      initials: "LS",
+      role: "Estratégia ESG & Relações Institucionais",
+      area: "gestao",
+      bio: "Articulação de parcerias com redes de ensino, alinhamento com métricas de impacto socioambiental (ODS 4, 9 e 10) e captação de projetos de apadrinhamento.",
+      tags: ["Diretrizes ESG", "ODS ONU", "Relações B2B", "Gestão de Impacto"],
+      color: "from-emerald-500 to-teal-600",
+      accentBg: "bg-emerald-50 text-emerald-700 border-emerald-200"
+    },
+    {
+      name: "Ryan Henrique dos Santos Silva",
+      initials: "RS",
+      role: "Tech Lead & Full Stack Developer",
+      area: "tech",
+      bio: "Liderança técnica, arquitetura de software, integração com visão computacional via MediaPipe AI e engenharia dos fluxos de dados em tempo real.",
+      tags: ["Tech Lead", "MediaPipe IA", "Full Stack", "TypeScript"],
+      color: "from-emerald-600 to-teal-700",
+      accentBg: "bg-teal-50 text-teal-700 border-teal-200"
+    },
+    {
+      name: "Marcius Leandro Junior",
+      initials: "MJ",
+      role: "Engenharia de Software, Cloud & Banco de Dados",
+      area: "tech",
+      bio: "Gerenciamento de infraestrutura em nuvem, modelagem de banco de dados no Supabase, segurança Row Level Security (RLS) e escalabilidade do backend.",
+      tags: ["PostgreSQL", "Supabase", "Cloud / DevOps", "Segurança RLS"],
+      color: "from-purple-500 to-indigo-600",
+      accentBg: "bg-purple-50 text-purple-700 border-purple-200"
+    },
+  ];
+
+  const filteredMembers = teamMembers.filter((m) => {
+    if (teamFilter === "todos") return true;
+    return m.area === teamFilter;
+  });
 
   const scrollToSection = (id: string, slideNum: number) => {
     setSelectedSlide(slideNum);
@@ -104,6 +173,12 @@ export function ApresentacaoComponent() {
             >
               Personas
             </button>
+            <button
+              onClick={() => scrollToSection("integrantes", 8)}
+              className={`px-3 py-1.5 rounded-full transition-all ${selectedSlide === 8 ? "bg-white text-emerald-700 shadow-sm font-semibold" : "text-slate-600 hover:text-slate-900"}`}
+            >
+              Integrantes
+            </button>
           </nav>
 
           <div className="flex items-center gap-2">
@@ -114,7 +189,7 @@ export function ApresentacaoComponent() {
               Testar Trilha Vivo <ChevronRight className="w-3.5 h-3.5" />
             </Link>
             <button
-              onClick={() => scrollToSection("cta", 8)}
+              onClick={() => scrollToSection("cta", 9)}
               className="bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-xs px-4 py-2 rounded-lg shadow-md hover:brightness-110 transition-all"
             >
               Agendar Demo
@@ -675,11 +750,158 @@ export function ApresentacaoComponent() {
         </div>
       </section>
 
-      {/* SEÇÃO 8: CALL TO ACTION (CTA CORPORATIVO) */}
+      {/* SEÇÃO 8: INTEGRANTES & QUEM FAZ ACONTECER */}
+      <section id="integrantes" className="py-20 px-4 bg-white border-y border-slate-100">
+        <div className="max-w-6xl mx-auto space-y-12">
+          <div className="text-center space-y-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+              Slide 08 • Equipe do Projeto & Integrantes
+            </span>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900">
+              Quem Faz Acontecer
+            </h2>
+            <p className="text-slate-600 max-w-2xl mx-auto text-sm sm:text-base">
+              Talentos multidisciplinares unindo desenvolvimento de software, inteligência artificial, pedagogia inclusiva, design acessível e governança ESG.
+            </p>
+
+            {/* ABAS / FILTROS DE INTEGRANTES */}
+            <div className="pt-4 flex flex-wrap justify-center gap-2">
+              <button
+                onClick={() => setTeamFilter("todos")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  teamFilter === "todos"
+                    ? "bg-slate-900 text-white shadow-md"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                Todos ({teamMembers.length})
+              </button>
+              <button
+                onClick={() => setTeamFilter("tech")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  teamFilter === "tech"
+                    ? "bg-emerald-600 text-white shadow-md"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                💻 Tecnologia & IA
+              </button>
+              <button
+                onClick={() => setTeamFilter("pedagogia")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  teamFilter === "pedagogia"
+                    ? "bg-amber-600 text-white shadow-md"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                🎨 Pedagogia, Libras & Design
+              </button>
+              <button
+                onClick={() => setTeamFilter("gestao")}
+                className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+                  teamFilter === "gestao"
+                    ? "bg-teal-600 text-white shadow-md"
+                    : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                🌱 Estratégia ESG & Relações B2B
+              </button>
+            </div>
+          </div>
+
+          {/* GRID DE INTEGRANTES COM NOMES LOGO ABAIXO */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredMembers.map((member, index) => (
+              <div
+                key={index}
+                className="bg-[#FDFBF7] rounded-3xl p-6 border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-emerald-300 transition-all flex flex-col justify-between group"
+              >
+                <div>
+                  {/* CABEÇALHO DO INTEGRANTE COM AVATAR */}
+                  <div className="flex flex-col items-center text-center pb-4 border-b border-slate-100">
+                    <div className="relative mb-3">
+                      <div
+                        className={`w-20 h-20 rounded-2xl bg-gradient-to-br ${member.color} flex items-center justify-center text-white text-2xl font-black shadow-md shadow-slate-200 group-hover:scale-105 transition-transform`}
+                      >
+                        {member.initials}
+                      </div>
+                      <div className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white text-[10px]">
+                        ✓
+                      </div>
+                    </div>
+
+                    {/* NOME DESTACADO LOGO ABAIXO DO AVATAR */}
+                    <h3 className="text-lg font-black text-slate-900 tracking-tight leading-snug">
+                      {member.name}
+                    </h3>
+
+                    {/* CARGO / PAPEL */}
+                    <div className="mt-1.5">
+                      <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold border ${member.accentBg}`}>
+                        {member.role}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* MINI BIO EXPLICATIVA */}
+                  <p className="mt-4 text-xs text-slate-600 leading-relaxed min-h-[50px]">
+                    {member.bio}
+                  </p>
+                </div>
+
+                {/* COMPETÊNCIAS / TAGS */}
+                <div className="mt-6 pt-4 border-t border-slate-100">
+                  <div className="flex flex-wrap gap-1.5 mb-4">
+                    {member.tags.map((tag, tagIdx) => (
+                      <span
+                        key={tagIdx}
+                        className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-white text-slate-600 border border-slate-200"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between text-[11px] text-slate-400 font-semibold">
+                    <span className="flex items-center gap-1 text-emerald-700">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                      Equipe Sinalizar mais
+                    </span>
+                    <span className="text-slate-500">Membro Ativo</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* BOX INSTITUCIONAL DE GOVERNANÇA */}
+          <div className="p-6 rounded-2xl bg-emerald-50/60 border border-emerald-200/80 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold">
+                <Users className="w-5 h-5" />
+              </div>
+              <div>
+                <h4 className="font-bold text-slate-900 text-sm">Governança Colaborativa & Diversidade</h4>
+                <p className="text-xs text-slate-600">
+                  Time estruturado para escalar o projeto com responsabilidade técnica, rigor pedagógico e ética socioeducativa.
+                </p>
+              </div>
+            </div>
+            <a
+              href="mailto:equipe@sinalizarmais.com.br"
+              className="px-4 py-2 rounded-xl bg-white border border-emerald-300 text-emerald-800 text-xs font-bold hover:bg-emerald-100 transition-colors shrink-0"
+            >
+              Falar com os Integrantes
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* SEÇÃO 9: CALL TO ACTION (CTA CORPORATIVO) */}
       <section id="cta" className="py-24 px-4 bg-gradient-to-b from-slate-900 to-emerald-950 text-white relative overflow-hidden">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
-            <Sparkles className="w-4 h-4 text-emerald-400" /> Slide 08 • O Próximo Passo
+            <Sparkles className="w-4 h-4 text-emerald-400" /> Slide 09 • O Próximo Passo
           </div>
 
           <h2 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight">
