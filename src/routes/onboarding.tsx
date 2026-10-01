@@ -1784,7 +1784,7 @@ function OnboardingPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Pesquisar por nome ou e-mail do aluno…"
+                  placeholder="Digite o e-mail exato do aluno…"
                   value={studentAddSearch}
                   onChange={(e) => setStudentAddSearch(e.target.value)}
                   className="w-full rounded-2xl border border-border bg-background pl-9 pr-4 py-2.5 text-xs font-medium outline-none focus:border-primary transition-all"
@@ -1798,29 +1798,39 @@ function OnboardingPage() {
               {(() => {
                 const allStudents = usersList.filter((u) => u.role === "aluno");
                 const currentEnrolledCodes = [classroomToEnroll.code.toUpperCase()];
+                const query = studentAddSearch.trim().toLowerCase();
+
                 const eligibleStudents = allStudents.filter((student) => {
                   if (student.classroomCode && currentEnrolledCodes.includes(student.classroomCode.toUpperCase())) {
                     return false;
                   }
-                  if (!studentAddSearch.trim()) return true;
-                  const query = studentAddSearch.toLowerCase();
-                  return (
-                    student.name.toLowerCase().includes(query) ||
-                    student.email.toLowerCase().includes(query)
-                  );
+                  if (!query) return false;
+                  return student.email.toLowerCase() === query;
                 });
+
+                if (!query) {
+                  return (
+                    <div className="rounded-2xl border border-dashed border-border p-8 text-center bg-muted/20">
+                      <span className="text-3xl block mb-2">🔒</span>
+                      <p className="text-xs font-bold text-foreground">
+                        Por motivos de segurança, a lista de alunos não é exibida.
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-1 max-w-xs mx-auto">
+                        Digite o e-mail exato do aluno acima para encontrá-lo e matriculá-lo na turma.
+                      </p>
+                    </div>
+                  );
+                }
 
                 if (eligibleStudents.length === 0) {
                   return (
                     <div className="rounded-2xl border border-dashed border-border p-8 text-center bg-muted/20">
                       <span className="text-3xl block mb-2">👤</span>
                       <p className="text-xs font-bold text-foreground">
-                        {allStudents.length === 0
-                          ? "Nenhum aluno cadastrado no sistema ainda."
-                          : "Todos os alunos cadastrados já estão nesta turma!"}
+                        Nenhum aluno encontrado com este e-mail.
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-1 max-w-xs mx-auto">
-                        Alunos que criarem conta ou acessarem pelo botão <strong>"Sala de Aula"</strong> com o código <span className="font-mono text-primary font-bold">{classroomToEnroll.code}</span> serão vinculados no Supabase.
+                        Verifique se o e-mail está correto ou se o aluno já está matriculado nesta turma. Alunos também podem entrar usando o código <span className="font-mono text-primary font-bold">{classroomToEnroll.code}</span>.
                       </p>
                     </div>
                   );
