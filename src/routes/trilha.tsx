@@ -4,7 +4,7 @@ import luviMascot from "@/assets/luvi-mascot.png";
 import { ParallaxTrailMap, type TrailNode } from "@/components/ParallaxTrailMap";
 import { AlphabetReferenceModal } from "@/components/AlphabetReferenceModal";
 import { soundFx } from "@/lib/sound-effects";
-import { getActiveUser, loginUser, logoutUser, User } from "@/lib/user-store";
+import { getActiveUser, loginUser, logoutUser, User, regenerateLives, saveUser, onUserChange } from "@/lib/user-store";
 import { toast } from "sonner";
 import { JoinClassroomFab } from "@/components/JoinClassroomFab";
 import { TurmaClaNavbarButton } from "@/components/TurmaClaNavbarButton";
@@ -192,6 +192,14 @@ function TrailPage() {
       }
     }
 
+    // Regenera vidas passivas do usuário caso o tempo tenha passado
+    if (user) {
+      const { lives: regLives, lastLiveLostAt: regLast } = regenerateLives(user);
+      if (regLives !== user.lives) {
+        user = saveUser({ ...user, lives: regLives, lastLiveLostAt: regLast });
+      }
+    }
+
     // 3. Autenticado -> Calcula progresso e concede acesso
     const isTeacher = user.role === "professor";
     const lessons = user.completedLessons ?? [];
@@ -208,6 +216,18 @@ function TrailPage() {
     setIslands(buildIslands(computed, targetWorld));
     setAuthorizedUser(user);
     setIsValidating(false);
+
+    // Listener para atualizações de vidas, streak e XP em tempo real
+    const unsub = onUserChange(() => {
+      const refreshed = getActiveUser();
+      if (refreshed) {
+        setAuthorizedUser(refreshed);
+      }
+    });
+
+    return () => {
+      unsub();
+    };
   }, [navigate, search.world]);
 
   // Recalcula nós e ilhas ao alternar de mundo
@@ -258,6 +278,7 @@ function TrailPage() {
     <div className="min-h-screen bg-gradient-hero pb-24 text-foreground selection:bg-primary/20">
       {/* Top Header with Stats and Controls */}
       <TrailHeader
+        user={authorizedUser}
         timeOfDay={timeOfDay}
         setTimeOfDay={setTimeOfDay}
         isMuted={isMuted}
@@ -547,6 +568,7 @@ function TrailPage() {
 }
 
 function TrailHeader({
+  user,
   timeOfDay,
   setTimeOfDay,
   isMuted,
@@ -555,6 +577,7 @@ function TrailHeader({
   onToggleView,
   onOpenAlphabet,
 }: {
+  user: User | null;
   timeOfDay: "day" | "sunset" | "night";
   setTimeOfDay: (t: "day" | "sunset" | "night") => void;
   isMuted: boolean;
@@ -563,6 +586,10 @@ function TrailHeader({
   onToggleView: (v: "map" | "list") => void;
   onOpenAlphabet?: () => void;
 }) {
+  const streakVal = user?.streak ?? 1;
+  const xpVal = user?.xp ?? 0;
+  const livesVal = user?.lives ?? 5;
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
@@ -624,9 +651,9 @@ function TrailHeader({
           >
             <span className="text-base">{isMuted ? "🔇" : "🔊"}</span>
           </button>
-          <Stat icon="🔥" value="12" label="ofensiva" />
-          <Stat icon="⭐" value="340" label="XP" />
-          <Stat icon="❤️" value="5" label="vidas" />
+          <Stat icon="🔥" value={`${streakVal}`} label={`${streakVal} dias de ofensiva`} />
+          <Stat icon="⭐" value={`${xpVal}`} label={`${xpVal} XP total`} />
+          <Stat icon="❤️" value={`${livesVal}`} label={`${livesVal} vidas restantes`} />
 
           <TrailUserAuthControls />
         </div>

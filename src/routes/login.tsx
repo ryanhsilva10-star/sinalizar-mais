@@ -93,19 +93,25 @@ function LoginPage() {
         if (authUser) {
           supabaseAuthSucceeded = true;
           // Sync user profile from Supabase to local storage so loginUser doesn't fail
-          const profile = await fetchProfileFromSupabase(authUser.id);
+          const profile = await fetchProfileFromSupabase(authUser.id, authUser.email, authUser.user_metadata);
           if (profile) {
             saveUser({ ...profile, password, id: authUser.id });
           } else {
+            const meta = authUser.user_metadata || {};
             saveUser({
               id: authUser.id,
               email: authUser.email!,
-              name: authUser.user_metadata?.name || "Usuário",
-              role: authUser.user_metadata?.role || "aluno",
-              world: authUser.user_metadata?.world || "ef1",
-              avatar: authUser.user_metadata?.avatar || "🦊",
-              discipline: authUser.user_metadata?.discipline,
-              classroomCode: authUser.user_metadata?.classroom_code,
+              name: meta.name || "Usuário",
+              role: meta.role || "aluno",
+              world: meta.world || "ef1",
+              avatar: meta.avatar || "🦊",
+              discipline: meta.discipline,
+              classroomCode: meta.classroom_code,
+              streak: meta.streak ?? 1,
+              lives: meta.lives ?? 5,
+              lastStreakDate: meta.lastStreakDate || meta.last_streak_date,
+              xp: meta.xp ?? 100,
+              level: meta.level ?? 1,
               password: password,
             });
           }
@@ -185,6 +191,8 @@ function LoginPage() {
           level: 1,
           xp: 100,
           streak: 1,
+          lives: 5,
+          lastStreakDate: new Date().toISOString().split("T")[0],
           completedLessons: [],
         });
 

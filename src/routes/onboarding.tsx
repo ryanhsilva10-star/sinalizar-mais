@@ -17,6 +17,7 @@ import {
   generateRandomClassroomCode,
   Classroom,
   joinClassroom,
+  syncClassroomsFromSupabase,
 } from "@/lib/user-store";
 import { addAlunoToSalaInSupabase, fetchCompletedLessonsForUsers } from "@/lib/supabase-auth";
 import Footer from "@/components/Footer";
@@ -159,6 +160,9 @@ function OnboardingPage() {
 
   useEffect(() => {
     refreshUserData();
+    syncClassroomsFromSupabase().then(() => {
+      refreshUserData();
+    });
   }, [navigate]);
 
   // Quando o professor abre o modal de progresso, busca as lições do Supabase
@@ -167,10 +171,15 @@ function OnboardingPage() {
       setStudentLessonsMap(new Map());
       return;
     }
+    // Sincroniza dados atualizados do Supabase para garantir notas mais recentes
+    syncClassroomsFromSupabase().then(() => {
+      refreshUserData();
+    });
+
     const students = getStudentsInClassroom(selectedClassroomForStudents.code);
-    const ids = students.map((s) => s.id).filter(Boolean);
-    if (ids.length === 0) return;
-    fetchCompletedLessonsForUsers(ids).then((map) => {
+    const studentInfo = students.map((s) => ({ id: s.id, email: s.email }));
+    if (studentInfo.length === 0) return;
+    fetchCompletedLessonsForUsers(studentInfo).then((map) => {
       setStudentLessonsMap(map);
     });
   }, [selectedClassroomForStudents]);
@@ -1146,8 +1155,10 @@ function OnboardingPage() {
         });
 
         const getStudentScore = (student: (typeof allEnrolled)[0], nodeId: number): number | null => {
-          // Prioriza os dados ao vivo do Supabase (studentLessonsMap)
-          const supabaseLessons = studentLessonsMap.get(student.id);
+          // Prioriza os dados ao vivo do Supabase (studentLessonsMap por ID ou por E-mail)
+          const supabaseLessons =
+            studentLessonsMap.get(student.id) ||
+            (student.email ? studentLessonsMap.get(student.email.toLowerCase()) : undefined);
           const lessonsSource = (supabaseLessons && supabaseLessons.length > 0)
             ? supabaseLessons
             : (student.completedLessons ?? []);
@@ -1422,7 +1433,12 @@ function OnboardingPage() {
                                         onClick={() => setSelectedStudentForLessons(student)}
                                         className="text-blue-500 hover:text-blue-600 hover:underline"
                                       >
-                                        📜{(studentLessonsMap.get(student.id)?.length ?? student.completedLessons?.length) || 0} lições
+                                        📜{(
+                                          studentLessonsMap.get(student.id)?.length ??
+                                          (student.email ? studentLessonsMap.get(student.email.toLowerCase())?.length : undefined) ??
+                                          student.completedLessons?.length ??
+                                          0
+                                        )} lições
                                       </button>
                                     </div>
                                   </div>
@@ -1635,9 +1651,14 @@ function OnboardingPage() {
 
             <div className="mt-4 max-h-80 overflow-y-auto space-y-3 pr-1">
               {(() => {
+                const mapLessons =
+                  studentLessonsMap.get(selectedStudentForLessons.id) ||
+                  (selectedStudentForLessons.email
+                    ? studentLessonsMap.get(selectedStudentForLessons.email.toLowerCase())
+                    : undefined);
                 const lessonsToShow =
-                  (studentLessonsMap.get(selectedStudentForLessons.id)?.length ?? 0) > 0
-                    ? studentLessonsMap.get(selectedStudentForLessons.id)!
+                  mapLessons && mapLessons.length > 0
+                    ? mapLessons
                     : (selectedStudentForLessons.completedLessons ?? []);
                 return lessonsToShow.length === 0 ? (
                   <p className="text-center text-sm text-muted-foreground py-6">
