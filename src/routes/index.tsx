@@ -57,9 +57,7 @@ function Header() {
           <Link to="/trilha" className="hover:text-foreground">Trilha</Link>
           <a href="#jogos" className="hover:text-foreground">Atividades</a>
           <a href="#escolas" className="hover:text-foreground">Para escolas</a>
-          <Link to="/apresentacao" className="text-emerald-700 font-extrabold hover:text-emerald-800 transition-colors flex items-center gap-1 bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200">
-            📊 Apresentação ESG
-          </Link>
+
         </nav>
 
         <div className="hidden md:block">
@@ -120,7 +118,7 @@ function Header() {
             <Link to="/trilha" className="hover:text-foreground" onClick={() => setIsMobileMenuOpen(false)}>Trilha</Link>
             <a href="#jogos" className="hover:text-foreground" onClick={() => setIsMobileMenuOpen(false)}>Atividades</a>
             <a href="#escolas" className="hover:text-foreground" onClick={() => setIsMobileMenuOpen(false)}>Para escolas</a>
-            <Link to="/apresentacao" className="text-emerald-700 font-extrabold hover:text-emerald-800" onClick={() => setIsMobileMenuOpen(false)}>📊 Apresentação & Pitch ESG</Link>
+
           </nav>
 
           <div className="border-t border-border/60 pt-4 mt-2">
@@ -582,12 +580,7 @@ function LessonCTA({ helpMode }: { helpMode: boolean }) {
               >
                 ➕ Cadastrar Novo Usuário →
               </Link>
-              <Link
-                to="/apresentacao"
-                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 hover:bg-emerald-600 px-7 py-4 text-base font-extrabold text-white shadow-chunky transition-transform hover:-translate-y-1"
-              >
-                📊 Apresentação & Pitch ESG →
-              </Link>
+
               <Link
                 to="/login"
                 search={{ mode: "login" }}

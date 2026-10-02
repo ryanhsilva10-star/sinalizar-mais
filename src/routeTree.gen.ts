@@ -10,7 +10,6 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ApresentacaoRouteImport } from './routes/apresentacao'
 import { Route as LicaoRouteImport } from './routes/licao'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -21,11 +20,6 @@ import { Route as StudentProfileRouteImport } from './routes/student/profile'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApresentacaoRoute = ApresentacaoRouteImport.update({
-  id: '/apresentacao',
-  path: '/apresentacao',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LicaoRoute = LicaoRouteImport.update({
@@ -61,7 +55,6 @@ const StudentProfileRoute = StudentProfileRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/apresentacao': typeof ApresentacaoRoute
   '/licao': typeof LicaoRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -71,7 +64,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/apresentacao': typeof ApresentacaoRoute
   '/licao': typeof LicaoRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -82,7 +74,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/apresentacao': typeof ApresentacaoRoute
   '/licao': typeof LicaoRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
@@ -94,7 +85,6 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/apresentacao'
     | '/licao'
     | '/login'
     | '/onboarding'
@@ -104,7 +94,6 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/apresentacao'
     | '/licao'
     | '/login'
     | '/onboarding'
@@ -114,7 +103,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
-    | '/apresentacao'
     | '/licao'
     | '/login'
     | '/onboarding'
@@ -125,7 +113,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApresentacaoRoute: typeof ApresentacaoRoute
   LicaoRoute: typeof LicaoRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -141,13 +128,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/apresentacao': {
-      id: '/apresentacao'
-      path: '/apresentacao'
-      fullPath: '/apresentacao'
-      preLoaderRoute: typeof ApresentacaoRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/licao': {
@@ -197,7 +177,6 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ApresentacaoRoute: ApresentacaoRoute,
   LicaoRoute: LicaoRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
