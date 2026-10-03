@@ -4,6 +4,7 @@ import {
   removeAlunoFromSalaInSupabase,
   fetchSalasFromSupabase,
   fetchAlunosFromSupabase,
+  updateAlunoPontuacaoInSupabase,
 } from "./supabase-auth";
 
 export interface CompletedLesson {
@@ -37,6 +38,12 @@ export interface User {
   level: number;
   xp: number;
   streak: number;
+  /** Data (YYYY-MM-DD) em que o streak foi incrementado pela última vez */
+  lastStreakDate?: string;
+  /** Vidas do aluno (máx 5). Perde 1 por erro. Regenera 1 por hora. */
+  lives?: number;
+  /** Timestamp (ISO) em que o aluno perdeu uma vida pela última vez */
+  lastLiveLostAt?: string;
   phone?: string;
   birthDate?: string;
   document?: string;
@@ -227,6 +234,118 @@ export function seedDefaultClassrooms(): void {
   }
 }
 
+
+// ==========================================
+// UTILITÁRIOS DE STREAK E VIDAS
+// ==========================================
+
+const MAX_LIVES = 5;
+const LIVES_REGEN_MINUTES = 60; // 1 vida regenera a cada 60 min
+
+/** Retorna a data atual no formato YYYY-MM-DD */
+function getTodayDate(): string {
+  return new Date().toISOString().split("T")[0];
+}
+
+/**
+ * Calcula o novo valor do streak considerando a data do último incremento:
+ * - Mesmo dia  → mantém o streak atual (não incrementa duas vezes)
+ * - Dia anterior → incrementa streak
+ * - Mais de 1 dia atrás → reseta para 1 (sequência quebrada)
+ * - Sem data anterior → seta 1
+ */
+export function computeNewStreak(currentStreak: number, lastStreakDate?: string): { streak: number; lastStreakDate: string } {
+  const today = getTodayDate();
+  if (!lastStreakDate) return { streak: 1, lastStreakDate: today };
+
+  const last = new Date(lastStreakDate);
+  const now = new Date(today);
+  const diffDays = Math.round((now.getTime() - last.getTime()) / (1000 * 60 * 60 * 24));
+
+  if (diffDays === 0) {
+    // Mesma sessão do dia — não incrementa
+    return { streak: currentStreak, lastStreakDate };
+  } else if (diffDays === 1) {
+    // Dia consecutivo — incrementa!
+    return { streak: currentStreak + 1, lastStreakDate: today };
+  } else {
+    // Quebrou a sequência
+    return { streak: 1, lastStreakDate: today };
+  }
+}
+
+/**
+ * Regenera vidas passivamente com base no tempo decorrido desde a última perda.
+ * A cada LIVES_REGEN_MINUTES minutos sem jogar, uma vida é recuperada (máx MAX_LIVES).
+ */
+export function regenerateLives(user: User): { lives: number; lastLiveLostAt?: string } {
+  const currentLives = user.lives ?? MAX_LIVES;
+  if (currentLives >= MAX_LIVES) return { lives: MAX_LIVES, lastLiveLostAt: user.lastLiveLostAt };
+  if (!user.lastLiveLostAt) return { lives: MAX_LIVES };
+
+  const diffMs = Date.now() - new Date(user.lastLiveLostAt).getTime();
+  const diffMinutes = Math.floor(diffMs / (1000 * 60));
+  const livesRegained = Math.floor(diffMinutes / LIVES_REGEN_MINUTES);
+
+  if (livesRegained <= 0) return { lives: currentLives, lastLiveLostAt: user.lastLiveLostAt };
+
+  const newLives = Math.min(MAX_LIVES, currentLives + livesRegained);
+  // Se chegou ao máximo, limpa o timer de regeneração
+  const newLastLiveLostAt = newLives >= MAX_LIVES ? undefined : user.lastLiveLostAt;
+  return { lives: newLives, lastLiveLostAt: newLastLiveLostAt };
+}
+
+/**
+ * Desconta 1 vida do usuário ativo quando ele erra uma questão.
+ * Persiste no localStorage e retorna o novo número de vidas.
+ */
+export function loseLife(userId: string): number {
+  const users = getUsers();
+  const idx = users.findIndex((u) => u.id === userId);
+  if (idx === -1) return MAX_LIVES;
+
+  const user = users[idx];
+  // Primeiro, tenta regenerar vidas passivas antes de descontar
+  const { lives: currentLives } = regenerateLives(user);
+  const newLives = Math.max(0, currentLives - 1);
+  const nowIso = new Date().toISOString();
+
+  users[idx] = {
+    ...user,
+    lives: newLives,
+    lastLiveLostAt: newLives < MAX_LIVES ? nowIso : undefined,
+    lastActiveAt: nowIso,
+  };
+
+  if (typeof window !== "undefined") {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
+    notifyUserChanges({ type: "loseLife", userId, lives: newLives });
+
+    // Sincroniza a perda de vidas no Supabase imediatamente
+    if (user.role === "aluno") {
+      updateAlunoPontuacaoInSupabase(
+        user.id,
+        user.xp ?? 0,
+        undefined,
+        user.email,
+        {
+          streak: user.streak ?? 1,
+          lives: newLives,
+          lastStreakDate: user.lastStreakDate,
+          lastLiveLostAt: newLives < MAX_LIVES ? nowIso : undefined,
+        }
+      ).catch((err) => console.warn("Aviso ao sincronizar vidas no Supabase:", err));
+    }
+  }
+
+  return newLives;
+}
+
+export function getMaxLives(): number {
+  return MAX_LIVES;
+}
+
+
 export function getUsers(): User[] {
   if (typeof window === "undefined") return DEFAULT_USERS;
   try {
@@ -241,6 +360,7 @@ export function getUsers(): User[] {
     return DEFAULT_USERS;
   }
 }
+
 
 export function resetToDefaults(): void {
   if (typeof window === "undefined") return;
@@ -269,13 +389,21 @@ export function saveUser(userData: Partial<User> & { name: string; email: string
   let updatedUser: User;
 
   if (existingIndex >= 0) {
+    const prev = users[existingIndex];
     updatedUser = {
-      ...users[existingIndex],
+      ...prev,
       ...userData,
       email: userData.email.trim().toLowerCase(),
       name: userData.name.trim(),
-      role: userData.role || users[existingIndex].role || "aluno",
-      discipline: userData.discipline !== undefined ? userData.discipline : users[existingIndex].discipline,
+      role: userData.role || prev.role || "aluno",
+      discipline: userData.discipline !== undefined ? userData.discipline : prev.discipline,
+      level: userData.level !== undefined ? userData.level : prev.level ?? 1,
+      xp: userData.xp !== undefined ? userData.xp : prev.xp ?? 100,
+      streak: userData.streak !== undefined ? userData.streak : prev.streak ?? 1,
+      lives: userData.lives !== undefined ? userData.lives : prev.lives ?? 5,
+      lastStreakDate: userData.lastStreakDate !== undefined ? userData.lastStreakDate : prev.lastStreakDate,
+      lastLiveLostAt: userData.lastLiveLostAt !== undefined ? userData.lastLiveLostAt : prev.lastLiveLostAt,
+      completedLessons: userData.completedLessons !== undefined ? userData.completedLessons : prev.completedLessons ?? [],
       lastActiveAt: new Date().toISOString(),
     };
     users[existingIndex] = updatedUser;
@@ -290,8 +418,12 @@ export function saveUser(userData: Partial<User> & { name: string; email: string
       world: userData.world || "ef1",
       avatar: userData.avatar || (userData.role === "professor" ? "🧑‍🏫" : userData.world === "ef2" ? "🚀" : "🦊"),
       level: userData.level || (userData.role === "professor" ? 10 : 1),
-      xp: userData.xp || (userData.role === "professor" ? 2000 : 100),
-      streak: userData.streak || 1,
+      xp: userData.xp !== undefined ? userData.xp : (userData.role === "professor" ? 2000 : 100),
+      streak: userData.streak !== undefined ? userData.streak : 1,
+      lives: userData.lives !== undefined ? userData.lives : 5,
+      lastStreakDate: userData.lastStreakDate,
+      lastLiveLostAt: userData.lastLiveLostAt,
+      completedLessons: userData.completedLessons || [],
       classroomCode: userData.classroomCode || "",
       lastActiveAt: new Date().toISOString(),
       createdAt: new Date().toISOString(),
@@ -302,6 +434,25 @@ export function saveUser(userData: Partial<User> & { name: string; email: string
   if (typeof window !== "undefined") {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
     notifyUserChanges({ type: "saveUser", user: updatedUser });
+
+    // Sincroniza a pontuação, streak e vidas do aluno no Supabase
+    if (updatedUser.role === "aluno") {
+      const pontuacao = updatedUser.xp ?? 0;
+      const lastLesson = updatedUser.completedLessons?.[updatedUser.completedLessons.length - 1];
+      updateAlunoPontuacaoInSupabase(
+        updatedUser.id,
+        pontuacao,
+        lastLesson ? { id: lastLesson.id, title: lastLesson.title, score: lastLesson.score } : undefined,
+        updatedUser.email,
+        {
+          streak: updatedUser.streak,
+          lives: updatedUser.lives ?? 5,
+          lastStreakDate: updatedUser.lastStreakDate,
+          lastLiveLostAt: updatedUser.lastLiveLostAt,
+        },
+        updatedUser.completedLessons
+      ).catch((err) => console.warn("Aviso ao sincronizar pontuação no Supabase:", err));
+    }
   }
 
   return updatedUser;
@@ -663,8 +814,18 @@ export async function syncClassroomsFromSupabase(): Promise<void> {
         );
         const salaCode = ra.codigoSala ? String(ra.codigoSala) : undefined;
         if (uIdx >= 0) {
-          if (salaCode && localUsers[uIdx].classroomCode !== salaCode) {
-            localUsers[uIdx].classroomCode = salaCode;
+          const prev = localUsers[uIdx];
+          const newXp = Math.max(prev.xp || 0, ra.pontuacaoTotal || 100);
+          if (salaCode && prev.classroomCode !== salaCode) {
+            prev.classroomCode = salaCode;
+            changed = true;
+          }
+          if (ra.userId && prev.id !== ra.userId) {
+            prev.id = ra.userId;
+            changed = true;
+          }
+          if (prev.xp !== newXp) {
+            prev.xp = newXp;
             changed = true;
           }
         } else {
@@ -736,6 +897,8 @@ export function subscribeToUserChanges(callback: () => void): () => void {
     window.removeEventListener("storage", handler);
   };
 }
+
+export const onUserChange = subscribeToUserChanges;
 
 // ==========================================
 // MÉTRICAS AGREGADAS DA TURMA / CLÃ (PRIVACIDADE REFORÇADA)

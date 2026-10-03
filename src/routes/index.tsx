@@ -1,14 +1,17 @@
+import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import luviMascot from "@/assets/luvi-mascot.png";
 import novaAvatar from "@/assets/nova-avatar.png";
 import Footer from "@/components/Footer";
 import { JoinClassroomFab } from "@/components/JoinClassroomFab";
+import { getActiveUser, logoutUser } from "@/lib/user-store";
+import { TurmaClaNavbarButton } from "@/components/TurmaClaNavbarButton";
+import { toast } from "sonner";
+import { Menu, X } from "lucide-react";
 
 export const Route = createFileRoute("/")({
   component: LandingPage,
 });
-
-import { useState, useEffect } from "react";
 
 function LandingPage() {
   const [helpMode, setHelpMode] = useState(false);
@@ -28,11 +31,6 @@ function LandingPage() {
   );
 }
 
-import { getActiveUser, logoutUser } from "@/lib/user-store";
-import { TurmaClaNavbarButton } from "@/components/TurmaClaNavbarButton";
-import { toast } from "sonner";
-import { Menu, X } from "lucide-react";
-
 function Header() {
   const [currentUser, setCurrentUser] = useState(() => getActiveUser());
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -51,7 +49,7 @@ function Header() {
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         <Link to="/" className="flex items-center gap-2">
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">S</span>
+          <img src="/sinaliza-mais-logo.jpg" alt="Sinaliza Mais - Logo" className="h-16 w-16 rounded-xl object-cover shadow-soft" />
           <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-bold text-muted-foreground md:flex text-secondary-foreground">
@@ -59,6 +57,7 @@ function Header() {
           <Link to="/trilha" className="hover:text-foreground">Trilha</Link>
           <a href="#jogos" className="hover:text-foreground">Atividades</a>
           <a href="#escolas" className="hover:text-foreground">Para escolas</a>
+
         </nav>
 
         <div className="hidden md:block">
@@ -119,6 +118,7 @@ function Header() {
             <Link to="/trilha" className="hover:text-foreground" onClick={() => setIsMobileMenuOpen(false)}>Trilha</Link>
             <a href="#jogos" className="hover:text-foreground" onClick={() => setIsMobileMenuOpen(false)}>Atividades</a>
             <a href="#escolas" className="hover:text-foreground" onClick={() => setIsMobileMenuOpen(false)}>Para escolas</a>
+
           </nav>
 
           <div className="border-t border-border/60 pt-4 mt-2">
@@ -580,6 +580,7 @@ function LessonCTA({ helpMode }: { helpMode: boolean }) {
               >
                 ➕ Cadastrar Novo Usuário →
               </Link>
+
               <Link
                 to="/login"
                 search={{ mode: "login" }}

@@ -9,6 +9,8 @@ import {
   joinClassroom,
   leaveClassroom,
   syncClassroomsFromSupabase,
+  regenerateLives,
+  onUserChange,
   Classroom,
   User,
 } from "@/lib/user-store";
@@ -54,7 +56,7 @@ function StudentProfilePage() {
 
   // Regra de Guarda de Autorização da Rota
   useEffect(() => {
-    const active = getActiveUser();
+    let active = getActiveUser();
 
     // 1. Não autenticado -> redireciona para login
     if (!active) {
@@ -70,6 +72,12 @@ function StudentProfilePage() {
       return;
     }
 
+    // Regenera vidas passivas do usuário se necessário
+    const { lives: regLives, lastLiveLostAt: regLast } = regenerateLives(active);
+    if (regLives !== active.lives) {
+      active = saveUser({ ...active, lives: regLives, lastLiveLostAt: regLast });
+    }
+
     // 3. Autenticado como Aluno -> carrega dados cadastrais
     setCurrentUser(active);
     setName(active.name);
@@ -80,6 +88,15 @@ function StudentProfilePage() {
     setAddress(active.address || "");
     setWorld(active.world || "ef1");
     setAvatar(active.avatar || "🦊");
+
+    const unsub = onUserChange(() => {
+      const refreshed = getActiveUser();
+      if (refreshed) {
+        setCurrentUser(refreshed);
+      }
+    });
+
+    return () => unsub();
   }, [navigate]);
 
   // Função para Log-off
@@ -154,6 +171,13 @@ function StudentProfilePage() {
         world,
         avatar,
         role: "aluno",
+        streak: currentUser.streak,
+        lives: currentUser.lives,
+        lastStreakDate: currentUser.lastStreakDate,
+        lastLiveLostAt: currentUser.lastLiveLostAt,
+        xp: currentUser.xp,
+        level: currentUser.level,
+        completedLessons: currentUser.completedLessons,
       });
 
       setCurrentUser(updated);
@@ -234,18 +258,22 @@ function StudentProfilePage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3 text-center text-xs w-full md:w-auto">
-            <div className="rounded-2xl bg-muted/50 px-4 py-2.5">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs w-full md:w-auto">
+            <div className="rounded-2xl bg-muted/50 px-3.5 py-2.5">
               <p className="text-[10px] font-bold uppercase text-muted-foreground">Nível</p>
-              <p className="font-extrabold text-base">{currentUser.level}</p>
+              <p className="font-extrabold text-base">{currentUser.level ?? 1}</p>
             </div>
-            <div className="rounded-2xl bg-muted/50 px-4 py-2.5">
+            <div className="rounded-2xl bg-muted/50 px-3.5 py-2.5">
               <p className="text-[10px] font-bold uppercase text-muted-foreground">XP</p>
-              <p className="font-extrabold text-base text-amber-500">⚡ {currentUser.xp}</p>
+              <p className="font-extrabold text-base text-amber-500">⚡ {currentUser.xp ?? 0}</p>
             </div>
-            <div className="rounded-2xl bg-muted/50 px-4 py-2.5">
+            <div className="rounded-2xl bg-muted/50 px-3.5 py-2.5">
               <p className="text-[10px] font-bold uppercase text-muted-foreground">Ofensiva</p>
-              <p className="font-extrabold text-base text-rose-500">🔥 {currentUser.streak}d</p>
+              <p className="font-extrabold text-base text-rose-500">🔥 {currentUser.streak ?? 1}d</p>
+            </div>
+            <div className="rounded-2xl bg-muted/50 px-3.5 py-2.5">
+              <p className="text-[10px] font-bold uppercase text-muted-foreground">Vidas</p>
+              <p className="font-extrabold text-base text-red-500">❤️ {currentUser.lives ?? 5}/5</p>
             </div>
           </div>
         </div>

@@ -17,8 +17,9 @@ import {
   generateRandomClassroomCode,
   Classroom,
   joinClassroom,
+  syncClassroomsFromSupabase,
 } from "@/lib/user-store";
-import { addAlunoToSalaInSupabase } from "@/lib/supabase-auth";
+import { addAlunoToSalaInSupabase, fetchCompletedLessonsForUsers } from "@/lib/supabase-auth";
 import Footer from "@/components/Footer";
 import {
   Eye,
@@ -105,6 +106,8 @@ function OnboardingPage() {
   const [isStudentModalFullscreen, setIsStudentModalFullscreen] = useState(false);
   const [studentModalWorldFilter, setStudentModalWorldFilter] = useState<"all" | "world1" | "world2">("all");
   const [studentSearchQuery, setStudentSearchQuery] = useState("");
+  // Map userId -> lições concluídas buscadas do Supabase para o modal do professor
+  const [studentLessonsMap, setStudentLessonsMap] = useState<Map<string, Array<{ id: string; title: string; score: number; completedAt: string }>>>(new Map());
 
   // Estado para matricular alunos diretamente na sala
   const [isAddStudentModalOpen, setIsAddStudentModalOpen] = useState(false);
@@ -157,7 +160,29 @@ function OnboardingPage() {
 
   useEffect(() => {
     refreshUserData();
+    syncClassroomsFromSupabase().then(() => {
+      refreshUserData();
+    });
   }, [navigate]);
+
+  // Quando o professor abre o modal de progresso, busca as lições do Supabase
+  useEffect(() => {
+    if (!selectedClassroomForStudents) {
+      setStudentLessonsMap(new Map());
+      return;
+    }
+    // Sincroniza dados atualizados do Supabase para garantir notas mais recentes
+    syncClassroomsFromSupabase().then(() => {
+      refreshUserData();
+    });
+
+    const students = getStudentsInClassroom(selectedClassroomForStudents.code);
+    const studentInfo = students.map((s) => ({ id: s.id, email: s.email }));
+    if (studentInfo.length === 0) return;
+    fetchCompletedLessonsForUsers(studentInfo).then((map) => {
+      setStudentLessonsMap(map);
+    });
+  }, [selectedClassroomForStudents]);
 
   const handleLogout = () => {
     logoutUser();
@@ -1130,7 +1155,14 @@ function OnboardingPage() {
         });
 
         const getStudentScore = (student: (typeof allEnrolled)[0], nodeId: number): number | null => {
-          const lesson = student.completedLessons?.find(
+          // Prioriza os dados ao vivo do Supabase (studentLessonsMap por ID ou por E-mail)
+          const supabaseLessons =
+            studentLessonsMap.get(student.id) ||
+            (student.email ? studentLessonsMap.get(student.email.toLowerCase()) : undefined);
+          const lessonsSource = (supabaseLessons && supabaseLessons.length > 0)
+            ? supabaseLessons
+            : (student.completedLessons ?? []);
+          const lesson = lessonsSource.find(
             (l) => l.id === `trail_node_${nodeId}` || l.id === `les_${nodeId}`
           );
           return lesson ? lesson.score : null;
@@ -1401,7 +1433,12 @@ function OnboardingPage() {
                                         onClick={() => setSelectedStudentForLessons(student)}
                                         className="text-blue-500 hover:text-blue-600 hover:underline"
                                       >
-                                        📜{student.completedLessons?.length || 0} lições
+                                        📜{(
+                                          studentLessonsMap.get(student.id)?.length ??
+                                          (student.email ? studentLessonsMap.get(student.email.toLowerCase())?.length : undefined) ??
+                                          student.completedLessons?.length ??
+                                          0
+                                        )} lições
                                       </button>
                                     </div>
                                   </div>
@@ -1613,29 +1650,39 @@ function OnboardingPage() {
             </div>
 
             <div className="mt-4 max-h-80 overflow-y-auto space-y-3 pr-1">
-              {!selectedStudentForLessons.completedLessons ||
-                selectedStudentForLessons.completedLessons.length === 0 ? (
-                <p className="text-center text-sm text-muted-foreground py-6">
-                  Nenhuma lição registrada para este aluno ainda.
-                </p>
-              ) : (
-                selectedStudentForLessons.completedLessons.map((les) => (
-                  <div
-                    key={les.id}
-                    className="flex items-center justify-between rounded-2xl border border-border bg-background p-3.5 text-xs"
-                  >
-                    <div>
-                      <p className="font-bold text-sm">{les.title}</p>
-                      <p className="text-[10px] text-muted-foreground">Concluído em: {les.completedAt}</p>
+              {(() => {
+                const mapLessons =
+                  studentLessonsMap.get(selectedStudentForLessons.id) ||
+                  (selectedStudentForLessons.email
+                    ? studentLessonsMap.get(selectedStudentForLessons.email.toLowerCase())
+                    : undefined);
+                const lessonsToShow =
+                  mapLessons && mapLessons.length > 0
+                    ? mapLessons
+                    : (selectedStudentForLessons.completedLessons ?? []);
+                return lessonsToShow.length === 0 ? (
+                  <p className="text-center text-sm text-muted-foreground py-6">
+                    Nenhuma lição registrada para este aluno ainda.
+                  </p>
+                ) : (
+                  lessonsToShow.map((les) => (
+                    <div
+                      key={les.id}
+                      className="flex items-center justify-between rounded-2xl border border-border bg-background p-3.5 text-xs"
+                    >
+                      <div>
+                        <p className="font-bold text-sm">{les.title}</p>
+                        <p className="text-[10px] text-muted-foreground">Concluído em: {les.completedAt}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-black text-emerald-600 dark:text-emerald-400">
+                          ⭐ {les.score}%
+                        </span>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="rounded-full bg-emerald-500/20 px-2.5 py-1 text-xs font-black text-emerald-600 dark:text-emerald-400">
-                        ⭐ {les.score}%
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
+                  ))
+                );
+              })()}
             </div>
 
             <div className="mt-6 flex justify-end">
@@ -1758,7 +1805,7 @@ function OnboardingPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <input
                   type="text"
-                  placeholder="Pesquisar por nome ou e-mail do aluno…"
+                  placeholder="Digite o e-mail exato do aluno…"
                   value={studentAddSearch}
                   onChange={(e) => setStudentAddSearch(e.target.value)}
                   className="w-full rounded-2xl border border-border bg-background pl-9 pr-4 py-2.5 text-xs font-medium outline-none focus:border-primary transition-all"
@@ -1772,29 +1819,39 @@ function OnboardingPage() {
               {(() => {
                 const allStudents = usersList.filter((u) => u.role === "aluno");
                 const currentEnrolledCodes = [classroomToEnroll.code.toUpperCase()];
+                const query = studentAddSearch.trim().toLowerCase();
+
                 const eligibleStudents = allStudents.filter((student) => {
                   if (student.classroomCode && currentEnrolledCodes.includes(student.classroomCode.toUpperCase())) {
                     return false;
                   }
-                  if (!studentAddSearch.trim()) return true;
-                  const query = studentAddSearch.toLowerCase();
-                  return (
-                    student.name.toLowerCase().includes(query) ||
-                    student.email.toLowerCase().includes(query)
-                  );
+                  if (!query) return false;
+                  return student.email.toLowerCase() === query;
                 });
+
+                if (!query) {
+                  return (
+                    <div className="rounded-2xl border border-dashed border-border p-8 text-center bg-muted/20">
+                      <span className="text-3xl block mb-2">🔒</span>
+                      <p className="text-xs font-bold text-foreground">
+                        Por motivos de segurança, a lista de alunos não é exibida.
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-1 max-w-xs mx-auto">
+                        Digite o e-mail exato do aluno acima para encontrá-lo e matriculá-lo na turma.
+                      </p>
+                    </div>
+                  );
+                }
 
                 if (eligibleStudents.length === 0) {
                   return (
                     <div className="rounded-2xl border border-dashed border-border p-8 text-center bg-muted/20">
                       <span className="text-3xl block mb-2">👤</span>
                       <p className="text-xs font-bold text-foreground">
-                        {allStudents.length === 0
-                          ? "Nenhum aluno cadastrado no sistema ainda."
-                          : "Todos os alunos cadastrados já estão nesta turma!"}
+                        Nenhum aluno encontrado com este e-mail.
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-1 max-w-xs mx-auto">
-                        Alunos que criarem conta ou acessarem pelo botão <strong>"Sala de Aula"</strong> com o código <span className="font-mono text-primary font-bold">{classroomToEnroll.code}</span> serão vinculados no Supabase.
+                        Verifique se o e-mail está correto ou se o aluno já está matriculado nesta turma. Alunos também podem entrar usando o código <span className="font-mono text-primary font-bold">{classroomToEnroll.code}</span>.
                       </p>
                     </div>
                   );

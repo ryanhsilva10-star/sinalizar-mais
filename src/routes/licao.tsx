@@ -7,7 +7,7 @@ import { getAlphabetReference } from "@/utils/alphabetReference";
 import { getAnimalMascot, type AnimalMascot } from "@/utils/animalMascots";
 import { AnimalMascotDisplay } from "@/components/AnimalMascotDisplay";
 import { soundFx } from "@/lib/sound-effects";
-import { getActiveUser, saveUser, User } from "@/lib/user-store";
+import { getActiveUser, saveUser, User, loseLife, getMaxLives, regenerateLives, computeNewStreak } from "@/lib/user-store";
 import { toast } from "sonner";
 import { BookOpen, Play, RotateCw, Sparkles, CheckCircle2, Lightbulb, Heart, ArrowRight, RefreshCw, Trophy } from "lucide-react";
 
@@ -1260,6 +1260,7 @@ function LessonPage() {
 
   const [isValidating, setIsValidating] = useState(true);
   const [authorizedUser, setAuthorizedUser] = useState<User | null>(null);
+  const [lives, setLives] = useState(getMaxLives());
 
   const [step, setStep] = useState(0);
   const [mirrorScore, setMirrorScore] = useState<LessonMirrorScore | null>(null);
@@ -1288,6 +1289,9 @@ function LessonPage() {
     }
 
     setAuthorizedUser(user);
+    // Inicializa vidas com regeneração passiva aplicada
+    const { lives: regenLives } = regenerateLives(user);
+    setLives(regenLives);
     setIsValidating(false);
   }, [navigate]);
 
@@ -1311,10 +1315,15 @@ function LessonPage() {
       const lessonId = `trail_node_${nodeId}`;
       const existingLessons = authorizedUser.completedLessons ?? [];
       const alreadyDone = existingLessons.some((l) => l.id === lessonId);
-      if (!alreadyDone) {
-        const updated = saveUser({
-          ...authorizedUser,
-          completedLessons: [
+      // Calcula novo streak respeitando a data (1x por dia)
+      const { streak: newStreak, lastStreakDate: newStreakDate } = computeNewStreak(
+        authorizedUser.streak ?? 0,
+        authorizedUser.lastStreakDate
+      );
+
+      const nextCompletedLessons = alreadyDone
+        ? existingLessons
+        : [
             ...existingLessons,
             {
               id: lessonId,
@@ -1322,12 +1331,19 @@ function LessonPage() {
               score: scoreVal,
               completedAt: new Date().toISOString().split("T")[0],
             },
-          ],
-          xp: (authorizedUser.xp ?? 0) + 25,
-          streak: (authorizedUser.streak ?? 0) + 1,
-        });
-        setAuthorizedUser(updated);
-      }
+          ];
+
+      const nextXp = (authorizedUser.xp ?? 0) + (alreadyDone ? 5 : 25);
+
+      const updated = saveUser({
+        ...authorizedUser,
+        completedLessons: nextCompletedLessons,
+        xp: nextXp,
+        streak: newStreak,
+        lastStreakDate: newStreakDate,
+        lives: lives,
+      });
+      setAuthorizedUser(updated);
     }
   };
 
@@ -1364,6 +1380,7 @@ function LessonPage() {
         total={total}
         title={currentLesson.title}
         nodeId={nodeId}
+        lives={lives}
         onExit={restart}
         onOpenAlphabet={() => openAlphabetGuide(colors[0]?.targetLetter || "A")}
       />
@@ -1382,8 +1399,32 @@ function LessonPage() {
             onOpenAlphabet={openAlphabetGuide}
           />
         )}
-        {step === 2 && <ScreenQuiz target={colors[0]} colors={colors} onNext={next} />}
-        {step === 3 && <ScreenBubble target={colors[1] || colors[0]} colors={colors} onNext={next} />}
+        {step === 2 && (
+          <ScreenQuiz
+            target={colors[0]}
+            colors={colors}
+            onNext={next}
+            onWrongAnswer={() => {
+              if (authorizedUser) {
+                const newLives = loseLife(authorizedUser.id);
+                setLives(newLives);
+              }
+            }}
+          />
+        )}
+        {step === 3 && (
+          <ScreenBubble
+            target={colors[1] || colors[0]}
+            colors={colors}
+            onNext={next}
+            onWrongAnswer={() => {
+              if (authorizedUser) {
+                const newLives = loseLife(authorizedUser.id);
+                setLives(newLives);
+              }
+            }}
+          />
+        )}
         {step === 4 && (
           <ScreenMirror
             target={colors[0]}
@@ -1419,6 +1460,7 @@ function TopBar({
   total,
   title,
   nodeId,
+  lives,
   onExit,
   onOpenAlphabet,
 }: {
@@ -1426,6 +1468,7 @@ function TopBar({
   total: number;
   title: string;
   nodeId: number;
+  lives: number;
   onExit: () => void;
   onOpenAlphabet?: () => void;
 }) {
@@ -1471,7 +1514,7 @@ function TopBar({
 
         <div className="flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 shadow-soft shrink-0">
           <span className="text-lg">❤️</span>
-          <span className="font-display font-extrabold">5</span>
+          <span className="font-display font-extrabold">{lives}</span>
         </div>
         <button
           onClick={onExit}
@@ -1778,10 +1821,12 @@ function ScreenQuiz({
   target,
   colors,
   onNext,
+  onWrongAnswer,
 }: {
   target: LessonItem;
   colors: LessonItem[];
   onNext: () => void;
+  onWrongAnswer?: () => void;
 }) {
   const [choice, setChoice] = useState<string | null>(null);
   const correct = choice === target.targetLetter;
@@ -1818,8 +1863,12 @@ function ScreenQuiz({
                 onClick={() => {
                   if (!choice) {
                     setChoice(c.targetLetter);
-                    if (c.targetLetter === target.targetLetter) soundFx.playChime();
-                    else soundFx.playPop();
+                    if (c.targetLetter === target.targetLetter) {
+                      soundFx.playChime();
+                    } else {
+                      soundFx.playPop();
+                      onWrongAnswer?.();
+                    }
                   }
                 }}
                 className={`group relative flex flex-col items-center justify-center p-4 rounded-3xl border-4 ${mascot.tone} transition-all ${isRight
@@ -1919,10 +1968,12 @@ function ScreenBubble({
   target,
   colors,
   onNext,
+  onWrongAnswer,
 }: {
   target: LessonItem;
   colors: LessonItem[];
   onNext: () => void;
+  onWrongAnswer?: () => void;
 }) {
   const [popped, setPopped] = useState<string | null>(null);
   const targetMascot = getAnimalMascot(target.targetLetter);
@@ -1957,8 +2008,12 @@ function ScreenBubble({
                   onClick={() => {
                     if (!popped) {
                       setPopped(c.targetLetter);
-                      if (c.targetLetter === target.targetLetter) soundFx.playChime();
-                      else soundFx.playPop();
+                      if (c.targetLetter === target.targetLetter) {
+                        soundFx.playChime();
+                      } else {
+                        soundFx.playPop();
+                        onWrongAnswer?.();
+                      }
                     }
                   }}
                   disabled={!!popped}

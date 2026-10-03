@@ -4,7 +4,7 @@ import luviMascot from "@/assets/luvi-mascot.png";
 import { ParallaxTrailMap, type TrailNode } from "@/components/ParallaxTrailMap";
 import { AlphabetReferenceModal } from "@/components/AlphabetReferenceModal";
 import { soundFx } from "@/lib/sound-effects";
-import { getActiveUser, loginUser, logoutUser, User } from "@/lib/user-store";
+import { getActiveUser, loginUser, logoutUser, User, regenerateLives, saveUser, onUserChange } from "@/lib/user-store";
 import { toast } from "sonner";
 import { JoinClassroomFab } from "@/components/JoinClassroomFab";
 import { TurmaClaNavbarButton } from "@/components/TurmaClaNavbarButton";
@@ -101,12 +101,13 @@ const ISLANDS_WORLD2: Island[] = [
 /** Calcula o estado dinâmico dos nós com base nas lições concluídas do usuário e no mundo ativo. */
 function computeNodes(
   completedLessons: import("@/lib/user-store").CompletedLesson[],
-  world: 1 | 2
+  world: 1 | 2,
+  isTeacher: boolean = false
 ): TrailNode[] {
   const completedIds = new Set(completedLessons.map((l) => l.id));
   const baseNodes = world === 1 ? TRAIL_NODES_BASE_WORLD1 : TRAIL_NODES_BASE_WORLD2;
 
-  // No Mundo 2, se o Mundo 1 não foi concluído (Fase 12), todas as fases ficam travadas
+  // No Mundo 2, se o Mundo 1 não foi concluído (Fase 12), todas as fases ficam travadas (se não for professor)
   const isWorld1Completed = completedIds.has("trail_node_12") || completedIds.has("les_12");
 
   let foundCurrent = false;
@@ -120,6 +121,10 @@ function computeNodes(
       const lesson = completedLessons.find((l) => l.id === lessonId || l.id === legacyId);
       const stars = lesson ? (lesson.score >= 90 ? 3 : lesson.score >= 60 ? 2 : 1) : 1;
       return { ...base, state: "done" as const, stars };
+    }
+
+    if (isTeacher) {
+      return { ...base, state: "current" as const, stars: 0 };
     }
 
     if (world === 2 && !isWorld1Completed) {
@@ -187,28 +192,42 @@ function TrailPage() {
       }
     }
 
-    // 2. Professor -> Redireciona para /onboarding (Painel do Professor)
-    if (user.role === "professor") {
-      toast.info("🔒 Professores não possuem acesso direto à trilha de lições. Redirecionando para o Painel.");
-      navigate({ to: "/onboarding", replace: true });
-      return;
+    // Regenera vidas passivas do usuário caso o tempo tenha passado
+    if (user) {
+      const { lives: regLives, lastLiveLostAt: regLast } = regenerateLives(user);
+      if (regLives !== user.lives) {
+        user = saveUser({ ...user, lives: regLives, lastLiveLostAt: regLast });
+      }
     }
 
-    // 3. Aluno Autenticado -> Calcula progresso e concede acesso
+    // 3. Autenticado -> Calcula progresso e concede acesso
+    const isTeacher = user.role === "professor";
     const lessons = user.completedLessons ?? [];
     const completedSet = new Set(lessons.map((l) => l.id));
-    const unlocked2 = completedSet.has("trail_node_12") || completedSet.has("les_12");
+    const unlocked2 = isTeacher || completedSet.has("trail_node_12") || completedSet.has("les_12");
     setIsWorld2Unlocked(unlocked2);
 
     // Se o usuário especificou mundo na busca ou já concluiu o Mundo 1
     const targetWorld: 1 | 2 = (search.world as 1 | 2) || (unlocked2 ? 2 : 1);
     setActiveWorld(targetWorld);
 
-    const computed = computeNodes(lessons, targetWorld);
+    const computed = computeNodes(lessons, targetWorld, isTeacher);
     setTrailNodes(computed);
     setIslands(buildIslands(computed, targetWorld));
     setAuthorizedUser(user);
     setIsValidating(false);
+
+    // Listener para atualizações de vidas, streak e XP em tempo real
+    const unsub = onUserChange(() => {
+      const refreshed = getActiveUser();
+      if (refreshed) {
+        setAuthorizedUser(refreshed);
+      }
+    });
+
+    return () => {
+      unsub();
+    };
   }, [navigate, search.world]);
 
   // Recalcula nós e ilhas ao alternar de mundo
@@ -220,8 +239,9 @@ function TrailPage() {
     }
     setActiveWorld(worldNum);
     if (authorizedUser) {
+      const isTeacher = authorizedUser.role === "professor";
       const lessons = authorizedUser.completedLessons ?? [];
-      const computed = computeNodes(lessons, worldNum);
+      const computed = computeNodes(lessons, worldNum, isTeacher);
       setTrailNodes(computed);
       setIslands(buildIslands(computed, worldNum));
     }
@@ -258,6 +278,7 @@ function TrailPage() {
     <div className="min-h-screen bg-gradient-hero pb-24 text-foreground selection:bg-primary/20">
       {/* Top Header with Stats and Controls */}
       <TrailHeader
+        user={authorizedUser}
         timeOfDay={timeOfDay}
         setTimeOfDay={setTimeOfDay}
         isMuted={isMuted}
@@ -547,6 +568,7 @@ function TrailPage() {
 }
 
 function TrailHeader({
+  user,
   timeOfDay,
   setTimeOfDay,
   isMuted,
@@ -555,6 +577,7 @@ function TrailHeader({
   onToggleView,
   onOpenAlphabet,
 }: {
+  user: User | null;
   timeOfDay: "day" | "sunset" | "night";
   setTimeOfDay: (t: "day" | "sunset" | "night") => void;
   isMuted: boolean;
@@ -563,6 +586,10 @@ function TrailHeader({
   onToggleView: (v: "map" | "list") => void;
   onOpenAlphabet?: () => void;
 }) {
+  const streakVal = user?.streak ?? 1;
+  const xpVal = user?.xp ?? 0;
+  const livesVal = user?.lives ?? 5;
+
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
@@ -624,9 +651,9 @@ function TrailHeader({
           >
             <span className="text-base">{isMuted ? "🔇" : "🔊"}</span>
           </button>
-          <Stat icon="🔥" value="12" label="ofensiva" />
-          <Stat icon="⭐" value="340" label="XP" />
-          <Stat icon="❤️" value="5" label="vidas" />
+          <Stat icon="🔥" value={`${streakVal}`} label={`${streakVal} dias de ofensiva`} />
+          <Stat icon="⭐" value={`${xpVal}`} label={`${xpVal} XP total`} />
+          <Stat icon="❤️" value={`${livesVal}`} label={`${livesVal} vidas restantes`} />
 
           <TrailUserAuthControls />
         </div>
