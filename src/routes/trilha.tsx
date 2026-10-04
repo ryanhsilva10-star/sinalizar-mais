@@ -634,10 +634,8 @@ function TrailHeader({
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 sm:py-3">
           <Link to="/" className="flex items-center gap-2" aria-label="sinaliza mais, início">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-rainbow font-display text-lg font-extrabold text-primary-foreground shadow-sm">
-              S
-            </span>
-            <span className="hidden font-display text-lg font-extrabold sm:block">sinaliza mais</span>
+            <img src="/sinaliza-mais-logo.jpg" alt="Sinaliza Mais - Logo" className="h-8 w-8 sm:h-14 sm:w-14 rounded-xl object-cover shadow-soft" />
+            <span className="hidden font-display text-xl font-extrabold sm:block sm:text-2xl">sinaliza mais</span>
           </Link>
 
           {/* View Mode switcher - HIDDEN ON MOBILE (moved to bottom) */}

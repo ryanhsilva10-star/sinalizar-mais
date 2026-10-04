@@ -363,12 +363,8 @@ function OnboardingPage() {
       {/* Top Header */}
       <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
-          <Link to="/" className="flex items-center gap-2">
-            <img
-              src="/sinaliza-mais-logo.jpg"
-              alt="Sinaliza Mais - Logo"
-              className="h-8 w-8 rounded-xl object-cover shadow-soft sm:h-10 sm:w-10"
-            />
+          <Link to="/" className="flex items-center gap-2" aria-label="sinaliza mais, início">
+            <img src="/sinaliza-mais-logo.jpg" alt="Sinaliza Mais - Logo" className="h-10 w-10 sm:h-14 sm:w-14 rounded-xl object-cover shadow-soft" />
             <span className="hidden font-display text-xl font-extrabold sm:block sm:text-2xl">sinaliza mais</span>
           </Link>
 

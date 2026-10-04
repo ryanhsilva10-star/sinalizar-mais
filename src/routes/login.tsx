@@ -225,10 +225,8 @@ function LoginPage() {
       {/* Header Minimalista */}
       <header className="border-b border-border/50 bg-background/80 backdrop-blur-md py-3 px-4 sm:py-4 sm:px-6">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
-              S
-            </span>
+          <Link to="/" className="flex items-center gap-2" aria-label="sinaliza mais, início">
+            <img src="/sinaliza-mais-logo.jpg" alt="Sinaliza Mais - Logo" className="h-10 w-10 sm:h-14 sm:w-14 rounded-xl object-cover shadow-soft" />
             <span className="hidden font-display text-xl font-extrabold sm:block sm:text-2xl">sinaliza mais</span>
           </Link>
           <Link
