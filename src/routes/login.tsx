@@ -223,19 +223,19 @@ function LoginPage() {
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col justify-between">
       {/* Header Minimalista */}
-      <header className="border-b border-border/50 bg-background/80 backdrop-blur-md py-4 px-6">
+      <header className="border-b border-border/50 bg-background/80 backdrop-blur-md py-3 px-4 sm:py-4 sm:px-6">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
               S
             </span>
-            <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
+            <span className="hidden font-display text-xl font-extrabold sm:block sm:text-2xl">sinaliza mais</span>
           </Link>
           <Link
             to="/trilha"
-            className="rounded-full border border-border px-4 py-2 text-xs font-extrabold hover:bg-muted transition-colors"
+            className="rounded-full border border-border px-3 py-1.5 text-xs font-extrabold hover:bg-muted transition-colors sm:px-4 sm:py-2"
           >
-            🗺️ Trilha Pública de Sinais
+            🗺️ <span className="hidden sm:inline">Trilha Pública de Sinais</span><span className="sm:hidden">Trilha Livre</span>
           </Link>
         </div>
       </header>

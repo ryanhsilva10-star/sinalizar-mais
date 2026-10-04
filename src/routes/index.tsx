@@ -198,7 +198,7 @@ function Hero({ helpMode, setHelpMode }: { helpMode: boolean; setHelpMode: (v: b
               search={{ mode: "register" }}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1"
             >
-              ➕ Cadastrar Novo Usuário →
+              ➕ <span className="sm:hidden">Cadastrar</span><span className="hidden sm:inline">Cadastrar Novo Usuário</span> →
             </Link>
             <Link
               to="/login"
@@ -578,7 +578,7 @@ function LessonCTA({ helpMode }: { helpMode: boolean }) {
                 search={{ mode: "register" }}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-7 py-4 text-base font-extrabold text-background shadow-chunky transition-transform hover:-translate-y-1"
               >
-                ➕ Cadastrar Novo Usuário →
+                ➕ <span className="sm:hidden">Cadastrar</span><span className="hidden sm:inline">Cadastrar Novo Usuário</span> →
               </Link>
 
               <Link
