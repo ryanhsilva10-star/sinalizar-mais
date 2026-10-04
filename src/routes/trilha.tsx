@@ -290,21 +290,22 @@ function TrailPage() {
 
       <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
         {/* Selector de Mundos (Abas de Navegação) */}
-        <div className="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
+        <div className="mb-6 grid grid-cols-2 gap-2 sm:flex sm:flex-row sm:items-center sm:justify-center sm:gap-3">
           <button
             onClick={() => handleSelectWorld(1)}
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${activeWorld === 1
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 rounded-2xl px-3 sm:px-5 py-2.5 sm:py-3 font-display text-xs sm:text-sm font-black transition-all ${activeWorld === 1
                 ? "bg-primary text-primary-foreground shadow-chunky scale-105"
                 : "bg-card text-muted-foreground hover:bg-muted hover:text-foreground shadow-soft"
               }`}
           >
             <span>🐾</span>
-            <span>Mundo 1: Alfabeto dos Bichinhos (A-R)</span>
+            <span className="hidden sm:inline">Mundo 1: Alfabeto dos Bichinhos (A-R)</span>
+            <span className="sm:hidden">Mundo 1 (A-R)</span>
           </button>
 
           <button
             onClick={() => handleSelectWorld(2)}
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${activeWorld === 2
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 rounded-2xl px-3 sm:px-5 py-2.5 sm:py-3 font-display text-xs sm:text-sm font-black transition-all ${activeWorld === 2
                 ? "bg-gradient-rainbow text-white shadow-chunky scale-105"
                 : isWorld2Unlocked
                   ? "bg-card text-foreground hover:bg-muted shadow-soft"
@@ -312,7 +313,8 @@ function TrailPage() {
               }`}
           >
             <span>👑</span>
-            <span>Mundo 2: O Trono do Alfabeto (S-Z)</span>
+            <span className="hidden sm:inline">Mundo 2: O Trono do Alfabeto (S-Z)</span>
+            <span className="sm:hidden">Mundo 2 (S-Z)</span>
             {!isWorld2Unlocked && <span className="ml-1 text-xs">🔒</span>}
             {isWorld2Unlocked && <span className="ml-1 text-xs">✨</span>}
           </button>
@@ -592,9 +594,9 @@ function TrailHeader({
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 sm:py-3">
         <Link to="/" className="flex items-center gap-2" aria-label="sinaliza mais, início">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-rainbow font-display text-lg font-extrabold text-primary-foreground shadow-sm">
+          <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-rainbow font-display text-lg font-extrabold text-primary-foreground shadow-sm">
             S
           </span>
           <span className="hidden font-display text-lg font-extrabold sm:block">sinaliza mais</span>
@@ -607,49 +609,49 @@ function TrailHeader({
               onToggleView("map");
               soundFx.playPop();
             }}
-            className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all ${viewMode === "map"
+            className={`flex items-center gap-1 sm:gap-1.5 rounded-xl px-2 sm:px-3 py-1.5 transition-all ${viewMode === "map"
                 ? "bg-card text-primary shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
               }`}
           >
             <span>🗺️</span>
-            <span>Mapa 3D</span>
+            <span className="hidden xs:inline">Mapa 3D</span>
           </button>
           <button
             onClick={() => {
               onToggleView("list");
               soundFx.playPop();
             }}
-            className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all ${viewMode === "list"
+            className={`flex items-center gap-1 sm:gap-1.5 rounded-xl px-2 sm:px-3 py-1.5 transition-all ${viewMode === "list"
                 ? "bg-card text-primary shadow-sm"
                 : "text-muted-foreground hover:text-foreground"
               }`}
           >
             <span>📋</span>
-            <span>Lista</span>
+            <span className="hidden xs:inline">Lista</span>
           </button>
         </div>
 
         {/* Game Stats, Alphabet Guide & Audio Toggle */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 sm:gap-2">
           {onOpenAlphabet && (
             <button
               onClick={onOpenAlphabet}
-              className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-extrabold text-primary hover:bg-primary/20 shadow-xs"
+              className="hidden sm:flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-extrabold text-primary hover:bg-primary/20 shadow-xs"
               title="Abrir Guia Oficial de Alfabeto em LIBRAS (A-Z)"
             >
               <BookOpen className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Guia A-Z</span>
+              <span>Guia A-Z</span>
             </button>
           )}
 
           <button
             onClick={onToggleMute}
-            className="grid h-9 w-9 place-items-center rounded-full bg-card shadow-soft transition-transform hover:scale-105"
+            className="grid h-8 w-8 place-items-center rounded-full bg-card shadow-soft transition-transform hover:scale-105"
             title={isMuted ? "Ativar som" : "Desativar som"}
             aria-label={isMuted ? "Ativar som" : "Desativar som"}
           >
-            <span className="text-base">{isMuted ? "🔇" : "🔊"}</span>
+            <span className="text-sm">{isMuted ? "🔇" : "🔊"}</span>
           </button>
           <Stat icon="🔥" value={`${streakVal}`} label={`${streakVal} dias de ofensiva`} />
           <Stat icon="⭐" value={`${xpVal}`} label={`${xpVal} XP total`} />
@@ -711,12 +713,12 @@ function TrailUserAuthControls() {
 function Stat({ icon, value, label }: { icon: string; value: string; label: string }) {
   return (
     <div
-      className="flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 shadow-soft"
+      className="flex items-center gap-1 rounded-full bg-card px-2 py-1.5 shadow-soft sm:gap-1.5 sm:px-3"
       title={label}
       aria-label={`${value} ${label}`}
     >
-      <span className="text-base">{icon}</span>
-      <span className="font-display text-sm font-extrabold">{value}</span>
+      <span className="text-sm sm:text-base">{icon}</span>
+      <span className="font-display text-xs font-extrabold sm:text-sm">{value}</span>
     </div>
   );
 }

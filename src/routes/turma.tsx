@@ -97,20 +97,20 @@ function TurmaDashboardPage() {
   if (!currentUser.classroomCode || !dashboardData) {
     return (
       <div className="min-h-screen bg-background text-foreground flex flex-col justify-between">
-        <header className="border-b border-border/50 bg-background/80 backdrop-blur-md py-4 px-6">
+        <header className="border-b border-border/50 bg-background/80 backdrop-blur-md py-3 px-4 sm:py-4 sm:px-6">
           <div className="mx-auto flex max-w-5xl items-center justify-between">
             <Link to="/trilha" className="flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
+              <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
                 S
               </span>
-              <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
+              <span className="hidden font-display text-xl font-extrabold sm:block sm:text-2xl">sinaliza mais</span>
             </Link>
             <Link
               to="/trilha"
-              className="inline-flex items-center gap-1 rounded-full border border-border px-3.5 py-1.5 text-xs font-extrabold hover:bg-muted"
+              className="inline-flex items-center gap-1 rounded-full border border-border px-3 py-1.5 text-xs font-extrabold hover:bg-muted sm:px-3.5"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Voltar para a Trilha</span>
+              <span className="hidden sm:inline">Voltar para a Trilha</span>
             </Link>
           </div>
         </header>
@@ -162,21 +162,21 @@ function TurmaDashboardPage() {
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       {/* Top Header */}
       <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
           <Link to="/" className="flex items-center gap-2">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
               S
             </span>
-            <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
+            <span className="hidden font-display text-xl font-extrabold sm:block sm:text-2xl">sinaliza mais</span>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Link
               to="/trilha"
-              className="inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-1.5 text-xs font-extrabold hover:bg-muted transition-colors"
+              className="inline-flex items-center gap-1 sm:gap-1.5 rounded-full border border-border px-3 py-1.5 text-xs font-extrabold hover:bg-muted transition-colors sm:px-3.5"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span>Trilha de Sinais</span>
+              <span className="hidden sm:inline">Trilha de Sinais</span>
             </Link>
 
             <Link
