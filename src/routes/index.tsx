@@ -48,9 +48,9 @@ function Header() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link to="/" className="flex items-center gap-2">
-          <img src="/sinaliza-mais-logo.jpg" alt="Sinaliza Mais - Logo" className="h-16 w-16 rounded-xl object-cover shadow-soft" />
-          <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
+        <Link to="/" className="flex items-center gap-2" aria-label="sinaliza mais, início">
+          <img src="/sinaliza-mais-logo.jpg" alt="Sinaliza Mais - Logo" className="h-10 w-10 sm:h-14 sm:w-14 rounded-xl object-cover shadow-soft" />
+          <span className="font-display text-xl font-extrabold sm:text-2xl">sinaliza mais</span>
         </Link>
         <nav className="hidden items-center gap-8 text-sm font-bold text-muted-foreground md:flex text-secondary-foreground">
           <a href="#mundos" className="hover:text-foreground">Mundos</a>
@@ -198,7 +198,7 @@ function Hero({ helpMode, setHelpMode }: { helpMode: boolean; setHelpMode: (v: b
               search={{ mode: "register" }}
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-primary px-7 py-4 text-base font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1"
             >
-              ➕ Cadastrar Novo Usuário →
+              ➕ <span className="sm:hidden">Cadastrar</span><span className="hidden sm:inline">Cadastrar Novo Usuário</span> →
             </Link>
             <Link
               to="/login"
@@ -578,7 +578,7 @@ function LessonCTA({ helpMode }: { helpMode: boolean }) {
                 search={{ mode: "register" }}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-full bg-foreground px-7 py-4 text-base font-extrabold text-background shadow-chunky transition-transform hover:-translate-y-1"
               >
-                ➕ Cadastrar Novo Usuário →
+                ➕ <span className="sm:hidden">Cadastrar</span><span className="hidden sm:inline">Cadastrar Novo Usuário</span> →
               </Link>
 
               <Link

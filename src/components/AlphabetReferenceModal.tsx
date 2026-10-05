@@ -63,8 +63,8 @@ export const AlphabetReferenceModal: React.FC<AlphabetReferenceModalProps> = ({
         </div>
 
         {/* Filters and Search */}
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border/60 bg-muted/20 px-6 py-3">
-          <div className="flex items-center gap-2">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-border/60 bg-muted/20 px-6 py-3">
+          <div className="flex flex-wrap items-center gap-2">
             <button
               onClick={() => setActiveTab("all")}
               className={`rounded-full px-4 py-1.5 text-xs font-extrabold transition-all ${

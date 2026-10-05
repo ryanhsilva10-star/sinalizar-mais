@@ -362,17 +362,13 @@ function OnboardingPage() {
     <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
       {/* Top Header */}
       <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link to="/" className="flex items-center gap-2">
-            <img
-              src="/sinaliza-mais-logo.jpg"
-              alt="Sinaliza Mais - Logo"
-              className="h-10 w-10 rounded-xl object-cover shadow-soft"
-            />
-            <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
+          <Link to="/" className="flex items-center gap-2" aria-label="sinaliza mais, início">
+            <img src="/sinaliza-mais-logo.jpg" alt="Sinaliza Mais - Logo" className="h-10 w-10 sm:h-14 sm:w-14 rounded-xl object-cover shadow-soft" />
+            <span className="hidden font-display text-xl font-extrabold sm:block sm:text-2xl">sinaliza mais</span>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <span className="text-xl">{activeUser.avatar}</span>
             <div className="hidden text-left md:block">
               <p className="text-xs font-extrabold leading-none flex items-center gap-1.5">
@@ -388,18 +384,18 @@ function OnboardingPage() {
 
             <Link
               to="/trilha"
-              className="rounded-full border border-border px-3.5 py-1.5 text-xs font-extrabold hover:bg-muted transition-colors"
+              className="rounded-full border border-border px-3 py-1.5 text-xs font-extrabold hover:bg-muted transition-colors sm:px-3.5"
             >
-              🗺️ Trilha
+              🗺️ <span className="hidden sm:inline">Trilha</span>
             </Link>
 
             {/* BOTÃO DE LOG-OFF */}
             <button
               onClick={handleLogout}
-              className="rounded-full border border-red-500/30 bg-red-500/10 px-4 py-1.5 text-xs font-extrabold text-red-600 hover:bg-red-500/20 dark:text-red-400 transition-colors"
+              className="rounded-full border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-extrabold text-red-600 hover:bg-red-500/20 dark:text-red-400 transition-colors sm:px-4"
               title="Encerrar sessão"
             >
-              🚪 Sair / Log-off
+              🚪 <span className="hidden sm:inline">Sair / Log-off</span><span className="sm:hidden">Sair</span>
             </button>
           </div>
         </div>

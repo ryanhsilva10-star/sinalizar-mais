@@ -1474,26 +1474,28 @@ function TopBar({
 }) {
   const pct = (step / total) * 100;
   const isWorld2 = nodeId >= 13;
-  const worldLabel = isWorld2 ? `Mundo 2 (Fase ${nodeId})` : `Mundo 1 (Fase ${nodeId})`;
+  const worldLabel = isWorld2 ? `M2 · F${nodeId}` : `M1 · F${nodeId}`;
+  const worldLabelFull = isWorld2 ? `Mundo 2 (Fase ${nodeId})` : `Mundo 1 (Fase ${nodeId})`;
 
   return (
     <div className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex max-w-3xl items-center gap-3 px-4 py-3 sm:px-6 sm:py-4">
+      <div className="mx-auto flex max-w-3xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 sm:py-4">
         <Link
           to="/trilha"
-          className="grid h-10 w-10 shrink-0 place-items-center rounded-full border-2 border-border bg-card text-lg font-bold transition-transform hover:scale-105"
+          className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-border bg-card text-base font-bold transition-transform hover:scale-105"
           aria-label="Sair da Lição"
         >
           ✕
         </Link>
         <div className="flex-1 min-w-0">
           <div className="flex justify-between text-xs font-extrabold mb-1">
-            <span className="text-primary truncate max-w-[180px] sm:max-w-none">
-              {worldLabel} · {title}
+            <span className="text-primary truncate">
+              <span className="sm:hidden">{worldLabel} · {title.length > 22 ? title.slice(0, 22) + "..." : title}</span>
+              <span className="hidden sm:inline">{worldLabelFull} · {title}</span>
             </span>
-            <span className="text-muted-foreground shrink-0">{step}/{total}</span>
+            <span className="text-muted-foreground shrink-0 ml-1">{step}/{total}</span>
           </div>
-          <div className="h-3 overflow-hidden rounded-full bg-muted shadow-inner">
+          <div className="h-2.5 sm:h-3 overflow-hidden rounded-full bg-muted shadow-inner">
             <div
               className="h-full rounded-full bg-gradient-rainbow transition-all duration-500"
               style={{ width: `${pct}%` }}
@@ -1504,17 +1506,17 @@ function TopBar({
         {onOpenAlphabet && (
           <button
             onClick={onOpenAlphabet}
-            className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-extrabold text-primary hover:bg-primary/20 shadow-xs"
+            className="hidden sm:flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-extrabold text-primary hover:bg-primary/20 shadow-xs"
             title="Abrir Exemplo de Referência do Alfabeto Oficial"
           >
             <BookOpen className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Exemplo A-Z</span>
+            <span>Exemplo A-Z</span>
           </button>
         )}
 
-        <div className="flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 shadow-soft shrink-0">
-          <span className="text-lg">❤️</span>
-          <span className="font-display font-extrabold">{lives}</span>
+        <div className="flex items-center gap-1 rounded-full bg-card px-2.5 py-1.5 shadow-soft shrink-0 sm:gap-1.5 sm:px-3">
+          <span className="text-base">❤️</span>
+          <span className="font-display text-sm font-extrabold">{lives}</span>
         </div>
         <button
           onClick={onExit}

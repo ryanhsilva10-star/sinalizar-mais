@@ -203,15 +203,13 @@ function StudentProfilePage() {
     >
       {/* Header com Botão de Log-off */}
       <header className="sticky top-0 z-40 border-b border-border/50 bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-rainbow text-lg font-black text-white shadow-soft">
-              S
-            </span>
-            <span className="font-display text-2xl font-extrabold">sinaliza mais</span>
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
+          <Link to="/" className="flex items-center gap-2" aria-label="sinaliza mais, início">
+            <img src="/sinaliza-mais-logo.jpg" alt="Sinaliza Mais - Logo" className="h-10 w-10 sm:h-14 sm:w-14 rounded-xl object-cover shadow-soft" />
+            <span className="hidden font-display text-xl font-extrabold sm:block sm:text-2xl">sinaliza mais</span>
           </Link>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <span className="text-2xl">{currentUser.avatar}</span>
             <div className="hidden text-left md:block">
               <p className="text-xs font-extrabold leading-none">{currentUser.name}</p>
@@ -224,16 +222,16 @@ function StudentProfilePage() {
               to="/trilha"
               className="rounded-full bg-primary/10 text-primary border border-primary/20 px-3 py-1.5 text-xs font-extrabold hover:bg-primary/20"
             >
-              🗺️ Ir para a Trilha
+              🗺️ <span className="hidden sm:inline">Ir para a Trilha</span>
             </Link>
 
             {/* BOTÃO DE LOG-OFF */}
             <button
               onClick={handleLogout}
-              className="rounded-full border border-red-500/30 bg-red-500/10 px-4 py-1.5 text-xs font-extrabold text-red-600 hover:bg-red-500/20 dark:text-red-400 transition-colors"
+              className="rounded-full border border-red-500/30 bg-red-500/10 px-3 py-1.5 text-xs font-extrabold text-red-600 hover:bg-red-500/20 dark:text-red-400 transition-colors sm:px-4"
               title="Encerrar sessão completamente"
             >
-              🚪 Sair / Log-off
+              🚪 <span className="hidden sm:inline">Sair / Log-off</span><span className="sm:hidden">Sair</span>
             </button>
           </div>
         </div>

@@ -290,21 +290,22 @@ function TrailPage() {
 
       <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6">
         {/* Selector de Mundos (Abas de Navegação) */}
-        <div className="mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3">
+        <div className="mb-6 grid grid-cols-2 gap-2 sm:flex sm:flex-row sm:items-center sm:justify-center sm:gap-3">
           <button
             onClick={() => handleSelectWorld(1)}
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${activeWorld === 1
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 rounded-2xl px-3 sm:px-5 py-2.5 sm:py-3 font-display text-xs sm:text-sm font-black transition-all ${activeWorld === 1
                 ? "bg-primary text-primary-foreground shadow-chunky scale-105"
                 : "bg-card text-muted-foreground hover:bg-muted hover:text-foreground shadow-soft"
               }`}
           >
             <span>🐾</span>
-            <span>Mundo 1: Alfabeto dos Bichinhos (A-R)</span>
+            <span className="hidden sm:inline">Mundo 1: Alfabeto dos Bichinhos (A-R)</span>
+            <span className="sm:hidden">Mundo 1 (A-R)</span>
           </button>
 
           <button
             onClick={() => handleSelectWorld(2)}
-            className={`w-full sm:w-auto flex items-center justify-center gap-2 rounded-2xl px-5 py-3 font-display text-sm font-black transition-all ${activeWorld === 2
+            className={`flex items-center justify-center gap-1.5 sm:gap-2 rounded-2xl px-3 sm:px-5 py-2.5 sm:py-3 font-display text-xs sm:text-sm font-black transition-all ${activeWorld === 2
                 ? "bg-gradient-rainbow text-white shadow-chunky scale-105"
                 : isWorld2Unlocked
                   ? "bg-card text-foreground hover:bg-muted shadow-soft"
@@ -312,7 +313,8 @@ function TrailPage() {
               }`}
           >
             <span>👑</span>
-            <span>Mundo 2: O Trono do Alfabeto (S-Z)</span>
+            <span className="hidden sm:inline">Mundo 2: O Trono do Alfabeto (S-Z)</span>
+            <span className="sm:hidden">Mundo 2 (S-Z)</span>
             {!isWorld2Unlocked && <span className="ml-1 text-xs">🔒</span>}
             {isWorld2Unlocked && <span className="ml-1 text-xs">✨</span>}
           </button>
@@ -590,75 +592,146 @@ function TrailHeader({
   const xpVal = user?.xp ?? 0;
   const livesVal = user?.lives ?? 5;
 
+  const [showBottomNav, setShowBottomNav] = useState(true);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    let lastScrollY = window.scrollY;
+    let timeout: NodeJS.Timeout;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      // Esconde a nav se scrollar para baixo (mais de 50px de margem)
+      if (currentScrollY > lastScrollY && currentScrollY > 50) {
+        setShowBottomNav(false);
+      } else {
+        // Mostra a nav se scrollar para cima
+        setShowBottomNav(true);
+      }
+      lastScrollY = currentScrollY;
+
+      // Oculta automaticamente após 3 segundos sem interação na tela
+      clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        if (window.scrollY > 50) {
+          setShowBottomNav(false);
+        }
+      }, 3000);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("touchstart", () => setShowBottomNav(true), { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("touchstart", () => setShowBottomNav(true));
+      clearTimeout(timeout);
+    };
+  }, []);
+
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3 sm:px-6">
-        <Link to="/" className="flex items-center gap-2" aria-label="sinaliza mais, início">
-          <span className="grid h-9 w-9 place-items-center rounded-full bg-gradient-rainbow font-display text-lg font-extrabold text-primary-foreground shadow-sm">
-            S
-          </span>
-          <span className="hidden font-display text-lg font-extrabold sm:block">sinaliza mais</span>
-        </Link>
+    <>
+      <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 sm:py-3">
+          <Link to="/" className="flex items-center gap-2" aria-label="sinaliza mais, início">
+            <img src="/sinaliza-mais-logo.jpg" alt="Sinaliza Mais - Logo" className="h-8 w-8 sm:h-14 sm:w-14 rounded-xl object-cover shadow-soft" />
+            <span className="hidden font-display text-xl font-extrabold sm:block sm:text-2xl">sinaliza mais</span>
+          </Link>
 
-        {/* View Mode switcher */}
-        <div className="flex items-center rounded-2xl bg-muted p-1 text-xs font-black">
-          <button
-            onClick={() => {
-              onToggleView("map");
-              soundFx.playPop();
-            }}
-            className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all ${viewMode === "map"
-                ? "bg-card text-primary shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-              }`}
-          >
-            <span>🗺️</span>
-            <span>Mapa 3D</span>
-          </button>
-          <button
-            onClick={() => {
-              onToggleView("list");
-              soundFx.playPop();
-            }}
-            className={`flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-all ${viewMode === "list"
-                ? "bg-card text-primary shadow-sm"
-                : "text-muted-foreground hover:text-foreground"
-              }`}
-          >
-            <span>📋</span>
-            <span>Lista</span>
-          </button>
-        </div>
-
-        {/* Game Stats, Alphabet Guide & Audio Toggle */}
-        <div className="flex items-center gap-2">
-          {onOpenAlphabet && (
+          {/* View Mode switcher - HIDDEN ON MOBILE (moved to bottom) */}
+          <div className="hidden sm:flex items-center rounded-2xl bg-muted p-1 text-xs font-black">
             <button
-              onClick={onOpenAlphabet}
-              className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-extrabold text-primary hover:bg-primary/20 shadow-xs"
-              title="Abrir Guia Oficial de Alfabeto em LIBRAS (A-Z)"
+              onClick={() => {
+                onToggleView("map");
+                soundFx.playPop();
+              }}
+              className={`flex items-center gap-1 sm:gap-1.5 rounded-xl px-2 sm:px-3 py-1.5 transition-all ${viewMode === "map"
+                  ? "bg-card text-primary shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+                }`}
             >
-              <BookOpen className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Guia A-Z</span>
+              <span>🗺️</span>
+              <span className="hidden xs:inline">Mapa 3D</span>
             </button>
-          )}
+            <button
+              onClick={() => {
+                onToggleView("list");
+                soundFx.playPop();
+              }}
+              className={`flex items-center gap-1 sm:gap-1.5 rounded-xl px-2 sm:px-3 py-1.5 transition-all ${viewMode === "list"
+                  ? "bg-card text-primary shadow-sm"
+                  : "text-muted-foreground hover:text-foreground"
+                }`}
+            >
+              <span>📋</span>
+              <span className="hidden xs:inline">Lista</span>
+            </button>
+          </div>
 
+          {/* Game Stats */}
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <Stat icon="🔥" value={`${streakVal}`} label={`${streakVal} dias de ofensiva`} />
+            <Stat icon="⭐" value={`${xpVal}`} label={`${xpVal} XP total`} />
+            <Stat icon="❤️" value={`${livesVal}`} label={`${livesVal} vidas restantes`} />
+
+            <div className="hidden sm:flex items-center gap-2">
+              {onOpenAlphabet && (
+                <button
+                  onClick={onOpenAlphabet}
+                  className="flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1.5 text-xs font-extrabold text-primary hover:bg-primary/20 shadow-xs"
+                  title="Abrir Guia Oficial de Alfabeto em LIBRAS (A-Z)"
+                >
+                  <BookOpen className="h-3.5 w-3.5" />
+                  <span>Guia A-Z</span>
+                </button>
+              )}
+              <button
+                onClick={onToggleMute}
+                className="grid h-8 w-8 place-items-center rounded-full bg-card shadow-soft transition-transform hover:scale-105"
+                title={isMuted ? "Ativar som" : "Desativar som"}
+                aria-label={isMuted ? "Ativar som" : "Desativar som"}
+              >
+                <span className="text-sm">{isMuted ? "🔇" : "🔊"}</span>
+              </button>
+              <TrailUserAuthControls />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Bottom Nav (Mobile Only) */}
+      <div className={`fixed bottom-0 left-0 right-0 z-40 sm:hidden transition-transform duration-300 ease-in-out ${showBottomNav ? 'translate-y-0' : 'translate-y-full'}`}>
+        <div className="bg-background/90 backdrop-blur-md border-t border-border px-3 py-2.5 shadow-[0_-4px_10px_rgba(0,0,0,0.05)] flex items-center justify-between gap-2">
+          
+          {/* Mute Button */}
           <button
             onClick={onToggleMute}
-            className="grid h-9 w-9 place-items-center rounded-full bg-card shadow-soft transition-transform hover:scale-105"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-card shadow-soft"
             title={isMuted ? "Ativar som" : "Desativar som"}
-            aria-label={isMuted ? "Ativar som" : "Desativar som"}
           >
-            <span className="text-base">{isMuted ? "🔇" : "🔊"}</span>
+            <span className="text-lg">{isMuted ? "🔇" : "🔊"}</span>
           </button>
-          <Stat icon="🔥" value={`${streakVal}`} label={`${streakVal} dias de ofensiva`} />
-          <Stat icon="⭐" value={`${xpVal}`} label={`${xpVal} XP total`} />
-          <Stat icon="❤️" value={`${livesVal}`} label={`${livesVal} vidas restantes`} />
+
+          {/* View Mode Switcher */}
+          <div className="flex flex-1 items-center justify-center rounded-2xl bg-muted p-1 text-xs font-black">
+            <button
+              onClick={() => { onToggleView("map"); soundFx.playPop(); }}
+              className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all ${viewMode === "map" ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`}
+            >
+              <span>🗺️ Mapa</span>
+            </button>
+            <button
+              onClick={() => { onToggleView("list"); soundFx.playPop(); }}
+              className={`flex-1 flex items-center justify-center gap-1.5 rounded-xl py-2 transition-all ${viewMode === "list" ? "bg-card text-primary shadow-sm" : "text-muted-foreground"}`}
+            >
+              <span>📋 Lista</span>
+            </button>
+          </div>
 
           <TrailUserAuthControls />
         </div>
       </div>
-    </header>
+    </>
   );
 }
 
@@ -685,21 +758,23 @@ function TrailUserAuthControls() {
   }
 
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1.5 sm:gap-2">
       {/* Botão Turma/Clã estritamente para alunos logados */}
-      <TurmaClaNavbarButton />
+      <div className="hidden sm:block">
+        <TurmaClaNavbarButton />
+      </div>
 
       <Link
         to={currentUser.role === "professor" ? "/onboarding" : "/student/profile"}
-        className="flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 text-xs font-extrabold hover:bg-muted"
+        className="flex items-center justify-center h-10 w-10 sm:h-auto sm:w-auto sm:gap-1 rounded-full sm:border sm:border-border bg-card sm:px-2.5 sm:py-1 text-xs font-extrabold hover:bg-muted shadow-soft sm:shadow-none"
         title="Meu Perfil / Painel"
       >
-        <span>{currentUser.avatar}</span>
-        <span className="hidden md:inline">{currentUser.name.split(" ")[0]}</span>
+        <span className="text-lg sm:text-base">{currentUser.avatar}</span>
+        <span className="hidden sm:inline">{currentUser.name.split(" ")[0]}</span>
       </Link>
       <button
         onClick={handleLogout}
-        className="rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-extrabold text-red-600 hover:bg-red-500/20 dark:text-red-400"
+        className="hidden sm:inline-block rounded-full border border-red-500/30 bg-red-500/10 px-2.5 py-1 text-xs font-extrabold text-red-600 hover:bg-red-500/20 dark:text-red-400"
         title="Sair / Log-off"
       >
         🚪 Sair
@@ -711,12 +786,12 @@ function TrailUserAuthControls() {
 function Stat({ icon, value, label }: { icon: string; value: string; label: string }) {
   return (
     <div
-      className="flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 shadow-soft"
+      className="flex items-center gap-1 rounded-full bg-card px-2 py-1.5 shadow-soft sm:gap-1.5 sm:px-3"
       title={label}
       aria-label={`${value} ${label}`}
     >
-      <span className="text-base">{icon}</span>
-      <span className="font-display text-sm font-extrabold">{value}</span>
+      <span className="text-sm sm:text-base">{icon}</span>
+      <span className="font-display text-xs font-extrabold sm:text-sm">{value}</span>
     </div>
   );
 }
