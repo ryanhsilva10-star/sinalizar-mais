@@ -60,10 +60,10 @@ export const LESSONS_DATA: Record<number, LessonNodeData> = {
         letter: "A",
         targetLetter: "A",
         sign: "Punho fechado com polegar lateral",
-        emoji: "🦫",
-        animalEmoji: "🦫",
-        animalName: "Capivarinha Luvi",
-        species: "Capivara",
+        emoji: "🦜",
+        animalEmoji: "🦜",
+        animalName: "Ararinha Lara",
+        species: "Arara",
         tone: "bg-sunshine",
         signTip: "Feche a mão em punho e apoie o polegar estendido ao lado do dedo indicador.",
         handShapeDesc: "Punho fechado com polegar ao lado",
@@ -74,10 +74,10 @@ export const LESSONS_DATA: Record<number, LessonNodeData> = {
         letter: "B",
         targetLetter: "B",
         sign: "4 dedos eretos com polegar na palma",
-        emoji: "🐰",
-        animalEmoji: "🐰",
-        animalName: "Coelhinho Theo",
-        species: "Coelho",
+        emoji: "🦋",
+        animalEmoji: "🦋",
+        animalName: "Borboletinha Mimi",
+        species: "Borboleta",
         tone: "bg-sky",
         signTip: "Mantenha os 4 dedos unidos apontando para cima e dobre o polegar sobre a palma.",
         handShapeDesc: "Mão em 'B' com dedos unidos",
@@ -88,10 +88,10 @@ export const LESSONS_DATA: Record<number, LessonNodeData> = {
         letter: "C",
         targetLetter: "C",
         sign: "Dedos curvados em formato de C",
-        emoji: "🐱",
-        animalEmoji: "🐱",
-        animalName: "Gatinha Mel",
-        species: "Gatinha",
+        emoji: "🦫",
+        animalEmoji: "🦫",
+        animalName: "Capivarinha Luvi",
+        species: "Capivara",
         tone: "bg-coral",
         signTip: "Curve os dedos e o polegar suavemente formando um semicírculo em forma de 'C'.",
         handShapeDesc: "Dedos em arco semicircular",
@@ -1374,7 +1374,7 @@ function LessonPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-hero shadow">
+    <div className="min-h-screen bg-gradient-hero flex flex-col shadow">
       <TopBar
         step={step}
         total={total}
@@ -1384,66 +1384,68 @@ function LessonPage() {
         onExit={restart}
         onOpenAlphabet={() => openAlphabetGuide(colors[0]?.targetLetter || "A")}
       />
-      <div className="mx-auto max-w-3xl px-4 py-6 sm:px-7 sm:py-10">
-        {step === 0 && (
-          <ScreenIntro
-            lesson={currentLesson}
-            onNext={next}
-            onOpenAlphabet={openAlphabetGuide}
-          />
-        )}
-        {step === 1 && (
-          <ScreenTeach
-            lesson={currentLesson}
-            onNext={next}
-            onOpenAlphabet={openAlphabetGuide}
-          />
-        )}
-        {step === 2 && (
-          <ScreenQuiz
-            target={colors[0]}
-            colors={colors}
-            onNext={next}
-            onWrongAnswer={() => {
-              if (authorizedUser) {
-                const newLives = loseLife(authorizedUser.id);
-                setLives(newLives);
-              }
-            }}
-          />
-        )}
-        {step === 3 && (
-          <ScreenBubble
-            target={colors[1] || colors[0]}
-            colors={colors}
-            onNext={next}
-            onWrongAnswer={() => {
-              if (authorizedUser) {
-                const newLives = loseLife(authorizedUser.id);
-                setLives(newLives);
-              }
-            }}
-          />
-        )}
-        {step === 4 && (
-          <ScreenMirror
-            target={colors[0]}
-            colors={colors}
-            onNext={(score) => {
-              setMirrorScore(score);
-              next();
-            }}
-          />
-        )}
-        {step === 5 && (
-          <ScreenReward
-            nodeId={nodeId}
-            score={mirrorScore}
-            onRestart={restart}
-            onNextLesson={handleNextLesson}
-          />
-        )}
-      </div>
+      <main className="flex-1 flex flex-col justify-center items-center w-full px-3 py-4 sm:px-6 sm:py-6 lg:px-8">
+        <div className="w-full max-w-5xl xl:max-w-6xl my-auto">
+          {step === 0 && (
+            <ScreenIntro
+              lesson={currentLesson}
+              onNext={next}
+              onOpenAlphabet={openAlphabetGuide}
+            />
+          )}
+          {step === 1 && (
+            <ScreenTeach
+              lesson={currentLesson}
+              onNext={next}
+              onOpenAlphabet={openAlphabetGuide}
+            />
+          )}
+          {step === 2 && (
+            <ScreenQuiz
+              target={colors[0]}
+              colors={colors}
+              onNext={next}
+              onWrongAnswer={() => {
+                if (authorizedUser) {
+                  const newLives = loseLife(authorizedUser.id);
+                  setLives(newLives);
+                }
+              }}
+            />
+          )}
+          {step === 3 && (
+            <ScreenBubble
+              target={colors[1] || colors[0]}
+              colors={colors}
+              onNext={next}
+              onWrongAnswer={() => {
+                if (authorizedUser) {
+                  const newLives = loseLife(authorizedUser.id);
+                  setLives(newLives);
+                }
+              }}
+            />
+          )}
+          {step === 4 && (
+            <ScreenMirror
+              target={colors[0]}
+              colors={colors}
+              onNext={(score) => {
+                setMirrorScore(score);
+                next();
+              }}
+            />
+          )}
+          {step === 5 && (
+            <ScreenReward
+              nodeId={nodeId}
+              score={mirrorScore}
+              onRestart={restart}
+              onNextLesson={handleNextLesson}
+            />
+          )}
+        </div>
+      </main>
 
       {/* Modal de Exemplo Oficial do Alfabeto */}
       <AlphabetReferenceModal
@@ -1479,7 +1481,7 @@ function TopBar({
 
   return (
     <div className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur">
-      <div className="mx-auto flex max-w-3xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 sm:py-4">
+      <div className="mx-auto flex max-w-5xl xl:max-w-6xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-6 sm:py-3.5">
         <Link
           to="/trilha"
           className="grid h-9 w-9 shrink-0 place-items-center rounded-full border-2 border-border bg-card text-base font-bold transition-transform hover:scale-105"
@@ -1529,9 +1531,17 @@ function TopBar({
   );
 }
 
-function ScreenShell({ children }: { children: React.ReactNode }) {
+function ScreenShell({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="animate-pop rounded-4xl bg-card p-6 shadow-chunky md:p-10 border border-border/50">
+    <div
+      className={`animate-pop rounded-3xl sm:rounded-4xl bg-card/95 backdrop-blur-md p-4 sm:p-6 md:p-8 lg:p-10 shadow-chunky border border-border/60 ${className}`}
+    >
       {children}
     </div>
   );
@@ -1557,53 +1567,93 @@ function ScreenIntro({
         <span className="text-xs font-extrabold uppercase tracking-[0.2em] text-primary">
           {worldBadge}
         </span>
-        <h1 className="mt-3 font-display text-3xl font-extrabold md:text-5xl">
+        <h1 className="mt-2 font-display text-2xl font-extrabold sm:text-4xl lg:text-5xl">
           {lesson.title}
         </h1>
-        <p className="mt-2 text-sm text-muted-foreground font-bold">{lesson.subtitle}</p>
+        <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-muted-foreground font-bold">
+          {lesson.subtitle}
+        </p>
 
         {/* Card Dica Didática: 3 Letras por Vez com Mascotes */}
-        <div className="mx-auto my-5 flex max-w-lg items-center gap-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 p-4 text-left text-xs text-amber-900 dark:text-amber-200 shadow-xs">
-          <span className="text-3xl shrink-0">🐾</span>
-          <div>
-            <strong className="font-extrabold block text-amber-950 dark:text-amber-100 text-sm">
+        <div className="mx-auto my-3 sm:my-4 flex max-w-2xl items-center gap-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 px-4 py-2 sm:py-2.5 text-left text-xs text-amber-900 dark:text-amber-200 shadow-xs">
+          <span className="text-2xl sm:text-3xl shrink-0">🐾</span>
+          <div className="leading-snug">
+            <strong className="font-extrabold block text-amber-950 dark:text-amber-100 text-xs sm:text-sm">
               3 Letras nesta Lição com os Bichinhos!
             </strong>
             Nesta lição você aprenderá <strong>3 letras do alfabeto em LIBRAS</strong>. Os bichinhos mostram o sinal nos exercícios e você pode consultar as imagens reais como exemplo de apoio!
           </div>
         </div>
 
-        {/* Exibição dos 3 Bichinhos da Lição */}
-        <div className="mx-auto my-6 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-xl">
+        {/* Exibição dos Bichinhos da Lição - Cards Maiores e Responsivos */}
+        <div className="mx-auto my-4 sm:my-6 grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 w-full max-w-5xl">
           {lesson.colors.map((c) => {
             const mascot = getAnimalMascot(c.targetLetter);
             return (
               <div
                 key={c.targetLetter}
-                onClick={() => onOpenAlphabet?.(c.targetLetter)}
-                className={`group cursor-pointer rounded-3xl ${mascot.tone} p-4 text-center shadow-chunky transition-transform hover:scale-105 border-2 border-border/40`}
+                onClick={() => {
+                  soundFx.playPop();
+                  onOpenAlphabet?.(c.targetLetter);
+                }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    soundFx.playPop();
+                    onOpenAlphabet?.(c.targetLetter);
+                  }
+                }}
+                className={`group cursor-pointer rounded-3xl sm:rounded-4xl ${mascot.tone} p-4 sm:p-5 text-center shadow-chunky transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl border-3 border-black/15 flex flex-col justify-between focus:outline-none focus:ring-4 focus:ring-primary/40`}
               >
-                <div className="relative mx-auto h-24 w-24 overflow-hidden rounded-2xl border-2 border-black/20 bg-black/10 shadow-inner">
+                {/* Topo do Card: Espécie + Badge da Letra em Destaque */}
+                <div className="flex items-center justify-between mb-3 px-1">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-white/80 dark:bg-black/50 px-3 py-1 text-xs font-black text-slate-900 shadow-2xs backdrop-blur-xs">
+                    <span className="text-sm">{mascot.emoji}</span>
+                    <span>{mascot.species}</span>
+                  </span>
+                  <span className="rounded-xl bg-black/85 px-3 py-1 text-xs sm:text-sm font-black text-white shadow-md border border-white/20">
+                    Letra {c.targetLetter}
+                  </span>
+                </div>
+
+                {/* Área da Imagem do Mascote demonstrando a Letra - Maximizada com aspecto responsivo */}
+                <div className="relative mx-auto w-full aspect-square max-h-[38vh] min-h-[180px] sm:max-h-[30vh] md:max-h-[34vh] lg:max-h-[38vh] overflow-hidden rounded-2xl sm:rounded-3xl border-2 sm:border-3 border-black/20 bg-white/50 dark:bg-black/20 shadow-inner flex items-center justify-center p-2">
                   {mascot.image ? (
                     <img
                       src={mascot.image}
-                      alt={mascot.animalName}
-                      className="h-full w-full object-cover"
+                      alt={`${mascot.animalName} ensinando a Letra ${c.targetLetter}`}
+                      className="h-full w-full object-contain rounded-xl sm:rounded-2xl transition-transform duration-300 group-hover:scale-105 filter drop-shadow-md"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-4xl">
+                    <div className="flex h-full w-full items-center justify-center text-6xl">
                       {mascot.emoji}
                     </div>
                   )}
-                  <span className="absolute top-1 right-1 rounded-md bg-black/80 px-2 py-0.5 text-xs font-black text-white">
-                    {c.targetLetter}
-                  </span>
+
+                  {/* Dica no Hover */}
+                  <div className="absolute bottom-2 inset-x-2 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span className="rounded-full bg-black/75 px-3 py-1 text-[11px] font-black text-white shadow backdrop-blur-xs">
+                      Clique para ver sinal em LIBRAS 👆
+                    </span>
+                  </div>
                 </div>
-                <div className="mt-2 font-display text-sm font-black text-slate-900">
-                  {mascot.animalName}
-                </div>
-                <div className="text-[11px] font-extrabold text-slate-800/80">
-                  Ensinando: <strong>Letra {c.targetLetter}</strong>
+
+                {/* Informações do Bichinho */}
+                <div className="mt-3.5 space-y-1">
+                  <div className="font-display text-base sm:text-lg lg:text-xl font-black text-slate-900 tracking-tight">
+                    {mascot.animalName}
+                  </div>
+                  <div className="text-xs sm:text-sm font-extrabold text-slate-800/90 flex items-center justify-center gap-1">
+                    <span>Ensinando:</span>
+                    <strong className="rounded-md bg-white/80 dark:bg-black/40 px-2 py-0.5 font-black text-primary shadow-2xs">
+                      Letra {c.targetLetter}
+                    </strong>
+                  </div>
+                  <p className="text-[11px] font-bold text-slate-700/80 line-clamp-1 pt-0.5 italic">
+                    "{mascot.pawDescription}"
+                  </p>
                 </div>
               </div>
             );
@@ -1612,7 +1662,7 @@ function ScreenIntro({
 
         <button
           onClick={onNext}
-          className="rounded-full bg-primary px-10 py-4 font-display text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 mx-auto"
+          className="rounded-full bg-primary px-8 sm:px-12 py-3.5 sm:py-4 font-display text-base sm:text-lg font-extrabold text-primary-foreground shadow-chunky transition-transform hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-2 mx-auto mt-2"
         >
           <span>▶ Começar Exercícios com os Bichinhos</span>
         </button>
@@ -1666,12 +1716,14 @@ function ScreenTeach({
         <div className="relative mx-auto mt-5 grid grid-cols-1 md:grid-cols-12 gap-5 overflow-hidden rounded-3xl bg-muted border-2 border-border p-5 shadow-inner text-left">
           {/* Mascote Animal Fazendo o Sinal com a Mãozinha (Esquerda) */}
           <div className="md:col-span-6 flex flex-col items-center justify-center text-center">
-            <div className={`relative aspect-square w-full max-w-[240px] overflow-hidden rounded-3xl ${mascot.tone} border-4 border-primary/40 shadow-chunky p-2 flex flex-col items-center justify-center`}>
-              {mascot.letter === "A" || mascot.letter === "B" ? (
+            <div
+              className={`relative aspect-square w-full max-w-[340px] sm:max-w-[380px] md:max-w-[420px] max-h-[46vh] overflow-hidden rounded-3xl ${mascot.tone} border-4 border-primary/40 shadow-chunky p-3 flex flex-col items-center justify-center`}
+            >
+              {mascot.image ? (
                 <img
                   src={mascot.image}
                   alt={`${mascot.animalName} fazendo o sinal ${c.targetLetter}`}
-                  className="h-full w-full object-cover rounded-2xl"
+                  className="h-full w-full object-contain rounded-2xl filter drop-shadow-md"
                 />
               ) : (
                 <div className="flex h-full w-full flex-col items-center justify-between py-2 bg-card/40 rounded-2xl p-2">
@@ -1682,7 +1734,7 @@ function ScreenTeach({
                     </span>
                   </div>
 
-                  <div className="relative h-24 w-24 overflow-hidden rounded-2xl border-2 border-black/20 bg-black/10 shadow-sm">
+                  <div className="relative h-28 w-28 overflow-hidden rounded-2xl border-2 border-black/20 bg-black/10 shadow-sm">
                     {ref.mediaType === "video" ? (
                       <video
                         src={ref.primaryMedia}
@@ -1708,7 +1760,7 @@ function ScreenTeach({
               )}
 
               {/* Badge da Letra (visível na Apresentação) */}
-              <div className="absolute top-3 right-3 rounded-full bg-black/85 px-3 py-1 text-xs font-black text-white shadow-sm border border-white/20">
+              <div className="absolute top-3 right-3 rounded-xl bg-black/85 px-3.5 py-1 text-xs sm:text-sm font-black text-white shadow-md border border-white/20">
                 Letra {c.targetLetter}
               </div>
             </div>
@@ -1718,7 +1770,7 @@ function ScreenTeach({
                 <span>{mascot.emoji}</span>
                 <span>{mascot.animalName}</span>
               </span>
-              <p className="mt-1 text-xs font-extrabold text-primary">
+              <p className="mt-1 text-xs sm:text-sm font-extrabold text-primary">
                 "{mascot.librasExplanation}"
               </p>
             </div>
@@ -1851,7 +1903,7 @@ function ScreenQuiz({
         </p>
 
         {/* Grid com os Mascotes Fazendo os Sinais SEM INDICAR A LETRA NAS OPÇÕES */}
-        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-3 w-full max-w-4xl mx-auto">
           {shuffledColors.map((c) => {
             const isSel = choice === c.targetLetter;
             const isRight = isSel && c.targetLetter === target.targetLetter;
@@ -1873,25 +1925,26 @@ function ScreenQuiz({
                     }
                   }
                 }}
-                className={`group relative flex flex-col items-center justify-center p-4 rounded-3xl border-4 ${mascot.tone} transition-all ${isRight
-                  ? "border-mint bg-mint/30 animate-pop scale-105 shadow-chunky ring-4 ring-mint/40"
-                  : isWrong
-                    ? "border-destructive bg-destructive/10 opacity-75"
-                    : "border-transparent hover:border-primary hover:-translate-y-1 shadow-soft"
-                  }`}
+                className={`group relative flex flex-col items-center justify-between p-4 sm:p-5 rounded-3xl border-4 ${mascot.tone} transition-all ${
+                  isRight
+                    ? "border-mint bg-mint/30 animate-pop scale-105 shadow-chunky ring-4 ring-mint/40"
+                    : isWrong
+                      ? "border-destructive bg-destructive/10 opacity-75"
+                      : "border-transparent hover:border-primary hover:-translate-y-1 shadow-soft"
+                }`}
               >
                 {/* Visual da mãozinha do mascote (SEM PLACA, SEM EXIBIR A LETRA ANTES DA RESPOSTA) */}
-                <div className="relative h-28 w-28 overflow-hidden rounded-2xl border-2 border-black/20 bg-card/70 shadow-sm flex flex-col items-center justify-center p-1">
-                  {mascot.letter === "A" || mascot.letter === "B" ? (
+                <div className="relative w-full aspect-square max-h-[30vh] min-h-[170px] max-w-[240px] sm:max-w-none overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-black/20 bg-white/50 shadow-inner flex flex-col items-center justify-center p-2">
+                  {mascot.image ? (
                     <img
                       src={mascot.image}
                       alt={mascot.animalName}
-                      className="h-full w-full object-cover rounded-xl"
+                      className="h-full w-full object-contain rounded-xl sm:rounded-2xl transition-transform duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full flex-col items-center justify-between py-1">
-                      <span className="text-3xl animate-bounce-soft">{mascot.emoji}</span>
-                      <div className="relative h-14 w-14 overflow-hidden rounded-xl border border-black/20 bg-black/5">
+                    <div className="flex h-full w-full flex-col items-center justify-between py-2">
+                      <span className="text-4xl animate-bounce-soft">{mascot.emoji}</span>
+                      <div className="relative h-20 w-20 overflow-hidden rounded-xl border border-black/20 bg-black/5">
                         {ref.mediaType === "video" ? (
                           <video
                             src={ref.primaryMedia}
@@ -1915,18 +1968,19 @@ function ScreenQuiz({
                   {/* SÓ REVELA A LETRA APÓS O ALUNO TER CLICADO PARA RESPONDER! */}
                   {choice && (
                     <span
-                      className={`absolute top-1 right-1 rounded-md px-1.5 py-0.5 text-xs font-black text-white shadow-sm ${c.targetLetter === target.targetLetter ? "bg-mint text-slate-950" : "bg-black/80"
-                        }`}
+                      className={`absolute top-2 right-2 rounded-xl px-2.5 py-1 text-xs font-black text-white shadow-md ${
+                        c.targetLetter === target.targetLetter ? "bg-mint text-slate-950" : "bg-black/80"
+                      }`}
                     >
-                      {c.targetLetter}
+                      Letra {c.targetLetter}
                     </span>
                   )}
                 </div>
 
-                <div className="mt-3 font-display text-base font-black text-slate-900">
+                <div className="mt-3 font-display text-base sm:text-lg font-black text-slate-900">
                   {mascot.animalName}
                 </div>
-                <span className="mt-0.5 text-[11px] font-extrabold text-slate-800/80">
+                <span className="mt-0.5 text-xs font-extrabold text-slate-800/80">
                   {choice ? `Fez a Letra ${c.targetLetter}` : "Observe o sinal da mão ✋"}
                 </span>
               </button>
@@ -1996,8 +2050,8 @@ function ScreenBubble({
           Observe a mão de cada bichinho nas bolhas flutuantes!
         </p>
 
-        <div className="relative mt-8 grid h-76 place-items-center overflow-hidden rounded-3xl bg-gradient-to-b from-sky/30 to-mint/20 border border-border">
-          <div className="flex items-end justify-around gap-4 sm:gap-6 drop-shadow-xl/25 px-4">
+        <div className="relative mt-8 grid min-h-[340px] sm:min-h-[400px] place-items-center overflow-hidden rounded-3xl bg-gradient-to-b from-sky/30 to-mint/20 border border-border p-4">
+          <div className="flex items-end justify-around gap-4 sm:gap-8 drop-shadow-xl/25 px-4 w-full max-w-4xl">
             {shuffledColors.map((c, i) => {
               const isPopped = popped === c.targetLetter;
               const isRight = isPopped && c.targetLetter === target.targetLetter;
@@ -2020,7 +2074,7 @@ function ScreenBubble({
                   }}
                   disabled={!!popped}
                   style={{ animationDelay: `${i * 0.4}s` }}
-                  className={`animate-float rounded-3xl ${mascot.tone} p-3 shadow-chunky transition-all ${isPopped
+                  className={`animate-float rounded-3xl ${mascot.tone} p-3 sm:p-4 shadow-chunky transition-all ${isPopped
                     ? isRight
                       ? "scale-125 opacity-30 ring-4 ring-mint"
                       : "scale-75 opacity-40"
@@ -2028,17 +2082,17 @@ function ScreenBubble({
                     }`}
                 >
                   <div className="flex flex-col items-center">
-                    <div className="relative h-20 w-20 sm:h-22 sm:w-22 overflow-hidden rounded-2xl border border-black/20 bg-card/70 p-1 flex flex-col items-center justify-center">
-                      {mascot.letter === "A" || mascot.letter === "B" ? (
+                    <div className="relative h-28 w-28 sm:h-36 sm:w-36 md:h-44 md:w-44 overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-black/20 bg-white/70 p-2 flex flex-col items-center justify-center">
+                      {mascot.image ? (
                         <img
                           src={mascot.image}
                           alt={mascot.animalName}
-                          className="h-full w-full object-cover rounded-xl"
+                          className="h-full w-full object-contain rounded-xl sm:rounded-2xl"
                         />
                       ) : (
-                        <div className="flex h-full w-full flex-col items-center justify-between py-0.5">
-                          <span className="text-2xl animate-bounce-soft">{mascot.emoji}</span>
-                          <div className="relative h-12 w-12 overflow-hidden rounded-lg border border-black/20 bg-black/5">
+                        <div className="flex h-full w-full flex-col items-center justify-between py-1">
+                          <span className="text-3xl animate-bounce-soft">{mascot.emoji}</span>
+                          <div className="relative h-16 w-16 overflow-hidden rounded-xl border border-black/20 bg-black/5">
                             {ref.mediaType === "video" ? (
                               <video
                                 src={ref.primaryMedia}
@@ -2061,12 +2115,12 @@ function ScreenBubble({
 
                       {/* SÓ REVELA A LETRA APÓS O ALUNO TER ESTOURADO A BOLHA! */}
                       {popped && (
-                        <span className="absolute top-1 right-1 rounded-md bg-black/80 px-1.5 py-0.2 text-[10px] font-black text-white shadow-sm">
+                        <span className="absolute top-1.5 right-1.5 rounded-lg bg-black/80 px-2 py-0.5 text-xs font-black text-white shadow-sm">
                           {c.targetLetter}
                         </span>
                       )}
                     </div>
-                    <span className="mt-1 font-display text-xs font-black text-slate-900">
+                    <span className="mt-1.5 font-display text-xs sm:text-sm font-black text-slate-900">
                       {mascot.animalName}
                     </span>
                   </div>

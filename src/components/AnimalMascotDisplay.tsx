@@ -61,11 +61,11 @@ export const AnimalMascotDisplay: React.FC<AnimalMascotDisplayProps> = ({
         {/* Renderização do Mascote com a Mãozinha fazendo o sinal em LIBRAS */}
         <div className="relative flex h-full w-full flex-col items-center justify-between overflow-hidden rounded-2xl bg-card/40 backdrop-blur-xs p-1">
           {/* Imagem do Mascote com a mãozinha fazendo o sinal */}
-          {mascot.letter === "A" || mascot.letter === "B" ? (
+          {mascot.image ? (
             <img
               src={mascot.image}
               alt={`${mascot.animalName} fazendo o sinal em LIBRAS`}
-              className="h-full w-full object-cover rounded-xl"
+              className="h-full w-full object-contain rounded-xl"
             />
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-between py-1">
