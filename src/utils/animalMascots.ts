@@ -1,9 +1,16 @@
 // Catálogo de Bichinhos Mascotes que ensinam o Alfabeto em LIBRAS
-import mascotA from "@/assets/bichinhos/mascot_a.jpg";
-import mascotB from "@/assets/bichinhos/mascot_b.jpg";
-import mascotC from "@/assets/bichinhos/mascot_c.jpg";
-import mascotD from "@/assets/bichinhos/mascot_d.jpg";
-import mascotE from "@/assets/bichinhos/mascot_e.jpg";
+import mascotA from "@/assets/bichinhos/a.jpg";
+import mascotB from "@/assets/bichinhos/b.jpg";
+import mascotC from "@/assets/bichinhos/c.jpg";
+import mascotD from "@/assets/bichinhos/d.jpg";
+import mascotE from "@/assets/bichinhos/e.jpg";
+import mascotI from "@/assets/bichinhos/i.jpg";
+import mascotL from "@/assets/bichinhos/l.jpg";
+import mascotM from "@/assets/bichinhos/m.png";
+import mascotO from "@/assets/bichinhos/o.jpg";
+import mascotR from "@/assets/bichinhos/r.jpg";
+import mascotU from "@/assets/bichinhos/u.jpg";
+import mascotV from "@/assets/bichinhos/v.jpg";
 
 export type AnimalMascot = {
   letter: string;
@@ -120,7 +127,7 @@ export const ANIMAL_MASCOTS: Record<string, AnimalMascot> = {
     animalName: "Iguana Izi",
     species: "Iguana",
     emoji: "🦎",
-    image: mascotC,
+    image: mascotI,
     tone: "bg-neon",
     badgeBg: "from-lime-400 to-green-600",
     pawDescription: "Mão fechada com apenas o dedo mínimo (mindinho) estendido para cima.",
@@ -156,7 +163,7 @@ export const ANIMAL_MASCOTS: Record<string, AnimalMascot> = {
     animalName: "Leãozinho Léo",
     species: "Leão",
     emoji: "🦁",
-    image: mascotA,
+    image: mascotL,
     tone: "bg-coral",
     badgeBg: "from-orange-500 to-amber-600",
     pawDescription: "Indicador para cima e polegar aberto a 90 graus formando um 'L' perfeito.",
@@ -168,7 +175,7 @@ export const ANIMAL_MASCOTS: Record<string, AnimalMascot> = {
     animalName: "Macaquinho Mico",
     species: "Macaco",
     emoji: "🐵",
-    image: mascotB,
+    image: mascotM,
     tone: "bg-sunshine",
     badgeBg: "from-amber-500 to-yellow-600",
     pawDescription: "Três dedos (indicador, médio e anelar) estendidos para BAIXO apoiados no polegar.",
@@ -192,7 +199,7 @@ export const ANIMAL_MASCOTS: Record<string, AnimalMascot> = {
     animalName: "Ovelhinha Olívia",
     species: "Ovelha",
     emoji: "🐑",
-    image: mascotE,
+    image: mascotO,
     tone: "bg-coral",
     badgeBg: "from-pink-400 to-rose-600",
     pawDescription: "Todos os 4 dedos e o polegar unidos pelas pontas formando um círculo 'O' fechado.",
@@ -228,7 +235,7 @@ export const ANIMAL_MASCOTS: Record<string, AnimalMascot> = {
     animalName: "Raposinha Rubi",
     species: "Raposa",
     emoji: "🦊",
-    image: mascotB,
+    image: mascotR,
     tone: "bg-coral",
     badgeBg: "from-orange-500 to-rose-600",
     pawDescription: "Dedo médio cruzado sobre o indicador estendido (dedos cruzados da sorte).",
@@ -264,7 +271,7 @@ export const ANIMAL_MASCOTS: Record<string, AnimalMascot> = {
     animalName: "Ursinho Uli",
     species: "Urso",
     emoji: "🐻",
-    image: mascotA,
+    image: mascotU,
     tone: "bg-sunshine",
     badgeBg: "from-amber-600 to-yellow-700",
     pawDescription: "Indicador e médio estendidos e bem UNIDOS para cima.",
@@ -276,7 +283,7 @@ export const ANIMAL_MASCOTS: Record<string, AnimalMascot> = {
     animalName: "Vaquinha Vivi",
     species: "Vaca",
     emoji: "🐮",
-    image: mascotB,
+    image: mascotV,
     tone: "bg-coral",
     badgeBg: "from-rose-500 to-pink-700",
     pawDescription: "Indicador e médio estendidos e AFASTADOS formando a letra 'V' da paz.",
